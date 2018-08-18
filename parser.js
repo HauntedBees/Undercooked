@@ -1,5 +1,9 @@
 const synonyms = {
     "pick up": "grab",
+    "frying pan": "pan",
+    "cooking pan": "pan",
+    "skillet": "pan",
+    "frypan": "pan",
     "cutting board": "cuttingboard",
     "chopping board": "cuttingboard",
     "butcher block": "cuttingboard",
@@ -13,6 +17,7 @@ const dropVerbs = ["drop", "put", "place", "plop", "set", "deposit", "position"]
 const chopVerbs = ["cut", "chop", "slice", "dice", "mince", "stab", "knife", "julienne", "chiffonade"];
 const serveVerbs = ["serve", "deliver", "provide", "supply"];
 const moveVerbs = ["walk", "move", "go"];
+const fryVerbs = ["fry", "sautee", "sauté", "sear", "brown", "sizzle"];
 const self = module.exports = {
     Parse: function(s) {
         if(s === "") { return null; }
@@ -28,9 +33,32 @@ const self = module.exports = {
         if(chopVerbs.indexOf(firstWord) >= 0) { return self.Chop(remainingWords); }
         if(serveVerbs.indexOf(firstWord) >= 0) { return self.Serve(remainingWords); }
         if(moveVerbs.indexOf(firstWord) >= 0) { return self.Move(remainingWords); }
+        if(fryVerbs.indexOf(firstWord) >= 0) { return self.Fry(remainingWords); }
         if(firstWord === "plate") { return self.Plate(remainingWords); }
 
         return null;
+    },
+    Fry: function(s) { // ${obj} ({$optional_number})
+        const splitStr = s.split(" ");
+        if(splitStr.length === 1) {
+            return {
+                type: "fry",
+                object: splitStr[0],
+                place: "pan", placeNum: -1
+            }
+        }
+        if(splitStr.length !== 2) { return; }
+        let placeNum = -1;
+        const potentialPlaceNum = parseInt(splitStr[1]);
+        if(!isNaN(potentialPlaceNum)) {
+            placeNum = potentialPlaceNum;
+            if(placeNum <= 0) { return null; } // "fry tomato -1" isn't valid
+        }
+        return {
+            type: "fry",
+            object: splitStr[0],
+            place: "pan", placeNum: placeNum
+        }
     },
     Move: function(s) { // (to room ${number}) or (${direction})
         const splitStr = s.split(" ");

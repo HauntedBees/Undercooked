@@ -41,23 +41,3 @@ const gameData = {
     bot: null, map: null, orders: [], score: 0,
     gameTimer: 0, gameSpeed: 1, secondsPlayed: 0 
 };
-
-/* items: 
-    - wall (can cross over to other sides or no)
-    - dispenser
-       - tomato, lettuce, onion, mushroom, buns, steak, fish, potato, cheese, pizza dough
-    - plates (finite number or dispensed)
-    - cutting board
-    - pot (volume, number of items that can be put in it)
-    - frying pan
-    - output area
-    - input area for used dishes
-    - stovetop
-    - oven
-    - table (size, number of items that can be placed on it)
-    - fire extinguisher
-    - sink (washes plates)
-    - trash can
-    - conveyor belt (might not work in text-based)
-    - events (areas become separated)
-*/

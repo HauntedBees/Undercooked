@@ -70,5 +70,11 @@ ${t}`,
 * synonyms: walk, go
 * format: "move direction" or "move to room #"
 * examples: "move to room 2", "walk north", "go left"
+
+< fry > - fry an item that's on a frying pan
+* synonyms: sautee, sauté, sear, brown, sizzle
+* format: fry item (number)
+* examples: "fry potato", "fry egg 2"
+* notes: the number here maps to the frying pan number, so "fry potato 2" is like saying "fry the potato on pan 2"
 ${t}`
 }

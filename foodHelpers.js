@@ -7,7 +7,8 @@ const self = module.exports = {
         return ` ${s}`;
     },
     FormatPlaceName: function(s) {
-        if(s === "cuttingboard") { return "cutting board"; }
+        if(s === "cuttingboard") { return "cutting board"; } // TODO: ???
+        if(s === "pan") { return "frying pan"; }
         return s;
     },
     FormatIngredientName: function(s) {
@@ -18,8 +19,13 @@ const self = module.exports = {
             switch(split[i]) {
                 case "sliced": food = `chopped ${food}`; break;
                 case "plated": food = `plated ${food}`; break;
+                case "fried": food = `fried ${food}`; break;
             }
         }
         return food;
+    },
+    TransformFood: function(s) {
+        if(s === "potato_sliced_fried") { return "french fries"; }
+        return s;
     }
 };

@@ -39,7 +39,7 @@ module.exports = {
 
         for(let i = 0; i < contents.length; i++) {
             const itemInfo = contents[i];
-            if(itemInfo.item.indexOf(obj) !== 0) { continue; }
+            if(itemInfo.item !== obj) { continue; }
             itemInfo.amount += 1;
             return "ok";
         }
