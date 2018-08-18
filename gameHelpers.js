@@ -18,7 +18,7 @@ module.exports = {
     },
     NoPlacesCheck: function(actingUser, relevantPlaces, verb, place) {
         if(relevantPlaces.length > 0) { return true; }
-        DiscordHelper.SayM(`${actingUser.nick} tried to ${verb} ${objectDisplayName}, but there are no ${place} in their room!`);
+        DiscordHelper.SayM(`${actingUser.nick} tried to ${verb} ${Food.AorAN(place)}, but there are no ${place}s in their room!`);
         return false;
     },
     ChosenPlaceCheck: function(actingUser, chosenPlace, action, objectDisplayName, placeCount, verb, noun) {

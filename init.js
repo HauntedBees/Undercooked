@@ -14,7 +14,8 @@ const self = module.exports = {
 + Anyone can type "join" to join the next match or "leave" to leave it.
 + The host can type "!players #" to set the player count (valid values are 2-100).
 + The host can type "!speed #" to set the speed (valid values are Fast, Normal, Slow, Very Slow).
-+ The host can type "start" to begin the game or "cancel" to end the game.`);
++ The host can type "start" to begin the game or "cancel" to end the game.
++ ${gameData.hostUserName} is the host!`);
     },
     HandlePostInitCommand: function(gameData, userID, message) {
         if(userID == gameData.hostUserID) {

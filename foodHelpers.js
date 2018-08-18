@@ -2,6 +2,7 @@ const recipeDisplayNames = {
     "frenchfries": "french fries",
     "tomatosoup": "tomato soup",
     "spicytomatosoup": "spicy tomato soup",
+    "weirdsoup": "weird soup",
     "badsoup": "bad soup"
 };
 const self = module.exports = {
@@ -30,6 +31,14 @@ const self = module.exports = {
         return true;
     },
 
+    FlattenFoodNames: function(s) {
+        for(const noSpaces in recipeDisplayNames) {
+            const spaces = recipeDisplayNames[noSpaces];
+            s = s.replace(spaces, noSpaces);
+        }
+        return s;
+    },
+
     AorAN: function(s) { 
         if("aeiou".indexOf(s[0]) >= 0) { return `an ${s}`; }
         return `a ${s}`;
@@ -47,6 +56,7 @@ const self = module.exports = {
     GetFoodDisplayNameFromAction: (action, ignorePlated) => self.GetFoodDisplayNameFromObj({ type: action.object, attributes: (action.objAttrs || []) }, ignorePlated || false),
     GetFoodDisplayNameFromObj: function(food, ignorePlated) {
         let name = food.type;
+        if(recipeDisplayNames[name] !== undefined) { name = recipeDisplayNames[name]; }
         for(let i = 0; i < food.attributes.length; i++) {
             switch(food.attributes[i]) {
                 case "sliced": name = `chopped ${name}`; break;
@@ -59,6 +69,30 @@ const self = module.exports = {
         } else {
             return `a ${name}`;
         }
+    },
+
+    GetCookTime: function(place, gameSpeed) {
+        let details = { time: 10, range: 2 };
+        if(place.type === "pot") {
+            const itemCount = place.contents.length;
+            details.time = itemCount * itemCount + itemCount + 10; // 12, 16, 22, 30
+            details.range = Math.round(itemCount * 1.5);           //  2,  3,  5,  6
+        }
+        details.time = Math.round(details.time * (1 + gameSpeed) / 2);
+        details.range = Math.round(details.range * gameSpeed);
+        return details;
+    },
+    GetCookingModifier: function(place) {
+        const cookedTime = place.cookingTime;
+        const rd = place.cookRangeDetails;
+        let potentialModifier = 1.25, rangeIncrease = 1;
+        for(let i = 0; i < 4; i++) {
+            const min = Math.ceil(rd.time - rd.range * rangeIncrease), max = Math.floor(rd.time + rd.range * rangeIncrease); 
+            if(min <= cookedTime && cookedTime <= max) { return potentialModifier; }
+            rangeIncrease += 0.5;
+            potentialModifier -= 0.25;
+        }
+        return 0.25;
     },
 
     AddAttribute: function(food, attr) {
@@ -79,6 +113,9 @@ const self = module.exports = {
     BoiledFoods: function(pot) {
         const ingredience = pot.contents;
         const newModifier = pot.modifier * self.AvgModifier(ingredience);
+        if(newModifier < 0.25) {
+            return { type: "badsoup", class: "soup", modifier: 0.5 * newModifier, attributes: [] };
+        }
         const sorted = {};
         for(let i = 0; i < ingredience.length; i++) {
             const ing = ingredience[i];
@@ -92,7 +129,7 @@ const self = module.exports = {
             }
             return { type: "tomatosoup", class: "soup", modifier: newModifier, attributes: [] };
         }
-        return { type: "badsoup", class: "soup", modifier: 0.5 * newModifier, attributes: [] };
+        return { type: "weirdsoup", class: "soup", modifier: 0.5 * newModifier, attributes: [] };
     },
-    AvgModifier: ingredience => ingredience.reduce((sum, curFood) => sum + curFood.modifier, 0) / food.length
+    AvgModifier: ingredience => ingredience.reduce((sum, curFood) => sum + curFood.modifier, 0) / ingredience.length
 };

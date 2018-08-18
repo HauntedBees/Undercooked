@@ -4,10 +4,15 @@ const self = module.exports = {
     ShowHelp: function() {
         DiscordHelper.Say(Strings.HELP1);
         DiscordHelper.Say(Strings.HELP2);
+        DiscordHelper.Say(Strings.HELP3);
         return true;
     },
     MainLoop: function(gameData) {
         gameData.secondsPlayed += 1;
+        for(let i = 0; i < gameData.map.items.length; i++) {
+            const place = gameData.map.items[i];
+            if(place.switchedOn) { place.cookingTime += 1; }
+        }
         if(gameData.secondsPlayed % 30 === 0) {
             const orders = gameData.map.potentialOrders;
             const order = orders[Math.floor(Math.random() * orders.length)];
@@ -17,6 +22,7 @@ const self = module.exports = {
     },
     HandleAction: function(gameData, userID, action) {
         try {
+            const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
             switch(action.type) {
                 case "grab": return self.Grab(gameData, userID, action);
                 case "drop": return self.Drop(gameData, userID, action);
@@ -25,10 +31,89 @@ const self = module.exports = {
                 case "serve": return self.Serve(gameData, userID, action);
                 case "move": return self.Move(gameData, userID, action);
                 case "fry": return self.Fry(gameData, userID, action);
+                case "turn": return self.Turn(gameData, userID, action);
+                case "look": return self.Look(gameData, currentRoom, actingUser, action);
             }
         } catch(e) {
             DiscordHelper.Log(e.stack);
             DiscordHelper.SayM(`Something broke but we're all good. I recovered. I'm a big boy. We got this. We're good.`);
+        }
+    },
+    Look: function(gameData, currentRoom, actingUser, action) {
+        if(action.around) { return self.LookAround(gameData, currentRoom, actingUser); }
+        const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
+        const specificPlace = Food.FormatPlaceName(action.place, true);
+        if(relevantPlaces.length === 0) {
+            DiscordHelper.SayM(`${actingUser.nick} looked for ${specificPlace}s, but couldn't find any in their room!`);
+            return;
+        }
+        if(action.placeNum > 0) {
+            const chosenPlace = relevantPlaces[action.placeNum - 1];
+            if(chosenPlace === undefined) {
+                DiscordHelper.SayM(`${actingUser.nick} tried to look at ${specificPlace} ${action.placeNum}, but there are only ${relevantPlaces.length} of those!`);
+                return;
+            }
+            DiscordHelper.SayP(`${actingUser.nick} looked at ${specificPlace} ${action.placeNum} in Room ${currentRoom + 1}: ${Room.GetInspectionString(chosenPlace, action.placeNum, true)}`);
+        } else if(relevantPlaces.length === 1) {
+            const chosenPlace = relevantPlaces[0];
+            DiscordHelper.SayP(`${actingUser.nick} looked at the ${specificPlace} in Room ${currentRoom + 1}: ${Room.GetInspectionString(chosenPlace, 0, true)}`);
+        } else {
+            let fullStr = `${actingUser.nick} looked at the ${specificPlace}s in Room ${currentRoom + 1}:`;
+            for(let i = 0; i < relevantPlaces.length; i++) {
+                const chosenPlace = relevantPlaces[i];
+                fullStr += `\n+ ${Room.GetInspectionString(chosenPlace, i + 1, false)}`;
+            }
+            DiscordHelper.SayP(fullStr);
+        }
+    },
+    LookAround: function(gameData, currentRoom, actingUser) {
+        const relevantPlaces = Room.GetObjectsInRoom(gameData.map, currentRoom);
+        if(relevantPlaces.length === 0) {
+            DiscordHelper.SayM(`${actingUser.nick} looked around Room ${currentRoom + 1}, but it's empty!`);
+            return;
+        }
+        relevantPlaces.sort((a, b) => a.type.localeCompare(b.type));
+        let fullStr = `${actingUser.nick} looked around Room ${currentRoom + 1}:`;
+        let lastItemType = "", typeIter = 1;
+        for(let i = 0; i < relevantPlaces.length; i++) {
+            const chosenPlace = relevantPlaces[i];
+            if(chosenPlace.type !== lastItemType) {
+                lastItemType = chosenPlace.type;
+                typeIter = 1;
+            }
+            fullStr += `\n+ ${Room.GetInspectionString(chosenPlace, typeIter, false)}`;
+            typeIter += 1;
+        }
+        DiscordHelper.SayP(fullStr);
+    },
+    Turn: function(gameData, userID, action) {
+        const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
+        const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
+        if(!GameHelper.NoPlacesCheck(actingUser, relevantPlaces, `turn ${action.switchType}`, action.displayPlace)) { return; }
+        if(action.placeNum < 0 && relevantPlaces.length > 1) {
+            DiscordHelper.SayM(`${actingUser.nick} tried to turn ${action.switchType} ${Food.AorAN(action.displayPlace)}, but there are ${relevantPlaces.length} of those, and they didn't specify which one!`);
+            return;
+        }
+        const placeNum = action.placeNum < 0 ? 0 : (action.placeNum - 1);
+        const chosenPlace = relevantPlaces[placeNum];
+        if(chosenPlace.switchedOn && action.switchType === "on") { return DiscordHelper.SayM(`${actingUser.nick} tried to turn on ${action.displayPlace} ${placeNum + 1}, but it's already on!`); }
+        if(!chosenPlace.switchedOn && action.switchType === "off") { return DiscordHelper.SayM(`${actingUser.nick} tried to turn off ${action.displayPlace} ${placeNum + 1}, but it's already off!`); }
+        if(chosenPlace.contents.length === 0 && !chosenPlace.switchedOn) { return DiscordHelper.SayM(`${actingUser.nick} tried to turn on ${action.displayPlace} ${placeNum + 1}, but it's empty! Put some food in it before turning it on!`); }
+
+        if(action.switchType === "on") {
+            chosenPlace.switchedOn = true;
+            chosenPlace.modifier = 1;
+            chosenPlace.cookingTime = 0;
+            chosenPlace.cookRangeDetails = Food.GetCookTime(chosenPlace, gameData.gameSpeed);
+            const newFood = Food.TransformFood(chosenPlace);
+            DiscordHelper.SayP(`${actingUser.nick} turned ${action.displayPlace} ${placeNum + 1} on, and is now boiling ${Food.GetFoodDisplayNameFromObj(newFood)}!
++ It will be ready in ${chosenPlace.cookRangeDetails.time - chosenPlace.cookRangeDetails.range}-${chosenPlace.cookRangeDetails.time + chosenPlace.cookRangeDetails.range} seconds!`);
+        } else {
+            chosenPlace.switchedOn = false;
+            chosenPlace.modifier = Food.GetCookingModifier(chosenPlace);
+            const newFood = Food.TransformFood(chosenPlace);
+            chosenPlace.contents = [ newFood ];
+            DiscordHelper.SayP(`${actingUser.nick} turned ${action.displayPlace} ${placeNum + 1} off, and made ${Food.GetFoodDisplayNameFromObj(newFood)}!`);
         }
     },
     Move: function(gameData, userID, action) {
@@ -63,7 +148,7 @@ const self = module.exports = {
         if(!GameHelper.HoldingCheck(actingUser, "serve", action, objectDisplayName)) { return; }
         
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "output");
-        if(!GameHelper.NoPlacesCheck(actingUser, relevantPlaces, "serve", "serving areas")) { return; }
+        if(!GameHelper.NoPlacesCheck(actingUser, relevantPlaces, "serve", "serving area")) { return; }
         
         const orders = gameData.orders;
         for(let i = 0; i < orders.length; i++) {
@@ -84,7 +169,7 @@ const self = module.exports = {
         if(!GameHelper.EmptyHandsCheck(actingUser, "fry", objectDisplayName)) { return; }
        
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "pan");
-        if(!GameHelper.NoPlacesCheck(actingUser, relevantPlaces, "fry", "frying pans")) { return; }
+        if(!GameHelper.NoPlacesCheck(actingUser, relevantPlaces, "fry", "frying pan")) { return; }
         
         if(action.placeNum > 0) {
             const chosenPlace = relevantPlaces[action.placeNum - 1];
@@ -118,7 +203,7 @@ const self = module.exports = {
         if(!GameHelper.EmptyHandsCheck(actingUser, "chop", objectDisplayName)) { return; }
         
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "cuttingboard");
-        if(!GameHelper.NoPlacesCheck(actingUser, relevantPlaces, "chop", "cutting boards")) { return; }
+        if(!GameHelper.NoPlacesCheck(actingUser, relevantPlaces, "chop", "cutting board")) { return; }
        
         if(action.placeNum > 0) {
             const chosenPlace = relevantPlaces[action.placeNum - 1];
@@ -153,10 +238,10 @@ const self = module.exports = {
         if(!GameHelper.HoldingCheck(actingUser, "plate", action, objectDisplayName)) { return; }
         
         const heldDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);
-        if(Food.HasAttribute(actingUser.holding, "plated")) {
-            DiscordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName}, but it doesn't need ANOTHER plate!`);
-            return;
-        }
+        if(actingUser.holding.type === "plate") { return DiscordHelper.SayM(`${actingUser.nick} tried to plate a plate! Why would you do that? What is your goal here?!`); }
+        if(actingUser.holding.class === "cooking") { return DiscordHelper.SayM(`${actingUser.nick} tried to plate a ${objectDisplayName}! Why would you do that? What is your goal here?!`); }
+        if(Food.HasAttribute(actingUser.holding, "plated")) { return DiscordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName}, but it doesn't need ANOTHER plate!`); }
+
         let relevantPlaces = null, placeType = "";
         if(action.place === "") { // chose just any plate
             relevantPlaces = Room.GetObjectsInRoom(gameData.map, currentRoom);
@@ -167,12 +252,8 @@ const self = module.exports = {
         }
         
         if(relevantPlaces.length === 0) {
-            if(placeType === "") {
-                DiscordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName} on a ${aPlace}, but there is nothing that they can reach!`);
-            } else {
-                DiscordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName} on a ${aPlace}, but there is no ${specificPlace} that they can reach!`);
-            }
-            return;
+            if(placeType === "") { return DiscordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName} on a ${aPlace}, but there is nothing that they can reach!`); }
+            else { return DiscordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName} on a ${aPlace}, but there is no ${specificPlace} that they can reach!`); }
         }
         if(action.placeNum > 0) { // chose a plate on a specific place (can never occur when placeType === "")
             const chosenPlace = relevantPlaces[action.placeNum - 1];
@@ -223,10 +304,12 @@ const self = module.exports = {
             });
             return;
         }
+        
         const heldDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
+        const onOrIn = (["table", "floor"].indexOf(place.type) < 0 ? "in" : "down on");
         if(relevantPlaces.length === 0) {
-            DiscordHelper.SayM(`${actingUser.nick} tried to drop ${heldDisplayName} on ${aPlace}, but there is no ${specificPlace} that they can reach!`);
+            DiscordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${aPlace}, but there is no ${specificPlace} that they can reach!`);
             return;
         }
         if(action.placeNum > 0) {
@@ -239,29 +322,29 @@ const self = module.exports = {
             switch(addStatus) {
                 case "ok":
                     actingUser.holding = null;
-                    DiscordHelper.SayP(`${actingUser.nick} put ${heldDisplayName} down on ${specificPlace} ${action.placeNum}!`);
+                    DiscordHelper.SayP(`${actingUser.nick} put ${heldDisplayName} ${onOrIn} ${specificPlace} ${action.placeNum}!`);
                     break;
                 case "full":
-                    DiscordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} down on ${specificPlace} ${action.placeNum}, but there was no more room!`);
+                    DiscordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${specificPlace} ${action.placeNum}, but there was no more room!`);
                     break;
                 case "invalid":
-                    DiscordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} down on ${specificPlace} ${action.placeNum}, but you can't put ${heldDisplayName} on ${aPlace}!!`);
+                    DiscordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${specificPlace} ${action.placeNum}, but you can't put ${heldDisplayName} on ${aPlace}!!`);
                     break;
             }
         } else {
             for(let i = 0; i < relevantPlaces.length; i++) {
                 const attempt = Room.TryAddObjectToPlace(relevantPlaces[i], actingUser.holding);
                 if(attempt === "ok") {
-                    DiscordHelper.SayP(`${actingUser.nick} put ${heldDisplayName} down on ${specificPlace} ${i + 1}!`);
+                    DiscordHelper.SayP(`${actingUser.nick} put ${heldDisplayName} ${onOrIn} ${specificPlace} ${i + 1}!`);
                     actingUser.holding = null;
                     return;
                 }
                 if(attempt === "invalid") {
-                    DiscordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} down on ${aPlace}, but you can't put ${heldDisplayName} on ${aPlace}!!`);
+                    DiscordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${aPlace}, but you can't put ${heldDisplayName} on ${aPlace}!!`);
                     return;
                 }
             }
-            DiscordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} down on ${aPlace}, but there was no more room!`);
+            DiscordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${aPlace}, but there was no more room!`);
         }
     },
     Grab: function(gameData, userID, action) { // TODO: maybe care about attributes
@@ -280,6 +363,11 @@ const self = module.exports = {
                 DiscordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${specificPlace} ${action.placeNum}, but there are only ${relevantPlaces.length} of those!`);
                 return;
             }
+            if(chosenPlace.switchedOn) {
+                const type = specificPlace === "pot" ? "stove" : specificPlace;
+                DiscordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${specificPlace} ${action.placeNum}, but the ${type} is on! Turn it off first!`);
+                return;
+            }
             const item = Room.TryTakeObjectFromPlace(chosenPlace, action.object);
             if(item !== null) {
                 DiscordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${specificPlace} ${action.placeNum}!`);
@@ -288,7 +376,9 @@ const self = module.exports = {
                 DiscordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${specificPlace} ${action.placeNum}, but there was no ${action.object} there to grab!`);
             }
         } else {
+            let itemsOn = false;
             for(let i = 0; i < relevantPlaces.length; i++) {
+                if(relevantPlaces[i].switchedOn) { itemsOn = true; continue; }
                 const item = Room.TryTakeObjectFromPlace(relevantPlaces[i], action.object);
                 if(item !== null) {
                     DiscordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${specificPlace} ${i + 1}!`);
@@ -296,7 +386,12 @@ const self = module.exports = {
                     return;
                 }
             }
-            DiscordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${aPlace}, but there was no ${action.object} there to grab!`);
+            if(itemsOn) {
+                const type = specificPlace === "pot" ? "stove" : specificPlace;
+                DiscordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${aPlace}, but the only ${action.object}s are in ${type}s that are turned on! Turn them off first!`);
+            } else {
+                DiscordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${aPlace}, but there was no ${action.object} there to grab!`);
+            }
         }
     }
 };

@@ -1,3 +1,4 @@
+const Food = require("./foodHelpers.js");
 const synonyms = {
     "pick up": "grab",
     "frying pan": "pan",
@@ -18,11 +19,14 @@ const chopVerbs = ["cut", "chop", "slice", "dice", "mince", "stab", "knife", "ju
 const serveVerbs = ["serve", "deliver", "provide", "supply"];
 const moveVerbs = ["walk", "move", "go"];
 const fryVerbs = ["fry", "sautee", "sauté", "sear", "brown", "sizzle"];
+const turnVerbs = ["turn", "switch", "flip"];
+const lookVerbs = ["look", "inspect", "view", "see"];
 const self = module.exports = {
     Parse: function(s) {
         if(s === "") { return null; }
         s = s.trim().replace(/[.,!:;'"]/g, "").replace(/\s+/g, " ").toLowerCase();
         for(const word in synonyms) { s = s.replace(word, synonyms[word]); }
+        s = Food.FlattenFoodNames(s);
 
         const splitWord = s.split(" ");
         const firstWord = splitWord[0], remainingWords = s.substring(s.indexOf(" ") + 1);
@@ -34,9 +38,48 @@ const self = module.exports = {
         if(serveVerbs.indexOf(firstWord) >= 0) { return self.Serve(remainingWords); }
         if(moveVerbs.indexOf(firstWord) >= 0) { return self.Move(remainingWords); }
         if(fryVerbs.indexOf(firstWord) >= 0) { return self.Fry(remainingWords); }
+        if(turnVerbs.indexOf(firstWord) >= 0) { return self.Turn(remainingWords); }
+        if(lookVerbs.indexOf(firstWord) >= 0) { return self.Look(remainingWords); }
         if(firstWord === "plate") { return self.Plate(remainingWords); }
 
         return null;
+    },
+    Look: function(s) { // around OR (at) $place(s/ {$optional_number}) -- number OR plural
+        const splitStr = s.split(" ");
+        if(splitStr[0] === "around") { return { type: "look", around: true }; }
+        if(splitStr[0] === "at") { splitStr.shift(); }
+        if(splitStr.length === 2) {
+            let placeName = splitStr[0];
+            const placeNum = parseInt(splitStr[1]);
+            if(isNaN(placeNum) || placeNum <= 0) { return null; }
+            if(placeName === "stove") { placeName = "pot"; }
+            return { type: "look", place: placeName, placeNum: placeNum };
+        } else if(splitStr.length === 1) {
+            let placeName = splitStr[0];
+            const lastChar = placeName[placeName.length - 1];
+            if(lastChar === "s") { placeName = placeName.substring(0, placeName.length - 1); }
+            if(placeName === "stove") { placeName = "pot"; }
+            return { type: "look", place: placeName, placeNum: -1 };
+        }
+        return null;
+    },
+    Turn: function(s) { // ${obj} (${optional_number}) ${on_off}
+        const splitStr = s.split(" ");
+        const place = splitStr[0];
+        if(["oven", "stove"].indexOf(place) < 0) { return null; }
+        let placeNum = -1;
+        let potentialPlaceNum = parseInt(splitStr[1]);
+        if(!isNaN(potentialPlaceNum)) {
+            placeNum = potentialPlaceNum;
+            if(placeNum <= 0) { return null; }
+        }
+        const switchType = splitStr[placeNum > 0 ? 2 : 1];
+        if(["on", "off"].indexOf(switchType) < 0) { return null; }
+        return {
+            type: "turn", displayPlace: place, 
+            place: (place === "stove" ? "pot" : place), placeNum: placeNum,
+            switchType: switchType
+        }
     },
     Fry: function(s) { // ${obj} ({$optional_number})
         const info = self.FormatObjectName(s);

@@ -77,5 +77,20 @@ ${t}`,
 * examples: "fry potato", "fry egg 2"
 * notes: the number here maps to the frying pan number, so "fry potato 2" is like saying "fry the potato on pan 2"
 
+< turn > - turn an oven or stove on
+* synonyms: switch, flip
+* format: turn item (number) on/off
+* examples: "turn stove on", "switch oven 2 off"
+* notes 1: number is only optional if there is only one of that item in the room.
+* notes 2: stoves are linked to pots. if you put items in "pot 2" then to cook the food in that pot, you'd type "turn stove 2 on."
+* notes 3: ovens and stoves do not need to be preheated or cleaned. pots do not need to be filled with water.
+${t}`,
+    HELP3: `${t}md
+< look > - look at cooking equipment to see what's going on
+* synonyms: look, inspect, view, see
+* format: "look around", "look (at) places" or "look (at) place number"
+* examples: "look around", inspect cutting board 1", "look at tables"
+* notes 1: this is only for cooking equipment and furniture, so things like "look at plates" or "look at tomato 2" won't work!
+* notes 2: "look around" will tell you about every piece of furniture in the room
 ${t}`
 }

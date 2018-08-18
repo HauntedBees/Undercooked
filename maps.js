@@ -3,13 +3,13 @@ const maps = [
         name: "De Testbench!",
         img: `
 XXXXXPSXXXXXXXOUXXXX    OU = Food Delivery Area
-FP                DT    TB = Table
-CB   1   TB   2   DP    DS = Potato Dispenser      
-CB       TB       DS    DT = Tomato Dispenser
+FP                DT    TT = Table
+CB   1   TT   2   DP    DS = Potato Dispenser      
+CB       TT       DS    DT = Tomato Dispenser
 XXXX   XXXXXXXXXXXXX    DP = Plate Dispenser
 XX       XX             CB = Cutting Board
 XX   3   XX             FP = Frying Pan
-XX       XX             PS = Pot & Stove
+XX       XX             PS = Pot on Stove
 XXXXXXXXXXX
 `,
         rooms: [
@@ -19,14 +19,14 @@ XXXXXXXXXXX
         ],
         items: [
             { type: "output", rooms: [1] },
-            { type: "table", rooms: [0, 1], size: 2, contents: [] },
+            { type: "table", rooms: [0, 1], size: 4, contents: [] },
             { type: "dispenser", rooms: [1], dispensed: "potato", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "tomato", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "plate", amount: 999 },
             { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
             { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
             { type: "pan", rooms: [0], size: 1, contents: [] },
-            { type: "stove", rooms: [0], on: false, contents: [] },
+            { type: "pot", rooms: [0], switchedOn: false, size: 4, contents: [] },
             { type: "floor", rooms: [0], size: 999, contents: [] },
             { type: "floor", rooms: [1], size: 999, contents: [] }
         ],
