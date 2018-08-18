@@ -5,8 +5,8 @@ module.exports = {
   / / / /__  ___/ /__ ___________  ___  / /_____ ___/ /
  / /_/ / _ \\/ _  / -_) __/ __/ _ \\/ _ \\/  '_/ -_) _  / 
  \\____/_//_/\\_,_/\\__/_/  \\__/\\___/\\___/_/\\_\\\\__/\\_,_/ 
- ======================================================== 
-  America's Favorite Text-Based Co-Op Cooking Adventure!${t}`,
+======================================================== 
+ America's Favorite Text-Based Co-Op Cooking Adventure!${t}`,
     PLAYERS_2: `${d}
 + Two players!`,
     PLAYERS_3: `${d}
@@ -76,5 +76,6 @@ ${t}`,
 * format: fry item (number)
 * examples: "fry potato", "fry egg 2"
 * notes: the number here maps to the frying pan number, so "fry potato 2" is like saying "fry the potato on pan 2"
+
 ${t}`
 }

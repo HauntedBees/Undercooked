@@ -35,4 +35,8 @@ module.exports = {
     Say: function(message) { messageCache.push(message); },
     Log: function(message) { logger.info(message); },
     LogError: function(message) { logger.error(message) }
+    SayP: function(message) { messageCache.push(`\`\`\`diff
++ ${message}\`\`\``); }, // "Say" wrapped in the "diff" formatting wrapper, first line prefixed with +
+    SayM: function(message) { messageCache.push(`\`\`\`diff
+- ${message}\`\`\``); }, // "Say" wrapped in the "diff" formatting wrapper, first line prefixed with -
 };

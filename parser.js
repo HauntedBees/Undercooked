@@ -39,11 +39,13 @@ const self = module.exports = {
         return null;
     },
     Fry: function(s) { // ${obj} ({$optional_number})
-        const splitStr = s.split(" ");
+        const info = self.FormatObjectName(s);
+        if(info.invalid) { return; }
+        const splitStr = info.newStr.split(" ");
         if(splitStr.length === 1) {
             return {
                 type: "fry",
-                object: splitStr[0],
+                object: splitStr[0], objAttrs: info.attrs,
                 place: "pan", placeNum: -1
             }
         }
@@ -56,7 +58,7 @@ const self = module.exports = {
         }
         return {
             type: "fry",
-            object: splitStr[0],
+            object: splitStr[0], objAttrs: info.attrs,
             place: "pan", placeNum: placeNum
         }
     },
@@ -77,7 +79,9 @@ const self = module.exports = {
         return { type: "serve", object: splitStr[0] }
     },
     Plate: function(s) { // ${obj} (on ${place} {$optional_number}) -- if inner area is omitted, any plate
-        const splitStr = s.split(" ");
+        const info = self.FormatObjectName(s); // attributes don't matter since it's based on what you're holding anyway
+        if(info.invalid) { return; }
+        const splitStr = info.newStr.split(" ");
         if(splitStr.length === 1) {
             return {
                 type: "plate",
@@ -103,11 +107,13 @@ const self = module.exports = {
         }
     },
     Chop: function(s) { // ${obj} ({$optional_number})
-        const splitStr = s.split(" ");
+        const info = self.FormatObjectName(s);
+        if(info.invalid) { return; }
+        const splitStr = info.newStr.split(" ");
         if(splitStr.length === 1) {
             return {
                 type: "chop",
-                object: splitStr[0],
+                object: splitStr[0], objAttrs: info.attrs,
                 place: "cuttingboard", placeNum: -1
             }
         }
@@ -116,16 +122,18 @@ const self = module.exports = {
         const potentialPlaceNum = parseInt(splitStr[1]);
         if(!isNaN(potentialPlaceNum)) {
             placeNum = potentialPlaceNum;
-            if(placeNum <= 0) { return null; } // "chop tomato -1" isn't valid
+            if(placeNum <= 0) { return null; }
         }
         return {
             type: "chop",
-            object: splitStr[0],
+            object: splitStr[0], objAttrs: info.attrs,
             place: "cuttingboard", placeNum: placeNum
         }
     },
     Drop: function(s) { // ${obj} (on ${place} {$optional_number}) -- if inner area is omitted, assume floor 
-        const splitStr = s.split(" ");
+        const info = self.FormatObjectName(s); // attributes don't matter since it's based on what you're holding anyway
+        if(info.invalid) { return; }
+        const splitStr = info.newStr.split(" ");
         if(splitStr.length === 1) {
             return {
                 type: "drop",
@@ -141,7 +149,7 @@ const self = module.exports = {
             const potentialPlaceNum = parseInt(splitStr[3]);
             if(!isNaN(potentialPlaceNum)) {
                 placeNum = potentialPlaceNum;
-                if(placeNum <= 0) { return null; } // "put tomato on table -1" isn't valid
+                if(placeNum <= 0) { return null; }
             }
         }
         return {
@@ -150,31 +158,50 @@ const self = module.exports = {
             place: placeName, placeNum: placeNum
         }
     },
-    Grab: function(s) { // ${obj} ${optional_number} from ${place} ${optional_number} -- EH: toss optional number probably
-        const splitStr = s.split(" ");
+    Grab: function(s) { // ${obj} from ${place} ${optional_number}
+        const info = self.FormatObjectName(s);
+        if(info.invalid) { return; }
+        const splitStr = info.newStr.split(" ");
         if(splitStr.length < 3) { return null; }
         const objectName = splitStr[0];
-        const objNumOrFrom = parseInt(splitStr[1]);
-        let objNum = -1;
-        if(!isNaN(objNumOrFrom)) {
-            objNum = objNumOrFrom;
-            if(objNum <= 0) { return null; } // "grab tomato -1" isn't valid
-        }
-        const placeIndex = (objNum > 0 ? 3 : 2);
-        if(splitStr[placeIndex] === undefined) { return null; }
-        const placeName = splitStr[placeIndex];
+        const placeName = splitStr[2];
         let placeNum = -1;
-        if(splitStr[placeIndex + 1] !== undefined) {
-            const potentialPlaceNum = parseInt(splitStr[placeIndex + 1]);
+        if(splitStr.length === 4) {
+            const potentialPlaceNum = parseInt(splitStr[3]);
             if(!isNaN(potentialPlaceNum)) {
                 placeNum = potentialPlaceNum;
-                if(placeNum <= 0) { return null; } // "grab tomato from table -1" isn't valid
+                if(placeNum <= 0) { return null; }
             }
         }
         return {
             type: "grab",
-            object: objectName, objNum: objNum,
+            object: objectName, objAttrs: info.attrs,
             place: placeName, placeNum: placeNum
         }
+    },
+    FormatObjectName: function(fullStr) { // first words must be the object or its adjectives
+        const splitStr = fullStr.split(" ");
+        const attrs = [];
+        for(let i = 0; i < splitStr.length; i++) {
+            switch(splitStr[i]) {
+                case "sliced":
+                case "chopped":
+                    attrs.push("sliced");
+                    break;
+                case "plated":
+                    attrs.push("plated");
+                    break;
+                case "fried":
+                    attrs.push("fried");
+                    break;
+                default:
+                    splitStr.splice(0, i);
+                    return {
+                        attrs: attrs, invalid: false, 
+                        newStr: splitStr.join(" ")
+                    };
+            }
+        }
+        return { invalid: true };
     }
 };

@@ -1,31 +1,98 @@
+const recipeDisplayNames = {
+    "frenchfries": "french fries",
+    "tomatosoup": "tomato soup",
+    "spicytomatosoup": "spicy tomato soup",
+    "badsoup": "bad soup"
+};
 const self = module.exports = {
-    ServedRecipeName: s => self.AorAN(self.FormatIngredientName(s.replace("_plated", ""))),
-    AorANFormattedIngredientName: s => self.AorAN(self.FormatIngredientName(s)),
-    AorANFormattedPlaceName: s => self.AorAN(self.FormatPlaceName(s)),
-    AorAN: function(s) {
-        if(["a", "e", "i", "o", "u"].indexOf(s[0]) >= 0) { return `n ${s}`; }
-        return ` ${s}`;
+    GetBaseFood: function(name) {
+        return {
+            type: name, modifier: 1,
+            attributes: []
+        };
     },
-    FormatPlaceName: function(s) {
-        if(s === "cuttingboard") { return "cutting board"; }
-        if(s === "pan") { return "frying pan"; }
-        return s;
+    HasAttribute: function(food, attr) {
+        for(let i = 0; i < food.attributes.length; i++) {
+            if(food.attributes[i] === attr) { return true; }
+        }
+        return false;
     },
-    FormatIngredientName: function(s) {
-        if(s.indexOf("_") < 0) { return s; }
-        const split = s.split("_");
-        let food = split[0];
-        for(let i = 1; i < split.length; i++) {
-            switch(split[i]) {
-                case "sliced": food = `chopped ${food}`; break;
-                case "plated": food = `plated ${food}`; break;
-                case "fried": food = `fried ${food}`; break;
+    DoesFoodMatchOrder: function(food, order) {
+        if(food.type !== order.type) { return false; }
+        let isPlated = false, numMatches = 0;
+        for(let i = 0; i < food.attributes.length; i++) {
+            const attr = food.attributes[i];
+            if(attr === "plated") { isPlated = true; continue; }
+            if(order.attributes.indexOf(attr) < 0) { return false; } // food has an attribute the order does not
+            numMatches += 1;
+        }
+        if(numMatches != order.attributes.length || !isPlated) { return false; }
+        return true;
+    },
+
+    AorAN: function(s) { 
+        if("aeiou".indexOf(s[0]) >= 0) { return `an ${s}`; }
+        return `a ${s}`;
+    },
+    FormatPlaceName: function(placeName, noAorAn) {
+        //if(recipeDisplayNames[placeName] !== undefined) { placeName = recipeDisplayNames[placeName]; } // TODO: not needed?? why was this here
+        if(placeName === "cuttingboard") { placeName = "cutting board"; }
+        else if(placeName === "pan") { placeName = "frying pan"; }
+        if(noAorAn) { return placeName; }
+
+        if("aeiou".indexOf(placeName[0]) >= 0) { return `an ${placeName}`; }
+        return `a ${placeName}`;
+    },
+
+    GetFoodDisplayNameFromAction: (action, ignorePlated) => self.GetFoodDisplayNameFromObj({ type: action.object, attributes: (action.objAttrs || []) }, ignorePlated || false),
+    GetFoodDisplayNameFromObj: function(food, ignorePlated) {
+        let name = food.type;
+        for(let i = 0; i < food.attributes.length; i++) {
+            switch(food.attributes[i]) {
+                case "sliced": name = `chopped ${name}`; break;
+                case "plated": if(!ignorePlated) { name = `plated ${name}` }; break;
+                case "fried": name = `fried ${name}`; break;
+            }
+        }
+        if("aeiou".indexOf(name[0]) >= 0) {
+            return `an ${name}`;
+        } else {
+            return `a ${name}`;
+        }
+    },
+
+    AddAttribute: function(food, attr) {
+        if(food.attributes.indexOf(attr) >= 0) { return food; }
+        food.attributes.push(attr);
+        return self.TransformFood(food);
+    },
+    TransformFood: function(food) {
+        if(food.type === "pot") { return self.BoiledFoods(food); }
+
+        if(food.type === "potato" && food.attributes.length === 2) {
+            if(self.HasAttribute(food, "fried") && self.HasAttribute(food, "sliced")) {
+                return { type: "frenchfries", class: "sides", modifier: food.modifier, attributes: [] };
             }
         }
         return food;
     },
-    TransformFood: function(s) {
-        if(s === "potato_sliced_fried") { return "french fries"; }
-        return s;
-    }
+    BoiledFoods: function(pot) {
+        const ingredience = pot.contents;
+        const newModifier = pot.modifier * self.AvgModifier(ingredience);
+        const sorted = {};
+        for(let i = 0; i < ingredience.length; i++) {
+            const ing = ingredience[i];
+            const baseIngredient = ing.type; // TODO: account for attributes
+            if(sorted[baseIngredient] === undefined) { sorted[baseIngredient] = 0; }
+            sorted[baseIngredient] += 1;
+        }
+        if(sorted["tomato"] >= 2) {
+            if(sorted["pepper"] >= 1) {
+                return { type: "spicytomatosoup", class: "soup", modifier: newModifier, attributes: [] };
+            }
+            return { type: "tomatosoup", class: "soup", modifier: newModifier, attributes: [] };
+        }
+        return { type: "badsoup", class: "soup", modifier: 0.5 * newModifier, attributes: [] };
+    },
+    AvgModifier: ingredience => ingredience.reduce((sum, curFood) => sum + curFood.modifier, 0) / food.length
 };

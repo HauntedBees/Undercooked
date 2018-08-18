@@ -1,5 +1,3 @@
-const t = "```", d = "```diff", dn = `${d}
-`;
 const CONSTS = require("./strings.js"), Server = require("./serverhelpers.js"), Map = require("./maps.js");
 const DiscordHelper = require("./discordHelper.js");
 const self = module.exports = {
@@ -12,11 +10,11 @@ const self = module.exports = {
         gameData.initialized = true;
         DiscordHelper.Init(gameData);
         DiscordHelper.Say(CONSTS.TITLE);
-        DiscordHelper.Say(`${dn}+ Current Settings -- Maximum Players: 4 -- Game Speed: Normal
+        DiscordHelper.SayP(`Current Settings -- Maximum Players: 4 -- Game Speed: Normal
 + Anyone can type "join" to join the next match or "leave" to leave it.
 + The host can type "!players #" to set the player count (valid values are 2-100).
 + The host can type "!speed #" to set the speed (valid values are Fast, Normal, Slow, Very Slow).
-+ The host can type "start" to begin the game or "cancel" to end the game.${t}`);
++ The host can type "start" to begin the game or "cancel" to end the game.`);
     },
     HandlePostInitCommand: function(gameData, userID, message) {
         if(userID == gameData.hostUserID) {
@@ -27,23 +25,23 @@ const self = module.exports = {
             for(let i = 0; i < gameData.players.length; i++) {
                 users.push(Server.GetNickname(gameData.bot, gameData.serverID, gameData.players[i]));
             }
-            DiscordHelper.Say(`${dn}+ Current Players are: ${users.join(", ")}.${t}`);
+            DiscordHelper.SayP(`Current Players are: ${users.join(", ")}.`);
             return;
         }
         const user = Server.GetNickname(gameData.bot, gameData.serverID, userID);
         if(message === "join") {
             if(gameData.players.indexOf(userID) >= 0) { return; }
             if(gameData.players.length >= gameData.numPlayers) {
-                DiscordHelper.Say(`${dn}- This round already has ${gameData.numPlayers} players in it. ${gameData.hostUserName}, type *Start* to begin the game.${t}`);
+                DiscordHelper.SayM(`This round already has ${gameData.numPlayers} players in it. ${gameData.hostUserName}, type *Start* to begin the game.`);
             } else {
                 gameData.players.push(userID);
-                DiscordHelper.Say(`${dn}+ ${user} has joined the round. ${gameData.numPlayers - gameData.players.length} player slot${(gameData.numPlayers - gameData.players.length !== 1) ? "s are" : " is"} still available.${t}`);
+                DiscordHelper.SayP(`${user} has joined the round. ${gameData.numPlayers - gameData.players.length} player slot${(gameData.numPlayers - gameData.players.length !== 1) ? "s are" : " is"} still available.`);
             }
         } else if(message === "leave") {
             const playerIdx = gameData.players.indexOf(userID);
             if(playerIdx < 0) { return false; }
             gameData.players.splice(playerIdx, 1);
-            DiscordHelper.Say(`${dn}+ ${user} has left the round. ${gameData.numPlayers - gameData.players.length} player slot${(gameData.numPlayers - gameData.players.length !== 1) ? "s are" : " is"} are still available.${t}`);
+            DiscordHelper.SayP(`${user} has left the round. ${gameData.numPlayers - gameData.players.length} player slot${(gameData.numPlayers - gameData.players.length !== 1) ? "s are" : " is"} are still available.`);
         }
     },
     JustHostyThings: function(gameData, message) {
@@ -51,13 +49,13 @@ const self = module.exports = {
             const potentialNum = message.replace("!players ", "");
             const tryNum = parseInt(potentialNum);
             if(isNaN(tryNum) || tryNum < 2 || tryNum > 100) {
-                DiscordHelper.Say(`${dn}- Invalid player count. Please enter a number from 2 to 100.${t}`);
+                DiscordHelper.SayM(`Invalid player count. Please enter a number from 2 to 100.`);
             } else {
                 const clearNumPlayers = (tryNum < gameData.players.length);
                 gameData.numPlayers = tryNum;
-                DiscordHelper.Say(`${dn}+ The next match's player count is now ${tryNum}!${t}`);
+                DiscordHelper.SayP(`The next match's player count is now ${tryNum}!`);
                 if(clearNumPlayers) {
-                    DiscordHelper.Say(`${dn}- Since there were already ${gameData.players.length} players signed up, they have all been cleared from the queue. Please type "join" again to join the next match!${t}`);
+                    DiscordHelper.SayM(`Since there were already ${gameData.players.length} players signed up, they have all been cleared from the queue. Please type "join" again to join the next match!`);
                     gameData.players = [];
                 }
             }
@@ -70,14 +68,14 @@ const self = module.exports = {
                 case "slow": gameData.gameSpeed = 2; break;
                 case "very slow": gameData.gameSpeed = 4; break;
                 default:
-                    DiscordHelper.Say(`${dn}- Invalid speed. Please enter either Fast, Normal, Slow, or Very Slow.${t}`);
+                    DiscordHelper.SayM(`Invalid speed. Please enter either Fast, Normal, Slow, or Very Slow.`);
                     return true;
             }
-            DiscordHelper.Say(`${dn}+ The next match's speed is now ${potentialSpeed}!${t}`);
+            DiscordHelper.SayP(`The next match's speed is now ${potentialSpeed}!`);
             return true;
         } else if(message === "start") {
             if(gameData.players.length === 0) {
-                DiscordHelper.Say(`${dn}- Come on, bro, at least wait until the match has someone in it before starting it!${t}`);
+                DiscordHelper.SayM(`Come on, bro, at least wait until the match has someone in it before starting it!`);
                 return;
             }
             gameData.map = Map.GetMap();
@@ -92,13 +90,13 @@ const self = module.exports = {
                 gameData.playerDetails[playerId] = {
                     nick: playerNick, 
                     room: playerRoom,
-                    holding: "",
+                    holding: null,
                     position: ""
                 };
                 if(roomsArray[playerRoom] === undefined) { roomsArray[playerRoom] = []; }
                 roomsArray[playerRoom].push(playerNick);
             }
-            let informationStr = `${dn}+ The game has begun! You are on the map "${gameData.map.name}!" 
+            let informationStr = `The game has begun! You are on the map "${gameData.map.name}!" 
 ${gameData.map.img}
 `;
             for(let i = 0; i < roomsArray.length; i++) {
@@ -106,8 +104,8 @@ ${gameData.map.img}
                 informationStr += `+ ${Server.GetListStringFromArray(peopleInRoom)} ${peopleInRoom.length === 1 ? "is" : "are"} in Room ${i + 1}.
 `;
             }
-            informationStr += `+ Bone Apple Tea!${t}`;
-            DiscordHelper.Say(informationStr);
+            informationStr += `+ Bone Apple Tea!`;
+            DiscordHelper.SayP(informationStr);
             return true;
         } else if(message === "cancel") {
             gameData.initialized = false;
