@@ -88,9 +88,14 @@ ${t}`,
     HELP3: `${t}md
 < look > - look at cooking equipment to see what's going on
 * synonyms: look, inspect, view, see
-* format: "look around", "look (at) places" or "look (at) place number"
-* examples: "look around", inspect cutting board 1", "look at tables"
+* format: "look around (room number)", "look (at) places" or "look (at) place number"
+* examples: "look around", "look around room 2", "inspect cutting board 1", "look at tables"
 * notes 1: this is only for cooking equipment and furniture, so things like "look at plates" or "look at tomato 2" won't work!
 * notes 2: "look around" will tell you about every piece of furniture in the room
+
+< who > - look at who is in a room
+* format: "who (is) here" or "who (is in) room number"
+* examples: "who is in room 2", "who here"
+* notes: "who is here" will tell you who is in the same room as you!
 ${t}`
 }

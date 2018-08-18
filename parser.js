@@ -41,12 +41,33 @@ const self = module.exports = {
         if(turnVerbs.indexOf(firstWord) >= 0) { return self.Turn(remainingWords); }
         if(lookVerbs.indexOf(firstWord) >= 0) { return self.Look(remainingWords); }
         if(firstWord === "plate") { return self.Plate(remainingWords); }
+        if(firstWord === "who") { return self.Who(remainingWords); }
 
         return null;
     },
-    Look: function(s) { // around OR (at) $place(s/ {$optional_number}) -- number OR plural
+    Who: function(s) { // is here OR is in room $number
         const splitStr = s.split(" ");
-        if(splitStr[0] === "around") { return { type: "look", around: true }; }
+        if(splitStr[0] === "is") { splitStr.shift(); }
+        if(splitStr[0] === "in") { splitStr.shift(); }
+        if(splitStr[0] === "room") { splitStr.shift(); }
+        if(splitStr[0] === "here") {
+            return { type: "who", placeNum: -1 };
+        } else {
+            const potentialNum = parseInt(splitStr[0]);
+            if(isNaN(potentialNum) || potentialNum <= 0) { return null; }
+            return { type: "who", placeNum: potentialNum };
+        }
+    },
+    Look: function(s) { // around (Room ${number}) OR (at) $place(s/ {$optional_number}) -- number OR plural
+        const splitStr = s.split(" ");
+        if(splitStr[0] === "around") {
+            if(splitStr.length === 1) { return { type: "look", around: true, placeNum: -1 }; }
+            splitStr.shift();
+            if(splitStr[0] === "room") { splitStr.shift(); }
+            const potentialNum = parseInt(splitStr[0]);
+            if(isNaN(potentialNum) || potentialNum <= 0) { return null; }
+            return { type: "look", around: true, placeNum: potentialNum };
+        }
         if(splitStr[0] === "at") { splitStr.shift(); }
         if(splitStr.length === 2) {
             let placeName = splitStr[0];

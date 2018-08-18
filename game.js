@@ -33,14 +33,56 @@ const self = module.exports = {
                 case "fry": return self.Fry(gameData, userID, action);
                 case "turn": return self.Turn(gameData, userID, action);
                 case "look": return self.Look(gameData, currentRoom, actingUser, action);
+                case "who": return self.Who(gameData, currentRoom, actingUser, userID, action.placeNum);
             }
         } catch(e) {
             DiscordHelper.Log(e.stack);
             DiscordHelper.SayM(`Something broke but we're all good. I recovered. I'm a big boy. We got this. We're good.`);
         }
     },
+    Who: function(gameData, currentRoom, actingUser, actingUserID, placeNum) {
+        if(placeNum < 0) { placeNum = currentRoom + 1; }
+        const internalRoomNum = placeNum - 1;
+        const playersInRoom = [];
+        let isInRoom = false;
+        for(let i = 0; i < gameData.players.length; i++) {
+            const playerId = gameData.players[i];
+            const playerInfo = gameData.playerDetails[playerId];
+            if(playerInfo.room === internalRoomNum) {
+                if(playerId === actingUserID) {
+                    isInRoom = true;
+                } else {
+                    playersInRoom.push(playerInfo.nick);
+                }
+            }
+        }
+        if(playersInRoom.length === 0) {
+            if(isInRoom) {
+                DiscordHelper.SayP(`${actingUser.nick} looked for people in Room ${placeNum}, and they're the only one in there!`);
+            } else {
+                DiscordHelper.SayP(`${actingUser.nick} looked for people in Room ${placeNum}, and there's no one there!`);
+            }
+        } else {
+            let res = `${actingUser.nick} looked for people in Room ${placeNum}, and found `;
+            if(playersInRoom.length === 1) {
+                res += playersInRoom[0];
+            } else if(playersInRoom.length === 2) {
+                res += `${playersInRoom[0]} and ${playersInRoom[1]}`;
+            } else {
+                for(let i = 0; i < playersInRoom.length; i++) {
+                    if(i === (playersInRoom.length - 1)) {
+                        res += `and ${playersInRoom[i]}`;
+                    } else {
+                        res += `${playersInRoom[i]}, `;
+                    }
+                }
+            }
+            res += isInRoom ? ", in addition to themselves." : ".";
+            DiscordHelper.SayP(res);
+        }
+    },
     Look: function(gameData, currentRoom, actingUser, action) {
-        if(action.around) { return self.LookAround(gameData, currentRoom, actingUser); }
+        if(action.around) { return self.LookAround(gameData, currentRoom, actingUser, action.placeNum); }
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
         const specificPlace = Food.FormatPlaceName(action.place, true);
         if(relevantPlaces.length === 0) {
@@ -66,14 +108,15 @@ const self = module.exports = {
             DiscordHelper.SayP(fullStr);
         }
     },
-    LookAround: function(gameData, currentRoom, actingUser) {
-        const relevantPlaces = Room.GetObjectsInRoom(gameData.map, currentRoom);
+    LookAround: function(gameData, currentRoom, actingUser, placeNum) {
+        if(placeNum < 0) { placeNum = currentRoom + 1; }
+        const relevantPlaces = Room.GetObjectsInRoom(gameData.map, placeNum - 1);
         if(relevantPlaces.length === 0) {
-            DiscordHelper.SayM(`${actingUser.nick} looked around Room ${currentRoom + 1}, but it's empty!`);
+            DiscordHelper.SayM(`${actingUser.nick} looked around Room ${placeNum}, but it's empty!`);
             return;
         }
         relevantPlaces.sort((a, b) => a.type.localeCompare(b.type));
-        let fullStr = `${actingUser.nick} looked around Room ${currentRoom + 1}:`;
+        let fullStr = `${actingUser.nick} looked around Room ${placeNum}:`;
         let lastItemType = "", typeIter = 1;
         for(let i = 0; i < relevantPlaces.length; i++) {
             const chosenPlace = relevantPlaces[i];
