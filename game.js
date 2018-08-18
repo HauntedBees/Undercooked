@@ -1,4 +1,4 @@
-const Room = require("./roomHelpers.js"), DiscordHelper = require("./discordHelper.js"), Strings = require("./strings.js");
+const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js"), DiscordHelper = require("./discordHelper.js"), Strings = require("./strings.js");
 const t = "```", d = "```diff", dn = `${d}
 `;
 const self = module.exports = {
@@ -13,7 +13,7 @@ const self = module.exports = {
             const orders = gameData.map.potentialOrders;
             const order = orders[Math.floor(Math.random() * orders.length)];
             gameData.orders.push(order);
-            DiscordHelper.Say(`${dn}+ Order up! Somebody wants a${Room.AorANFormattedIngredientName(order.item)}, an order worth $${order.score}!${t}`);
+            DiscordHelper.Say(`${dn}+ Order up! Somebody wants a${Food.AorANFormattedIngredientName(order.item)}, an order worth $${order.score}!${t}`);
         }
     },
     HandleAction: function(gameData, userID, action) {
@@ -60,7 +60,7 @@ const self = module.exports = {
     },
     Serve: function(gameData, userID, action) {
         const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
-        const objectDisplayName = `a${Room.ServedRecipeName(action.object)}`;
+        const objectDisplayName = `a${Food.ServedRecipeName(action.object)}`;
         if(actingUser.holding === "") {
             DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to serve ${objectDisplayName}, but they aren't holding anything!${t}`);
             return;
@@ -90,7 +90,7 @@ const self = module.exports = {
     },
     Chop: function(gameData, userID, action) {
         const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
-        const objectDisplayName = `a${Room.AorANFormattedIngredientName(action.object)}`;
+        const objectDisplayName = `a${Food.AorANFormattedIngredientName(action.object)}`;
         if(actingUser.holding !== "") {
             DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to chop ${objectDisplayName}, but their hands are full!${t}`);
             return;
@@ -112,11 +112,11 @@ const self = module.exports = {
             }
             const itemInfo = chosenPlace.contents[0];
             if(itemInfo.item !== action.object) {
-                DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to chop ${objectDisplayName} on cutting board ${action.placeNum}, but all that's on there is a${Room.AorAN(Room.FormatIngredientName(itemInfo.item))}!${t}`);
+                DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to chop ${objectDisplayName} on cutting board ${action.placeNum}, but all that's on there is a${Food.AorANFormattedIngredientName(itemInfo.item)}!${t}`);
                 return;
             }
             itemInfo.item += "_sliced";
-            DiscordHelper.Say(`${dn}+ ${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${action.placeNum}, and made a${Room.AorAN(Room.FormatIngredientName(itemInfo.item))}!${t}`);
+            DiscordHelper.Say(`${dn}+ ${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${action.placeNum}, and made a${Food.AorANFormattedIngredientName(itemInfo.item)}!${t}`);
         } else {
             for(let i = 0; i < relevantPlaces.length; i++) {
                 const chosenPlace = relevantPlaces[i];
@@ -124,7 +124,7 @@ const self = module.exports = {
                 const itemInfo = chosenPlace.contents[0];
                 if(itemInfo.item !== action.object) { continue; }
                 itemInfo.item += "_sliced";
-                DiscordHelper.Say(`${dn}+ ${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${i + 1}, and made a${Room.AorAN(Room.FormatIngredientName(itemInfo.item))}!${t}`);
+                DiscordHelper.Say(`${dn}+ ${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${i + 1}, and made a${Food.AorANFormattedIngredientName(itemInfo.item)}!${t}`);
                 return;
             }
             DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to chop ${objectDisplayName}, but none of the cutting boards had ${objectDisplayName} on them!${t}`);
@@ -132,13 +132,13 @@ const self = module.exports = {
     },
     Plate: function(gameData, userID, action) {
         const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
-        const objectDisplayName = `a${Room.AorANFormattedIngredientName(action.object)}`;
-        const generalPlaceDisplayName = Room.FormatPlaceName(action.place), placeDisplayName = `a${Room.AorAN(generalPlaceDisplayName)}`;
+        const objectDisplayName = `a${Food.AorANFormattedIngredientName(action.object)}`;
+        const generalPlaceDisplayName = Food.FormatPlaceName(action.place), placeDisplayName = `a${Food.AorAN(generalPlaceDisplayName)}`;
         if(actingUser.holding.indexOf(action.object) !== 0) {
             DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to plate ${objectDisplayName}, but they aren't holding one!${t}`);
             return;
         }
-        const heldDisplayName = `a${Room.AorANFormattedIngredientName(actingUser.holding)}`;
+        const heldDisplayName = `a${Food.AorANFormattedIngredientName(actingUser.holding)}`;
         if(actingUser.holding.indexOf("_plated") >= 0) { // it's already on a plate!
             DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to plate ${objectDisplayName}, but it doesn't need ANOTHER plate!${t}`);
             return;
@@ -183,7 +183,7 @@ const self = module.exports = {
                 const attempt = Room.TryPlateObjectOnPlace(relevantPlaces[i], actingUser.holding);
                 if(attempt === "ok") {
                     if(placeType === "") {
-                        DiscordHelper.Say(`${dn}+ ${actingUser.nick} plated ${heldDisplayName} on a${Room.AorANFormattedPlaceName(relevantPlaces[i].type)}!${t}`); // TODO: add number?
+                        DiscordHelper.Say(`${dn}+ ${actingUser.nick} plated ${heldDisplayName} on a${Food.AorANFormattedPlaceName(relevantPlaces[i].type)}!${t}`); // TODO: add number?
                     } else {
                         DiscordHelper.Say(`${dn}+ ${actingUser.nick} plated ${heldDisplayName} on ${generalPlaceDisplayName} ${i + 1}!${t}`);
                     }
@@ -196,8 +196,8 @@ const self = module.exports = {
     },
     Drop: function(gameData, userID, action) {
         const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
-        const objectDisplayName = `a${Room.AorANFormattedIngredientName(action.object)}`;
-        const generalPlaceDisplayName = Room.FormatPlaceName(action.place), placeDisplayName = `a${Room.AorAN(generalPlaceDisplayName)}`;
+        const objectDisplayName = `a${Food.AorANFormattedIngredientName(action.object)}`;
+        const generalPlaceDisplayName = Food.FormatPlaceName(action.place), placeDisplayName = `a${Food.AorAN(generalPlaceDisplayName)}`;
         if(actingUser.holding.indexOf(action.object) !== 0) {
             DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to drop ${objectDisplayName}, but they aren't holding one!${t}`);
             return;
@@ -210,7 +210,7 @@ const self = module.exports = {
             });
             return;
         }
-        const heldDisplayName = `a${Room.AorANFormattedIngredientName(actingUser.holding)}`;
+        const heldDisplayName = `a${Food.AorANFormattedIngredientName(actingUser.holding)}`;
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
         if(relevantPlaces.length === 0) {
             DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to drop ${heldDisplayName} on ${placeDisplayName}, but there is no ${action.place} that they can reach!${t}`);
@@ -253,15 +253,15 @@ const self = module.exports = {
     },
     Grab: function(gameData, userID, action) {
         const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
-        const objectDisplayName = `a${Room.AorANFormattedIngredientName(action.object)}`;
-        const generalPlaceDisplayName = Room.FormatPlaceName(action.place), placeDisplayName = `a${Room.AorAN(generalPlaceDisplayName)}`;
+        const objectDisplayName = `a${Food.AorANFormattedIngredientName(action.object)}`;
+        const generalPlaceDisplayName = Food.FormatPlaceName(action.place), placeDisplayName = `a${Food.AorAN(generalPlaceDisplayName)}`;
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
         if(relevantPlaces.length === 0) {
             DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to grab ${objectDisplayName} from ${placeDisplayName}, but there is no ${action.place} that they can reach!${t}`);
             return;
         }
         if(actingUser.holding !== "") {
-            DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to grab ${objectDisplayName}, but their hands are already full with a${Room.AorAN(actingUser.holding)}!${t}`)
+            DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to grab ${objectDisplayName}, but their hands are already full with a${Food.AorAN(actingUser.holding)}!${t}`)
             return;
         }
         if(action.placeNum > 0) {
@@ -272,7 +272,7 @@ const self = module.exports = {
             }
             const item = Room.TryTakeObjectFromPlace(chosenPlace, action.object);
             if(item !== "") {
-                DiscordHelper.Say(`${dn}+ ${actingUser.nick} picked up a${Room.AorANFormattedIngredientName(item)} from ${generalPlaceDisplayName} ${action.placeNum}!${t}`);
+                DiscordHelper.Say(`${dn}+ ${actingUser.nick} picked up a${Food.AorANFormattedIngredientName(item)} from ${generalPlaceDisplayName} ${action.placeNum}!${t}`);
                 actingUser.holding = item;
             } else {
                 DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to grab ${objectDisplayName} from ${generalPlaceDisplayName} ${action.placeNum}, but there was no ${action.object} there to grab!${t}`);
@@ -281,7 +281,7 @@ const self = module.exports = {
             for(let i = 0; i < relevantPlaces.length; i++) {
                 const item = Room.TryTakeObjectFromPlace(relevantPlaces[i], action.object);
                 if(item !== "") {
-                    DiscordHelper.Say(`${dn}+ ${actingUser.nick} picked up a${Room.AorANFormattedIngredientName(item)} from ${generalPlaceDisplayName} ${i + 1}!${t}`);
+                    DiscordHelper.Say(`${dn}+ ${actingUser.nick} picked up a${Food.AorANFormattedIngredientName(item)} from ${generalPlaceDisplayName} ${i + 1}!${t}`);
                     actingUser.holding = item;
                     return;
                 }
