@@ -6,7 +6,7 @@ Undercooked is licensed under the [GNU General Public License v3](https://www.gn
 ## why
 Demake Jam. I already said that.
 ## building
-I don't know how all this node.js stuff works yet, yo. Clone the repo, then do like an "npm install" or something I guess? I'll have a better answer here later. The two main dependencies are [discord.io](https://www.npmjs.com/package/discord.io) for the discord integration and [winston](https://www.npmjs.com/package/winston) for logging. oh yeah, did I mention this is a discord bot? because it is. you're probably going to want to have [discord](https://discordapp.com/) if you want to do much with this.
+I don't know how all this node.js stuff works yet, yo. Clone the repo, then do like an "npm install" or something I guess? I'll have a better answer here later. The only real dependency is [discord.io](https://www.npmjs.com/package/discord.io) for the discord integration. oh yeah, did I mention this is a discord bot? because it is. you're probably going to want to have [discord](https://discordapp.com/) if you want to do much with this.
 
 Once the thing is built, you also need to create a discord bot through discord's whole setup thing for that, and then put an *auth.json* file in the root of the directory with the right token in it.
 

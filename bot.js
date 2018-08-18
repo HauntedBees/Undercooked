@@ -1,19 +1,16 @@
-const Discord = require("discord.io"), logger = require("winston"), auth = require("./auth.json");
+const Discord = require("discord.io"), auth = require("./auth.json");
 const Setup = require("./init.js"), Game = require("./game.js"), Parser = require("./parser.js");
-logger.remove(logger.transports.Console);
-logger.add(new logger.transports.Console, { colorize: true });
-logger.level = "debug";
-logger.info("Connecting");
+console.log("Connecting");
 const bot = new Discord.Client({ token: auth.token, autorun: true });
 bot.on("ready", function (evt) {
-    logger.info("Connected! Logged in as: " + bot.username + " - (" + bot.id + ")");
+    console.log("Connected! Logged in as: " + bot.username + " - (" + bot.id + ")");
     gameData.bot = bot;
     bot.setPresence({ game: { name: "Garfield: Caught in the Act" } });
 });
 bot.on("message", function (user, userID, channelID, message, evt) {
     if(userID === bot.id) { return; }
     if(message === "!DEBUGPRINT") {
-        logger.info(JSON.stringify(gameData.map));
+        console.log(JSON.stringify(gameData.map));
         return;
     }
     if(!gameData.initialized) {
