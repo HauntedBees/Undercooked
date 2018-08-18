@@ -65,5 +65,10 @@ ${t}`,
 * synonyms: deliver, provide, supply
 * examples: "serve tomato"
 * notes: you never need to specify additional details about an item - if you have a "plated chopped tomato", just refer to it by "tomato!" you'll be informed if a food has a new name (i.e. when "tomato" becomes "soup")!
+
+< move > - move to another room!
+* synonyms: walk, go
+* format: "move direction" or "move to room #"
+* examples: "move to room 2", "walk north", "go left"
 ${t}`
 }

@@ -12,6 +12,7 @@ const grabVerbs = ["grab", "take", "get", "acquire", "procure", "obtain"];
 const dropVerbs = ["drop", "put", "place", "plop", "set", "deposit", "position"];
 const chopVerbs = ["cut", "chop", "slice", "dice", "mince", "stab", "knife", "julienne", "chiffonade"];
 const serveVerbs = ["serve", "deliver", "provide", "supply"];
+const moveVerbs = ["walk", "move", "go"];
 const self = module.exports = {
     Parse: function(s) {
         if(s === "") { return null; }
@@ -26,9 +27,21 @@ const self = module.exports = {
         if(dropVerbs.indexOf(firstWord) >= 0) { return self.Drop(remainingWords); }
         if(chopVerbs.indexOf(firstWord) >= 0) { return self.Chop(remainingWords); }
         if(serveVerbs.indexOf(firstWord) >= 0) { return self.Serve(remainingWords); }
+        if(moveVerbs.indexOf(firstWord) >= 0) { return self.Move(remainingWords); }
         if(firstWord === "plate") { return self.Plate(remainingWords); }
 
         return null;
+    },
+    Move: function(s) { // (to room ${number}) or (${direction})
+        const splitStr = s.split(" ");
+        if(splitStr.length === 1) { // direction
+            const direction = splitStr[0].replace("east", "right").replace("west", "left").replace("north", "up").replace("south", "down");
+            return { type: "move", direction: direction };
+        } else if(splitStr.length === 3) { // to room #
+            const roomNo = parseInt(splitStr[2]);
+            if(isNaN(roomNo)) { return null; }
+            return { type: "move", roomNo: roomNo - 1 };
+        } else { return null; }
     },
     Serve: function(s) { // ${obj}
         const splitStr = s.split(" ");

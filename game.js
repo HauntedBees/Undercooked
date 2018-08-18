@@ -24,11 +24,38 @@ const self = module.exports = {
                 case "chop": return self.Chop(gameData, userID, action);
                 case "plate": return self.Plate(gameData, userID, action);
                 case "serve": return self.Serve(gameData, userID, action);
+                case "move": return self.Move(gameData, userID, action);
             }
         } catch(e) {
             DiscordHelper.LogError(`Something broke with action ${JSON.stringify(action)} by user ${userID}.`);
             DiscordHelper.LogError(`Exception: ${JSON.stringify(e)}`);
             DiscordHelper.Say(`${dn}- Something broke but we're all good. I recovered. I'm a big boy. We got this. We're good.${t}`);
+        }
+    },
+    Move: function(gameData, userID, action) {
+        const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
+        if(action.direction !== undefined) { // trying to move in a specific direction
+            const nextRoom = gameData.map.rooms[currentRoom][action.direction];
+            if(nextRoom === undefined) {
+                DiscordHelper.Say(`${dn}- ${actingUser.nick} walked ${action.direction}, and successfully walked into a wall!${t}`);
+                return;
+            }
+            gameData.playerDetails[userID].room = nextRoom;
+            DiscordHelper.Say(`${dn}+ ${actingUser.nick} walked ${action.direction} from room ${currentRoom + 1} to room ${nextRoom + 1}!${t}`);
+        } else { // trying to move to a specific room
+            if(currentRoom === action.roomNo) {
+                DiscordHelper.Say(`${dn}- ${actingUser.nick} successfully walked to room ${action.roomNo + 1} from... room ${currentRoom + 1}. Good job.${t}`);
+                return;
+            }
+            const potentialRooms = gameData.map.rooms[currentRoom];
+            for(const direction in potentialRooms) {
+                if(potentialRooms[direction] === action.roomNo) {
+                    gameData.playerDetails[userID].room = action.roomNo;
+                    DiscordHelper.Say(`${dn}+ ${actingUser.nick} walked ${direction} from room ${currentRoom + 1} to room ${action.roomNo + 1}!${t}`);
+                    return;
+                }
+            }
+            DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to walk to room ${action.roomNo + 1}, but they can't reach it from room ${currentRoom + 1}!${t}`);
         }
     },
     Serve: function(gameData, userID, action) {
