@@ -27,7 +27,7 @@ const self = module.exports = {
         const splitWord = s.split(" ");
         const firstWord = splitWord[0], remainingWords = s.substring(s.indexOf(" ") + 1);
         
-        if(remainingWords === "") { return null; } // TODO: order these in likelihood of usage
+        if(remainingWords === "") { return null; } // EH: order these in likelihood of usage, since obviously the speed of comparing a few dozen strings is a big fucking bottleneck 
         if(grabVerbs.indexOf(firstWord) >= 0) { return self.Grab(remainingWords); }
         if(dropVerbs.indexOf(firstWord) >= 0) { return self.Drop(remainingWords); }
         if(chopVerbs.indexOf(firstWord) >= 0) { return self.Chop(remainingWords); }
@@ -150,7 +150,7 @@ const self = module.exports = {
             place: placeName, placeNum: placeNum
         }
     },
-    Grab: function(s) { // ${obj} ${optional_number} from ${place} ${optional_number} -- TODO: toss optional number probably
+    Grab: function(s) { // ${obj} ${optional_number} from ${place} ${optional_number} -- EH: toss optional number probably
         const splitStr = s.split(" ");
         if(splitStr.length < 3) { return null; }
         const objectName = splitStr[0];

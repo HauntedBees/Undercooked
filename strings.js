@@ -47,7 +47,7 @@ The following commands are available to you:
 * synonyms: put, place, plop, set, deposit, position
 * format: put item on place (number)
 * examples: "put tomato on cutting board 1", "drop tomato on table"
-* notes: you can just write "drop tomato" to put it on the floor - anyone else in the room can pick it up then! items on the floor may be trampled, though. (TODO: actually implement that)
+* notes: you can just write "drop tomato" to put it on the floor - anyone else in the room can pick it up then! items on the floor may be trampled, though.
 ${t}`,
     HELP2: `${t}md
 < chop > - cut an item that's on a cutting board

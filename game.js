@@ -226,7 +226,7 @@ const self = module.exports = {
                 const attempt = Room.TryPlateObjectOnPlace(relevantPlaces[i], actingUser.holding);
                 if(attempt === "ok") {
                     if(placeType === "") {
-                        DiscordHelper.Say(`${dn}+ ${actingUser.nick} plated ${heldDisplayName} on a${Food.AorANFormattedPlaceName(relevantPlaces[i].type)}!${t}`); // TODO: add number?
+                        DiscordHelper.Say(`${dn}+ ${actingUser.nick} plated ${heldDisplayName} on a${Food.AorANFormattedPlaceName(relevantPlaces[i].type)}!${t}`); // EH: add number?
                     } else {
                         DiscordHelper.Say(`${dn}+ ${actingUser.nick} plated ${heldDisplayName} on ${generalPlaceDisplayName} ${i + 1}!${t}`);
                     }
@@ -331,7 +331,7 @@ const self = module.exports = {
                     return;
                 }
             }
-            DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to grab ${objectDisplayName} from ${placeDisplayName}, but there was no ${action.object} there to grab!${t}`);  // TODO: ????
+            DiscordHelper.Say(`${dn}- ${actingUser.nick} tried to grab ${objectDisplayName} from ${placeDisplayName}, but there was no ${action.object} there to grab!${t}`);
         }
     }
 };

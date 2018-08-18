@@ -7,7 +7,7 @@ const self = module.exports = {
         return ` ${s}`;
     },
     FormatPlaceName: function(s) {
-        if(s === "cuttingboard") { return "cutting board"; } // TODO: ???
+        if(s === "cuttingboard") { return "cutting board"; }
         if(s === "pan") { return "frying pan"; }
         return s;
     },
