@@ -16,20 +16,15 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         logger.info(JSON.stringify(gameData.map));
         return;
     }
-    if(gameData.initState === 0) {
+    if(!gameData.initialized) {
         Setup.Init(gameData, channelID, userID, message);
         return;
     }
     if(channelID != gameData.channelID) { return; }
-    if(message === "!HELP") { return Game.ShowHelp(); }
     if(!gameData.started) {
-        switch(gameData.initState) {
-            case 1: Setup.SetPlayerCount(gameData, userID, message.toLowerCase()); break;
-            case 2:
-                const hasGameStarted = Setup.JoinPlayer(gameData, userID, message.toLowerCase());
-                if(hasGameStarted) { gameData.gameTimer = setInterval(function() { Game.MainLoop(gameData); }, 1000); }
-                break;
-        }
+        if(message === "!HELP") { return Game.ShowHelp(); }
+        Setup.HandlePostInitCommand(gameData, userID, message.toLowerCase());
+        if(gameData.started) { gameData.gameTimer = setInterval(function() { Game.MainLoop(gameData); }, 1000); }
         return;
     }
     if(gameData.players.indexOf(userID) < 0) { return; } // you don't get to do shit if you're not int he fucking game
@@ -40,10 +35,11 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 });
 
 const gameData = {
-    initState: 0, numPlayers: 0, players: [], started: false, gameTimer: 0, 
+    initialized: false, started: false, 
     serverID: "", channelID: "", hostUserID: "", hostUserName: "", 
-    bot: null, map: null, playerDetails: null, orders: [], score: 0,
-    secondsPlayed: 0
+    numPlayers: 4, players: [], playerDetails: null, 
+    bot: null, map: null, orders: [], score: 0,
+    gameTimer: 0, gameSpeed: 1, secondsPlayed: 0 
 };
 
 /* items: 
