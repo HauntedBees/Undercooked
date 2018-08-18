@@ -59,7 +59,7 @@ module.exports = {
         } else if(place.contents.length === 2) {
             resultStr = `${opening} has ${Food.GetFoodDisplayNameFromObj(place.contents[0])} and ${Food.GetFoodDisplayNameFromObj(place.contents[1])} ${onOrIn} it.`;
         } else {
-            resultStr = `${opening} has the following items  ${onOrIn} it: `;
+            resultStr = `${opening} has the following items ${onOrIn} it: `;
             for(let i = 0; i < place.contents.length; i++) {
                 const foodName = Food.GetFoodDisplayNameFromObj(place.contents[i]);
                 if(i === (place.contents.length - 1)) {
@@ -76,11 +76,11 @@ module.exports = {
                 const min = place.cookRangeDetails.time - place.cookRangeDetails.range;
                 const max = place.cookRangeDetails.time + place.cookRangeDetails.range;
                 if(curTime < min) {
-                    resultStr += `the food will be ready in ${min - curTime} - ${max - curTime} seconds.`;
+                    resultStr += `the food will be ready in ${min - curTime}-${max - curTime} seconds.`;
                 } else if(curTime > max) {
                     resultStr += `the food is, heh, overcooked! It's been ready for ${curTime - max} seconds.`;
                 } else {
-                    resultStr += `the food is ready! Take it out in at least ${max - curTime} seconds for optimal cookery!`;
+                    resultStr += `the food is ready! Turn the ${place} off in at least ${max - curTime} seconds for optimal cookery!`;
                 }
             } else {
                 resultStr += " it is turned off.";
