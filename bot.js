@@ -1,40 +1,52 @@
 const Discord = require("discord.io"), auth = require("./auth.json");
 const Setup = require("./init.js"), Game = require("./game.js"), Parser = require("./parser.js");
-console.log("Connecting");
 const bot = new Discord.Client({ token: auth.token, autorun: true });
+const chGdM = {}; // channel gamedata mappings
 bot.on("ready", function (evt) {
     console.log("Connected! Logged in as: " + bot.username + " - (" + bot.id + ")");
-    gameData.bot = bot;
-    bot.setPresence({ game: { name: "Garfield: Caught in the Act" } });
+    bot.setPresence({ game: { name: "Undercooked" } });
 });
 bot.on("message", function (user, userID, channelID, message, evt) {
     if(userID === bot.id) { return; }
-    if(message === "!DEBUGPRINT") {
-        console.log(JSON.stringify(gameData.map));
+    
+    if(chGdM[channelID] === undefined && message === "INIT") {
+        console.log(`Initializing up a game on channel ${channelID}.`);
+        chGdM[channelID] = GetNewGameData(bot);
+    }
+    const channelGameData = chGdM[channelID];
+    if(channelGameData === undefined) { return; }
+
+    if(!channelGameData.initialized) {
+        Setup.Init(chGdM[channelID], channelID, userID, message);
         return;
     }
-    if(!gameData.initialized) {
-        Setup.Init(gameData, channelID, userID, message);
-        return;
-    }
-    if(channelID != gameData.channelID) { return; }
-    if(!gameData.started) {
+    if(!channelGameData.started) {
         if(message === "!HELP") { return Game.ShowHelp(); }
-        Setup.HandlePostInitCommand(gameData, userID, message.toLowerCase());
-        if(gameData.started) { gameData.gameTimer = setInterval(function() { Game.MainLoop(gameData); }, 1000); }
+        Setup.HandlePostInitCommand(channelGameData, userID, message.toLowerCase());
+        if(channelGameData.cancelled) {
+            console.log(`Cancelling the game on channel ${channelID}.`);
+            delete chGdM[channelID];
+            return;
+        }
+        if(channelGameData.started) {
+            console.log(`The game on channel ${channelID} has began.`);
+            channelGameData.gameTimer = setInterval(function() { Game.MainLoop(channelGameData); }, 1000);
+        }
         return;
     }
-    if(gameData.players.indexOf(userID) < 0) { return; } // you don't get to do shit if you're not int he fucking game
+    if(channelGameData.players.indexOf(userID) < 0) { return; } // you don't get to do shit if you're not int he fucking game
     if(message === "!HELP") { return Game.ShowHelp(); }
     const parsedResult = Parser.Parse(message);
     if(parsedResult === null) { return; }
-    Game.HandleAction(gameData, userID, parsedResult);
+    Game.HandleAction(channelGameData, userID, parsedResult);
 });
 
-const gameData = {
-    initialized: false, started: false, 
-    serverID: "", channelID: "", hostUserID: "", hostUserName: "", 
-    numPlayers: 4, players: [], playerDetails: null, 
-    bot: null, map: null, orders: [], score: 0,
-    gameTimer: 0, gameSpeed: 1, secondsPlayed: 0 
-};
+function GetNewGameData(bot) {
+    return {
+        initialized: false, started: false, 
+        serverID: "", channelID: "", hostUserID: "", hostUserName: "", 
+        numPlayers: 4, players: [], playerDetails: null, 
+        bot: bot, map: null, orders: [], score: 0,
+        gameTimer: 0, gameSpeed: 1, secondsPlayed: 0 
+    };
+}

@@ -110,6 +110,7 @@ ${gameData.map.img}
             return true;
         } else if(message === "cancel") {
             gameData.initialized = false;
+            gameData.cancelled = true;
             gameData.players = [];
             DiscordHelper.Say(CONSTS.CANCELROUND);
             return false;
