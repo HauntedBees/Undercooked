@@ -1,16 +1,19 @@
 const Observers = require("./actionsObserve.js"), Cookers = require("./actionsCooking.js");
 const Maintainers = require("./actionsMaintenance.js"), Others = require("./actionsOther.js");
 const Food = require("./foodHelpers.js"), Strings = require("./strings.js");
-const DiscordHelper = require("./discordHelper.js");
 module.exports = {
     ShowHelp: function() {
-        DiscordHelper.Say(Strings.HELP1);
-        DiscordHelper.Say(Strings.HELP2);
-        DiscordHelper.Say(Strings.HELP3);
+        gameData.discordHelper.Say(Strings.HELP1);
+        gameData.discordHelper.Say(Strings.HELP2);
+        gameData.discordHelper.Say(Strings.HELP3);
         return true;
     },
     MainLoop: function(gameData) {
         gameData.secondsPlayed += 1;
+        if((gameData.secondsPlayed - gameData.lastActionTimeSecond) > 60) {
+            gameData.cancelled = true;
+            return;
+        }
         for(let i = 0; i < gameData.map.items.length; i++) {
             const place = gameData.map.items[i];
             if(place.switchedOn) { place.cookingTime += 1; }
@@ -19,10 +22,11 @@ module.exports = {
             const orders = gameData.map.potentialOrders;
             const order = orders[Math.floor(Math.random() * orders.length)];
             gameData.orders.push(order);
-            DiscordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
+            gameData.discordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
         }
     },
     HandleAction: function(gameData, userID, action) {
+        gameData.lastActionTimeSecond = gameData.secondsPlayed;
         try {
             const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
             switch(action.type) {
@@ -39,8 +43,8 @@ module.exports = {
                 case "move": return Others.Move(gameData, userID, action);
             }
         } catch(e) {
-            DiscordHelper.Log(e.stack);
-            DiscordHelper.SayM(`Something broke but we're all good. I recovered. I'm a big boy. We got this. We're good.`);
+            gameData.discordHelper.Log(e.stack);
+            gameData.discordHelper.SayM(`Something broke but we're all good. I recovered. I'm a big boy. We got this. We're good.`);
         }
     },
     

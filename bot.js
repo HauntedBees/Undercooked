@@ -1,5 +1,5 @@
 const Discord = require("discord.io"), auth = require("./auth.json");
-const Setup = require("./init.js"), Game = require("./game.js"), Parser = require("./parser.js");
+const Setup = require("./init.js"), Game = require("./game.js"), Parser = require("./parser.js"), DH = require("./discordHelper.js");
 const bot = new Discord.Client({ token: auth.token, autorun: true });
 const chGdM = {}; // channel gamedata mappings
 bot.on("ready", function (evt) {
@@ -11,7 +11,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     
     if(chGdM[channelID] === undefined && message === "INIT") {
         console.log(`Initializing up a game on channel ${channelID}.`);
-        chGdM[channelID] = GetNewGameData(bot);
+        chGdM[channelID] = GetNewGameData(bot, channelID);
     }
     const channelGameData = chGdM[channelID];
     if(channelGameData === undefined) { return; }
@@ -25,6 +25,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         Setup.HandlePostInitCommand(channelGameData, userID, message.toLowerCase());
         if(channelGameData.cancelled) {
             console.log(`Cancelling the game on channel ${channelID}.`);
+            KillGameData(chGdM[channelID]);
             delete chGdM[channelID];
             return;
         }
@@ -34,6 +35,13 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         }
         return;
     }
+    if(channelGameData.cancelled) {
+        console.log(`Timing out and cancelling the game on channel ${channelID}.`);
+        channelGameData.discordHelper.SayM(`Due to inactivity, the round has been cancelled. To start a new match, someone best be typin' INIT!`);
+        KillGameData(chGdM[channelID]);
+        delete chGdM[channelID];
+        return;
+    }
     if(channelGameData.players.indexOf(userID) < 0) { return; } // you don't get to do shit if you're not int he fucking game
     if(message === "!HELP") { return Game.ShowHelp(); }
     const parsedResult = Parser.Parse(message);
@@ -41,12 +49,20 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     Game.HandleAction(channelGameData, userID, parsedResult);
 });
 
-function GetNewGameData(bot) {
-    return {
+function GetNewGameData(bot, channelID) {
+    const gameData = {
         initialized: false, started: false, 
-        serverID: "", channelID: "", hostUserID: "", hostUserName: "", 
+        serverID: "", channelID: channelID, hostUserID: "", hostUserName: "", 
         numPlayers: 4, players: [], playerDetails: null, 
         bot: bot, map: null, orders: [], score: 0,
-        gameTimer: 0, gameSpeed: 1, secondsPlayed: 0 
+        gameTimer: 0, gameSpeed: 1, secondsPlayed: 0,
+        lastActionTimeSecond: 0
     };
+    const dh = new DH.DiscordHelper(bot, channelID);
+    gameData.discordHelper = dh;
+    return gameData;
+}
+function KillGameData(gameData) {
+    clearInterval(gameData.gameTimer);
+    gameData.discordHelper.CleanUp();
 }

@@ -1,5 +1,4 @@
 const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js");
-const DiscordHelper = require("./discordHelper.js");
 const self = module.exports = {
     Find: function(gameData, currentRoom, actingUser, action) {
         const roomNo = (action.placeNum < 0 ? currentRoom : (action.placeNum - 1));
@@ -7,24 +6,24 @@ const self = module.exports = {
         if(action.all) { // search every room
             let found = self.FindInRoom(gameData.map, roomNo, itemToFind); // start with your room
             if(found !== null) {
-                DiscordHelper.SayP(`${actingUser.nick} looked for ${itemName} and found one at ${found} in Room ${roomNo + 1}!`);
+                gameData.discordHelper.SayP(`${actingUser.nick} looked for ${itemName} and found one at ${found} in Room ${roomNo + 1}!`);
                 return;
             }
             for(let i = 0; i < gameData.map.rooms.length; i++) {
                 if(i === roomNo) { continue; } // don't search your room again!
                 found = self.FindInRoom(gameData.map, i, itemToFind);
                 if(found !== null) {
-                    DiscordHelper.SayP(`${actingUser.nick} looked for ${itemName} and found one at ${found} in Room ${i + 1}!`);
+                    gameData.discordHelper.SayP(`${actingUser.nick} looked for ${itemName} and found one at ${found} in Room ${i + 1}!`);
                     return;
                 }
             }
-            DiscordHelper.SayM(`${actingUser.nick} looked everywhere for ${itemName}, but found none! Check a dispenser!`);
+            gameData.discordHelper.SayM(`${actingUser.nick} looked everywhere for ${itemName}, but found none! Check a dispenser!`);
         } else {
             const found = self.FindInRoom(gameData.map, roomNo, itemToFind);
             if(found === null) {
-                DiscordHelper.SayM(`${actingUser.nick} looked for ${itemName} in Room ${roomNo + 1}, but found none! Check another room or a dispenser!`);
+                gameData.discordHelper.SayM(`${actingUser.nick} looked for ${itemName} in Room ${roomNo + 1}, but found none! Check another room or a dispenser!`);
             } else {
-                DiscordHelper.SayP(`${actingUser.nick} looked for ${itemName} in Room ${roomNo + 1} and found one at ${found}!`);
+                gameData.discordHelper.SayP(`${actingUser.nick} looked for ${itemName} in Room ${roomNo + 1} and found one at ${found}!`);
             }
         }
     },
@@ -68,9 +67,9 @@ const self = module.exports = {
         }
         if(playersInRoom.length === 0) {
             if(isInRoom) {
-                DiscordHelper.SayP(`${actingUser.nick} looked for people in Room ${placeNum}, and they're the only one in there!`);
+                gameData.discordHelper.SayP(`${actingUser.nick} looked for people in Room ${placeNum}, and they're the only one in there!`);
             } else {
-                DiscordHelper.SayP(`${actingUser.nick} looked for people in Room ${placeNum}, and there's no one there!`);
+                gameData.discordHelper.SayP(`${actingUser.nick} looked for people in Room ${placeNum}, and there's no one there!`);
             }
         } else {
             let res = `${actingUser.nick} looked for people in Room ${placeNum}, and found `;
@@ -88,7 +87,7 @@ const self = module.exports = {
                 }
             }
             res += isInRoom ? ", in addition to themselves." : ".";
-            DiscordHelper.SayP(res);
+            gameData.discordHelper.SayP(res);
         }
     },
     Look: function(gameData, currentRoom, actingUser, action) {
@@ -96,33 +95,33 @@ const self = module.exports = {
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
         const specificPlace = Food.FormatPlaceName(action.place, true);
         if(relevantPlaces.length === 0) {
-            DiscordHelper.SayM(`${actingUser.nick} looked for ${specificPlace}s, but couldn't find any in their room!`);
+            gameData.discordHelper.SayM(`${actingUser.nick} looked for ${specificPlace}s, but couldn't find any in their room!`);
             return;
         }
         if(action.placeNum > 0) {
             const chosenPlace = relevantPlaces[action.placeNum - 1];
             if(chosenPlace === undefined) {
-                DiscordHelper.SayM(`${actingUser.nick} tried to look at ${specificPlace} ${action.placeNum}, but there are only ${relevantPlaces.length} of those!`);
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to look at ${specificPlace} ${action.placeNum}, but there are only ${relevantPlaces.length} of those!`);
                 return;
             }
-            DiscordHelper.SayP(`${actingUser.nick} looked at ${specificPlace} ${action.placeNum} in Room ${currentRoom + 1}: ${Room.GetInspectionString(chosenPlace, action.placeNum, true)}`);
+            gameData.discordHelper.SayP(`${actingUser.nick} looked at ${specificPlace} ${action.placeNum} in Room ${currentRoom + 1}: ${Room.GetInspectionString(chosenPlace, action.placeNum, true)}`);
         } else if(relevantPlaces.length === 1) {
             const chosenPlace = relevantPlaces[0];
-            DiscordHelper.SayP(`${actingUser.nick} looked at the ${specificPlace} in Room ${currentRoom + 1}: ${Room.GetInspectionString(chosenPlace, 0, true)}`);
+            gameData.discordHelper.SayP(`${actingUser.nick} looked at the ${specificPlace} in Room ${currentRoom + 1}: ${Room.GetInspectionString(chosenPlace, 0, true)}`);
         } else {
             let fullStr = `${actingUser.nick} looked at the ${specificPlace}s in Room ${currentRoom + 1}:`;
             for(let i = 0; i < relevantPlaces.length; i++) {
                 const chosenPlace = relevantPlaces[i];
                 fullStr += `\n+ ${Room.GetInspectionString(chosenPlace, i + 1, false)}`;
             }
-            DiscordHelper.SayP(fullStr);
+            gameData.discordHelper.SayP(fullStr);
         }
     },
     LookAround: function(gameData, currentRoom, actingUser, placeNum) {
         if(placeNum < 0) { placeNum = currentRoom + 1; }
         const relevantPlaces = Room.GetObjectsInRoom(gameData.map, placeNum - 1);
         if(relevantPlaces.length === 0) {
-            DiscordHelper.SayM(`${actingUser.nick} looked around Room ${placeNum}, but it's empty!`);
+            gameData.discordHelper.SayM(`${actingUser.nick} looked around Room ${placeNum}, but it's empty!`);
             return;
         }
         relevantPlaces.sort((a, b) => a.type.localeCompare(b.type));
@@ -137,6 +136,6 @@ const self = module.exports = {
             fullStr += `\n+ ${Room.GetInspectionString(chosenPlace, typeIter, false)}`;
             typeIter += 1;
         }
-        DiscordHelper.SayP(fullStr);
+        gameData.discordHelper.SayP(fullStr);
     }
 };

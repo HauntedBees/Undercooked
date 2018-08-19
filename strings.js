@@ -7,18 +7,6 @@ module.exports = {
  \\____/_//_/\\_,_/\\__/_/  \\__/\\___/\\___/_/\\_\\\\__/\\_,_/ 
 ======================================================== 
  America's Favorite Text-Based Co-Op Cooking Adventure!${t}`,
-    PLAYERS_2: `${d}
-+ Two players!`,
-    PLAYERS_3: `${d}
-+ Three players!`,
-    PLAYERS_4: `${d}
-+ Four players!`,
-    PLAYERS_MANY: `${d}
-+ Tons of players!`,
-    PLAYERS_END: ` If you want to join this round, type *JOIN*. If you join and wish to leave the round before it starts, type *LEAVE.*
-+ Once there are enough players, the host can type *START* to begin or *CANCEL* to cancel the round! ${t}`,
-    ERROR: `${d}
-- Yeah, that ain't a valid command here.${t}`,
     CANCELROUND: `${d}
 - Round Cancelled! To start a new match, someone best be typin' INIT!${t}`,
     HELP1: `${t}md
