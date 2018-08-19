@@ -82,5 +82,42 @@ module.exports = {
             }
             gameData.discordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName}, but couldn't find any available plates!`);
         }    
+    },
+    Use: function(gameData, currentRoom, actingUser, action) {
+        const objectDisplayName = Food.GetFoodDisplayNameFromAction(action);
+        //const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
+        if(!GameHelper.HoldingCheck(gameData.discordHelper, actingUser, "use", action, objectDisplayName)) { return; }
+        if(action.place === "stove") { action.place = "pot"; }
+        const heldDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);
+        const heldTheirDisplayName = heldDisplayName.replace(/^an? /, "their ");
+        const relevantPlaces = (action.place === "") ? Room.GetObjectsInRoom(gameData.map, currentRoom) : Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
+        if(action.object === "extinguisher") {
+            if(action.placeNum > 0) {
+                const chosenPlace = relevantPlaces[action.placeNum - 1];
+                if(!chosenPlace.onFire) {
+                    gameData.discordHelper.SayM(`${actingUser.nick} wanted to use ${heldTheirDisplayName} on ${Food.FormatPlaceName(chosenPlace.type, true)} ${action.placeNum}, but it isn't on fire!`);
+                    return;
+                }
+                chosenPlace.onFire = false;
+                gameData.discordHelper.SayP(`${actingUser.nick} used ${heldTheirDisplayName} on ${Food.FormatPlaceName(chosenPlace.type, true)} ${action.placeNum}, putting out the fire! Hooray!`);
+            } else {
+                for(let i = 0; i < relevantPlaces.length; i++) {
+                    const chosenPlace = relevantPlaces[i];
+                    if(!chosenPlace.onFire) { continue; }
+                    chosenPlace.onFire = false;
+                    gameData.discordHelper.SayP(`${actingUser.nick} used ${heldTheirDisplayName} on ${Food.FormatPlaceName(chosenPlace.type)}, putting out the fire! Hooray!`);
+                    return;
+                }
+                if(action.place === "") {
+                    gameData.discordHelper.SayM(`${actingUser.nick} wanted to use ${heldTheirDisplayName}, but nothing's on fire!`);
+                } else {
+                    gameData.discordHelper.SayM(`${actingUser.nick} wanted to use ${heldTheirDisplayName} on ${Food.FormatPlaceName(action.place)}, but none of them are on fire!`);
+                }
+            }
+        } else {
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to use ${heldDisplayName}, but you can't use ${heldDisplayName}!`);
+            return;
+        }
+        
     }
 }

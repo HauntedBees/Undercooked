@@ -104,5 +104,10 @@ ${t}`,
 
 < holding > - check what you're currently holding
 * format: holding
+
+< use > - for using special items like fire extinguishers
+* format: use item (on place)
+* examples: "use fire extinguisher on stove"
+* notes: you must be holding the item to use it. if no place is specified, a random relevant place will be chosen (i.e. any place that is on fire, if using a fire extinguisher).
 ${t}`
 }

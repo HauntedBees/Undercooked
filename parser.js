@@ -17,7 +17,8 @@ const synonyms = {
     "search for": "search",
     "hunt for": "hunt",
     "mixing bowl": "bowl",
-    "trash can": "trashcan"
+    "trash can": "trashcan",
+    "fire extinguisher": "extinguisher"
 };
 const grabVerbs = ["grab", "take", "get", "acquire", "procure", "obtain"];
 const dropVerbs = ["drop", "put", "place", "plop", "set", "deposit", "position"];
@@ -52,11 +53,38 @@ const self = module.exports = {
         if(mixVerbs.indexOf(firstWord) >= 0) { return self.Mix(remainingWords); }
         if(firstWord === "plate") { return self.Plate(remainingWords); }
         if(firstWord === "who") { return self.Who(remainingWords); }
+        if(firstWord === "use") { return self.Use(remainingWords); }
         if(firstWord === "what") { return self.What(remainingWords); }
         if(firstWord === "trash") { return self.Trash(remainingWords); }
         if(firstWord === "holding" && splitWord.length === 1) { return { type: "holding" }; }
 
         return null;
+    },
+    Use: function(s) { // ${obj} on ${place} ${optional_number}
+        const splitStr = s.split(" ");
+        const objectName = splitStr[0];
+        if(splitStr.length === 1) {
+            return {
+                type: "use",
+                object: objectName,
+                place: "", placeNum: -1
+            }
+        }
+        if(splitStr.length < 3) { return null; }
+        const placeName = splitStr[2];
+        let placeNum = -1;
+        if(splitStr.length === 4) {
+            const potentialPlaceNum = parseInt(splitStr[3]);
+            if(!isNaN(potentialPlaceNum)) {
+                placeNum = potentialPlaceNum;
+                if(placeNum <= 0) { return null; }
+            }
+        }
+        return {
+            type: "use",
+            object: objectName,
+            place: placeName, placeNum: placeNum
+        }
     },
     Trash: function(s) { // ${obj}
         return {

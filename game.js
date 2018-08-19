@@ -41,8 +41,9 @@ module.exports = {
         try {
             const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
             switch(action.type) {
-                case "plate": return Maintainers.Plate(gameData, userID, action);
+                case "plate": return Maintainers.Plate(gameData, userIDaction);
                 case "serve": return Maintainers.Serve(gameData, userID, action);
+                case "use": return Maintainers.Use(gameData, currentRoom, actingUser, action);
                 case "chop": return Cookers.Chop(gameData, userID, action);
                 case "fry": return Cookers.Fry(gameData, userID, action);
                 case "turn": return Cookers.Turn(gameData, userID, action);

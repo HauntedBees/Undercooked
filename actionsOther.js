@@ -88,7 +88,7 @@ module.exports = {
     },
     Grab: function(gameData, userID, action) { // TODO: maybe care about attributes
         const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
-        const objectDisplayName = Food.GetFoodDisplayNameFromAction(action), objNoArticle = objectDisplayName.replace(/^an+ /, "");
+        const objectDisplayName = Food.GetFoodDisplayNameFromAction(action), objNoArticle = objectDisplayName.replace(/^an? /, "");
         const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
         if(relevantPlaces.length === 0) {
