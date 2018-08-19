@@ -4,13 +4,13 @@ const maps = [
         img: `
 XXXXXPSXXXXXXXOUXXXX    OU = Food Delivery Area
 FP                DT    TT = Table
-CB   1   TT   2   DP    DS = Potato Dispenser      
-CB       TT       DS    DT = Tomato Dispenser
-XXXX   XXXXXXXXXXXXX    DP = Plate Dispenser
-XX       XX             DL = Lettuce Dispenser
+CB   1   TT   2   DD    DS = Potato Dispenser       DO = Onion Dispenser
+CB       TT       DS    DT = Tomato Dispenser       DM = Mushroom Dispenser
+XXXX   XXXXXXXXXXXXX    DD = Plate Dispenser        DP = Pepper Dispenser
+DP       XX             DL = Lettuce Dispenser      DC = Cheese Dispenser
 DL   3   MB             FP = Frying Pan
-XX       XX             PS = Pot on Stove
-XX       XX             MB = Mixing Bowl
+DO       DC             PS = Pot on Stove
+DM       XX             MB = Mixing Bowl
 XXXXXXXXXXX             CB = Cutting Board
 `,
         rooms: [
@@ -24,6 +24,10 @@ XXXXXXXXXXX             CB = Cutting Board
             { type: "dispenser", rooms: [1], dispensed: "potato", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "tomato", amount: 999 },
             { type: "dispenser", rooms: [2], dispensed: "lettuce", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "onion", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "mushroom", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "pepper", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "cheese", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "plate", amount: 999 },
             { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
             { type: "cuttingboard", rooms: [0], size: 1, contents: [] },

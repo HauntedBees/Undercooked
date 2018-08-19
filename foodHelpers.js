@@ -7,7 +7,7 @@ const recipeDisplayNames = {
     "pileoffood": { displayName: "pile of food", recipe: "add any ingredients to a mixing bowl and mix 'em up. I don't know why you'd do this" },
     "salad": { displayName: "salad", recipe: "add one or more lettuce to a mixing bowl, plus any other ingredients, and mix 'em up" },
     "tomatosalad": { displayName: "tomato salad", recipe: "add one or more lettuce and one or more chopped tomatoes to a mixing bowl, plus any other ingredients, and mix 'em up" },
-    "aaaa": { displayName: "aaaa", recipe: "" },
+    "potionfire": { displayName: "potion of resist fire", recipe: "mix two cheese in a mixing bowl" },
     "aaaa": { displayName: "aaaa", recipe: "" },
     "aaaa": { displayName: "aaaa", recipe: "" }
 };
@@ -118,7 +118,6 @@ const self = module.exports = {
     TransformFood: function(food) {
         if(food.type === "pot") { return self.BoiledFoods(food); }
         if(food.type === "bowl") { return self.MixedFoods(food); }
-
         if(food.type === "potato" && food.attributes.length === 2) {
             if(self.HasAttribute(food, "fried") && self.HasAttribute(food, "sliced")) {
                 return { type: "frenchfries", class: "sides", modifier: food.modifier, attributes: [] };
@@ -131,6 +130,9 @@ const self = module.exports = {
         const newModifier = self.AvgModifier(ingredience);
         const sorted = self.GetSortedFoodStruct(ingredience);
         const badSalad = { type: "pileoffood", class: "garbage", modifier: 0.5 * newModifier, attributes: [] };
+        if(sorted["cheese"] === 2 && sorted["total"] === 2) {
+            return { type: "potionfire", class: "other", modifier: newModifier, attributes: [] };
+        }
         if(sorted["lettuce"] >= 1) {
             if(sorted["tomato"] === sorted["tomato_sliced"] && sorted["tomato_sliced"] >= 1) {
                 return { type: "tomatosalad", class: "salad", modifier: newModifier, attributes: [] };
@@ -157,12 +159,13 @@ const self = module.exports = {
         return { type: "weirdsoup", class: "soup", modifier: 0.5 * newModifier, attributes: [] };
     },
     GetSortedFoodStruct: function(ingredience) {
-        const sorted = {};
+        const sorted = { total: 0 };
         for(let i = 0; i < ingredience.length; i++) {
             const ing = ingredience[i];
             const baseIngredient = ing.type;
             if(sorted[baseIngredient] === undefined) { sorted[baseIngredient] = 0; }
             sorted[baseIngredient] += 1;
+            sorted["total"] += 1;
             ing.attributes.sort();
             let fullIng = baseIngredient;
             for(let j = 0; j < ing.attributes.length; j++) {
