@@ -92,7 +92,7 @@ ${t}`,
 * notes: will tell you how to make a recipe, or tell you if something is just a base item you can find from a dispenser.
 
 < mix > - mix foods in a mixing bowl
-* synonyms: 
+* synonyms: stir
 * format: mix (bowl) (number)
 * examples: "mix bowl 2", "mix 1"
 * notes: number is not necessary if only one mixing bowl is in the room.
