@@ -1,9 +1,9 @@
 const recipeDisplayNames = {
-    "frenchfries": "french fries",
-    "tomatosoup": "tomato soup",
-    "spicytomatosoup": "spicy tomato soup",
-    "weirdsoup": "weird soup",
-    "badsoup": "bad soup"
+    "frenchfries": { displayName: "french fries", recipe: "slice a potato on a cutting board, then fry it in a pan" },
+    "tomatosoup": { displayName: "tomato soup", recipe: "add two or more tomatos to a pot, then cook until ready" },
+    "spicytomatosoup": { displayName: "spicy tomato soup", recipe: "add two or more tomatos and one or more peppers to a pot, then cook until ready" },
+    "weirdsoup": { displayName: "weird soup", recipe: "add any ingredients to a pot and cook until ready" },
+    "badsoup": { displayName: "bad soup", recipe: "add any ingredients to a pot and either under- or over-cook them" }
 };
 const self = module.exports = {
     GetBaseFood: function(name) {
@@ -33,7 +33,7 @@ const self = module.exports = {
 
     FlattenFoodNames: function(s) {
         for(const noSpaces in recipeDisplayNames) {
-            const spaces = recipeDisplayNames[noSpaces];
+            const spaces = recipeDisplayNames[noSpaces].displayName;
             s = s.replace(spaces, noSpaces);
         }
         return s;
@@ -44,7 +44,6 @@ const self = module.exports = {
         return `a ${s}`;
     },
     FormatPlaceName: function(placeName, noAorAn) {
-        //if(recipeDisplayNames[placeName] !== undefined) { placeName = recipeDisplayNames[placeName]; } // TODO: not needed?? why was this here
         if(placeName === "cuttingboard") { placeName = "cutting board"; }
         else if(placeName === "pan") { placeName = "frying pan"; }
         if(noAorAn) { return placeName; }
@@ -53,10 +52,19 @@ const self = module.exports = {
         return `a ${placeName}`;
     },
 
+    GetRecipeNameAndHowMake: function(userName, name) {
+        const dish = recipeDisplayNames[name];
+        if(dish === undefined) { // just an ingredient
+            const ingName = self.GetFoodDisplayNameFromObj({ type: name, attributes: [] }).replace("an ", "").replace("a ", "");
+            return `${userName} consulted their cookbook. ${ingName}: literally just an ingredient. check a dispenser for it.`;
+        } else { // actually a dish
+            return `${userName} consulted their cookbook. ${dish.displayName}: ${dish.recipe}.`;
+        }
+    },
     GetFoodDisplayNameFromAction: (action, ignorePlated) => self.GetFoodDisplayNameFromObj({ type: action.object, attributes: (action.objAttrs || []) }, ignorePlated || false),
     GetFoodDisplayNameFromObj: function(food, ignorePlated) {
         let name = food.type;
-        if(recipeDisplayNames[name] !== undefined) { name = recipeDisplayNames[name]; }
+        if(recipeDisplayNames[name] !== undefined) { name = recipeDisplayNames[name].displayName; }
         for(let i = 0; i < food.attributes.length; i++) {
             switch(food.attributes[i]) {
                 case "sliced": name = `chopped ${name}`; break;

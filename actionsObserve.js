@@ -90,6 +90,9 @@ const self = module.exports = {
             gameData.discordHelper.SayP(res);
         }
     },
+    What: function(gameData, actingUser, food) {
+        gameData.discordHelper.SayP(Food.GetRecipeNameAndHowMake(actingUser.nick, food));
+    },
     Look: function(gameData, currentRoom, actingUser, action) {
         if(action.around) { return self.LookAround(gameData, currentRoom, actingUser, action.placeNum); }
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);

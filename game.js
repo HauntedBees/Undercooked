@@ -41,6 +41,7 @@ module.exports = {
                 case "turn": return Cookers.Turn(gameData, userID, action);
                 case "find": return Observers.Find(gameData, currentRoom, actingUser, action);
                 case "look": return Observers.Look(gameData, currentRoom, actingUser, action);
+                case "what": return Observers.What(gameData, actingUser, action.object);
                 case "who": return Observers.Who(gameData, currentRoom, actingUser, userID, action.placeNum);
                 case "grab": return Others.Grab(gameData, userID, action);
                 case "drop": return Others.Drop(gameData, userID, action);

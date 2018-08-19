@@ -47,8 +47,15 @@ const self = module.exports = {
         if(findVerbs.indexOf(firstWord) >= 0) { return self.Find(remainingWords); }
         if(firstWord === "plate") { return self.Plate(remainingWords); }
         if(firstWord === "who") { return self.Who(remainingWords); }
+        if(firstWord === "what") { return self.What(remainingWords); }
 
         return null;
+    },
+    What: function(s) { // (is) {$obj}
+        const splitStr = s.split(" ");
+        if(splitStr[0] === "is") { splitStr.shift(); }
+        if(splitStr.length !== 1) { return null; }
+        return { type: "what", object: splitStr[0] };
     },
     Find: function(s) { // ${obj} (in Room ${number}) OR {$obj} anywhere
         const splitStr = s.split(" ");
