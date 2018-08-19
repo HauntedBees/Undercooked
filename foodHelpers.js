@@ -8,6 +8,11 @@ const recipeDisplayNames = {
     "salad": { displayName: "salad", recipe: "add one or more lettuce to a mixing bowl, plus any other ingredients, and mix 'em up" },
     "tomatosalad": { displayName: "tomato salad", recipe: "add one or more lettuce and one or more chopped tomatoes to a mixing bowl, plus any other ingredients, and mix 'em up" },
     "potionfire": { displayName: "potion of resist fire", recipe: "mix two cheese in a mixing bowl" },
+    "pastadough": { displayName: "pasta dough", recipe: "chop dough on a cutting board" },
+    "angelhair": { displayName: "angelhair", recipe: "cook pasta dough in a pot." },
+    "fettucini": { displayName: "fettucini alfredo", recipe: "cook pasta dough and one or two cheese in a pot." },
+    "spaghetti": { displayName: "spaghetti and meatballs", recipe: "cook pasta dough, tomato, and meat in a pot." },
+    "macaroni": { displayName: "macaroni and cheese", recipe: "cook pasta dough and three cheese in a pot." },
     "aaaa": { displayName: "aaaa", recipe: "" },
     "aaaa": { displayName: "aaaa", recipe: "" }
 };
@@ -77,6 +82,7 @@ const self = module.exports = {
                 case "sliced": name = `chopped ${name}`; break;
                 case "plated": if(!ignorePlated) { name = `plated ${name}` }; break;
                 case "fried": name = `fried ${name}`; break;
+                case "cooked": name = `cooked ${name}`; break;
             }
         }
         if("aeiou".indexOf(name[0]) >= 0) {
@@ -110,7 +116,7 @@ const self = module.exports = {
         return 0.25;
     },
 
-    AddAttribute: function(food, attr) {
+    AddAttribute: function(food, attr) { // sliced, plated, fried, cooked
         if(food.attributes.indexOf(attr) >= 0) { return food; }
         food.attributes.push(attr);
         return self.TransformFood(food);
@@ -118,8 +124,13 @@ const self = module.exports = {
     TransformFood: function(food) {
         if(food.type === "pot") { return self.BoiledFoods(food); }
         if(food.type === "bowl") { return self.MixedFoods(food); }
-        if(food.type === "potato" && food.attributes.length === 2) {
-            if(self.HasAttribute(food, "fried") && self.HasAttribute(food, "sliced")) {
+        if(food.type === "dough") {
+            if(food.attributes.length === 1 && food.HasAttribute(food, "sliced")) {
+                return { type: "pastadough", modifier: food.modifier, attributes: [] };
+            }
+        }
+        if(food.type === "potato") {
+            if(food.attributes.length === 2 && self.HasAttribute(food, "fried") && self.HasAttribute(food, "sliced")) {
                 return { type: "frenchfries", class: "sides", modifier: food.modifier, attributes: [] };
             }
         }
@@ -150,6 +161,19 @@ const self = module.exports = {
             return { type: "badsoup", class: "garbage", modifier: 0.5 * newModifier, attributes: [] };
         }
         const sorted = self.GetSortedFoodStruct(ingredience);
+        if(sorted["pastadough"] >= 1) {
+            if(sorted["tomato"] >= 1 && sorted["meat"] >= 1) {
+                return { type: "spaghetti", class: "pasta", modifier: newModifier, attributes: [] };
+            }
+            if(sorted["cheese"] >= 1) {
+                if(sorted["cheese"] === 3) {
+                    return { type: "macaroni", class: "pasta", modifier: newModifier, attributes: [] };
+                } else {
+                    return { type: "fettucini", class: "pasta", modifier: newModifier, attributes: [] };
+                }
+            }
+            return { type: "angelhair", class: "pasta", modifier: newModifier, attributes: [] };
+        }
         if(sorted["tomato"] >= 2) {
             if(sorted["pepper"] >= 1) {
                 return { type: "spicytomatosoup", class: "soup", modifier: newModifier, attributes: [] };

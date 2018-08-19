@@ -7,10 +7,10 @@ FP                DT    TT = Table
 CB   1   TT   2   DD    DS = Potato Dispenser       DO = Onion Dispenser
 CB       TT       DS    DT = Tomato Dispenser       DM = Mushroom Dispenser
 XXXX   XXXXXXXXXXXXX    DD = Plate Dispenser        DP = Pepper Dispenser
-DP       XX             DL = Lettuce Dispenser      DC = Cheese Dispenser
-DL   3   MB             FP = Frying Pan
-DO       DC             PS = Pot on Stove
-DM       XX             MB = Mixing Bowl
+DP       DM             DL = Lettuce Dispenser      DC = Cheese Dispenser
+DL   3   MB             FP = Frying Pan             Dd = Dough Dispenser
+DO       DC             PS = Pot on Stove           DM = Meat Dispenser
+DM       Dd             MB = Mixing Bowl
 XXXXXXXXXXX             CB = Cutting Board
 `,
         rooms: [
@@ -28,6 +28,8 @@ XXXXXXXXXXX             CB = Cutting Board
             { type: "dispenser", rooms: [2], dispensed: "mushroom", amount: 999 },
             { type: "dispenser", rooms: [2], dispensed: "pepper", amount: 999 },
             { type: "dispenser", rooms: [2], dispensed: "cheese", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "dough", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "meat", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "plate", amount: 999 },
             { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
             { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
