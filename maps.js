@@ -77,6 +77,8 @@ XXXXXXXXXXXXXXXXXXX     T = Table
 ];
 module.exports = {
     GetMap: function() {
-        return JSON.parse(JSON.stringify(maps[0]));
+        const newMap = JSON.parse(JSON.stringify(maps[0]));
+        newMap.items.sort((a, b) => a.type.localeCompare(b.type));
+        return newMap;
     }
 };

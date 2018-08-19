@@ -2,6 +2,21 @@ const Food = require("./foodHelpers.js");
 module.exports = {
     GetObjectsInRoom: (map, roomNo) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0),
     GetObjectsOfTypeInRoom: (map, roomNo, type) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0 && item.type === type), 
+    GetPlaceNumber: function(roomContents, placeType, placeIdx) {
+        let lastItemType = "", typeIter = 1;
+        for(let i = 0; i < roomContents.length; i++) {
+            const chosenPlace = roomContents[i];
+            if(chosenPlace.type !== lastItemType) {
+                lastItemType = chosenPlace.type;
+                typeIter = 1;
+            }
+            if(chosenPlace.type === placeType && placeIdx === i) {
+                return typeIter;
+            }
+            typeIter += 1;
+        }
+        return 1;
+    },
     TryTakeObjectFromPlace: function(place, obj) {
         if(place.type === "dispenser") {
             if(place.dispensed !== obj) { return null; }

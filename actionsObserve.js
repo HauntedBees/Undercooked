@@ -29,7 +29,6 @@ const self = module.exports = {
     },
     FindInRoom: function(map, roomNo, obj) {
         const roomItems = Room.GetObjectsInRoom(map, roomNo);
-        roomItems.sort((a, b) => a.type.localeCompare(b.type));
         let lastItemType = "", typeIter = 1;
         for(let i = 0; i < roomItems.length; i++) {
             const item = roomItems[i];
@@ -127,7 +126,6 @@ const self = module.exports = {
             gameData.discordHelper.SayM(`${actingUser.nick} looked around Room ${placeNum}, but it's empty!`);
             return;
         }
-        relevantPlaces.sort((a, b) => a.type.localeCompare(b.type));
         let fullStr = `${actingUser.nick} looked around Room ${placeNum}:`;
         let lastItemType = "", typeIter = 1;
         for(let i = 0; i < relevantPlaces.length; i++) {
