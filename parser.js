@@ -5,6 +5,7 @@ const synonyms = {
     "cooking pan": "pan",
     "skillet": "pan",
     "frypan": "pan",
+    "cboard": "cuttingboard",
     "cutting board": "cuttingboard",
     "chopping board": "cuttingboard",
     "butcher block": "cuttingboard",
@@ -14,7 +15,8 @@ const synonyms = {
     "dish": "plate",
     "dishes": "plate",
     "search for": "search",
-    "hunt for": "hunt"
+    "hunt for": "hunt",
+    "mixing bowl": "bowl"
 };
 const grabVerbs = ["grab", "take", "get", "acquire", "procure", "obtain"];
 const dropVerbs = ["drop", "put", "place", "plop", "set", "deposit", "position"];
@@ -25,6 +27,7 @@ const fryVerbs = ["fry", "sautee", "sauté", "sear", "brown", "sizzle"];
 const turnVerbs = ["turn", "switch", "flip"];
 const lookVerbs = ["look", "inspect", "view", "see"];
 const findVerbs = ["find", "search", "locate", "hunt", "seek"];
+const mixVerbs = ["mix", "stir"];
 const self = module.exports = {
     Parse: function(s) {
         if(s === "") { return null; }
@@ -45,15 +48,27 @@ const self = module.exports = {
         if(turnVerbs.indexOf(firstWord) >= 0) { return self.Turn(remainingWords); }
         if(lookVerbs.indexOf(firstWord) >= 0) { return self.Look(remainingWords); }
         if(findVerbs.indexOf(firstWord) >= 0) { return self.Find(remainingWords); }
+        if(mixVerbs.indexOf(firstWord) >= 0) { return self.Mix(remainingWords); }
         if(firstWord === "plate") { return self.Plate(remainingWords); }
         if(firstWord === "who") { return self.Who(remainingWords); }
         if(firstWord === "what") { return self.What(remainingWords); }
 
         return null;
     },
-    What: function(s) { // (is) {$obj}
+    Mix: function(s) { // (bowl) {$optional_number}
+        const splitStr = s.split(" ");
+        if(splitStr[0] === "bowl") { splitStr.shift(); }
+        if(splitStr.length === 0) { return { type: "mix", placeNum: 1 }; }
+        if(splitStr.length !== 1) { return null; }
+        const placeNum = parseInt(splitStr[0]);
+        if(isNaN(placeNum) || placeNum <= 0) { return null; }
+        return { type: "mix", placeNum: placeNum };
+    },
+    What: function(s) { // (is a/an) {$obj}
         const splitStr = s.split(" ");
         if(splitStr[0] === "is") { splitStr.shift(); }
+        if(splitStr[0] === "a") { splitStr.shift(); }
+        if(splitStr[0] === "an") { splitStr.shift(); }
         if(splitStr.length !== 1) { return null; }
         return { type: "what", object: splitStr[0] };
     },

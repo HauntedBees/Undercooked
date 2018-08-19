@@ -1,4 +1,4 @@
-const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js");
+const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js"), GameHelper = require("./gameHelpers.js");
 module.exports = {
     Serve: function(gameData, userID, action) {
         const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];

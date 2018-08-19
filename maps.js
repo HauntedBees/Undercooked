@@ -7,10 +7,11 @@ FP                DT    TT = Table
 CB   1   TT   2   DP    DS = Potato Dispenser      
 CB       TT       DS    DT = Tomato Dispenser
 XXXX   XXXXXXXXXXXXX    DP = Plate Dispenser
-XX       XX             CB = Cutting Board
-XX   3   XX             FP = Frying Pan
+XX       XX             DL = Lettuce Dispenser
+DL   3   MB             FP = Frying Pan
 XX       XX             PS = Pot on Stove
-XXXXXXXXXXX
+XX       XX             MB = Mixing Bowl
+XXXXXXXXXXX             CB = Cutting Board
 `,
         rooms: [
             { right: 1, down: 2 },
@@ -22,13 +23,16 @@ XXXXXXXXXXX
             { type: "table", rooms: [0, 1], size: 4, contents: [] },
             { type: "dispenser", rooms: [1], dispensed: "potato", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "tomato", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "lettuce", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "plate", amount: 999 },
             { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
             { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
+            { type: "bowl", rooms: [2], size: 4, contents: [] },
             { type: "pan", rooms: [0], size: 1, contents: [] },
             { type: "pot", rooms: [0], switchedOn: false, size: 4, contents: [] },
             { type: "floor", rooms: [0], size: 999, contents: [] },
-            { type: "floor", rooms: [1], size: 999, contents: [] }
+            { type: "floor", rooms: [1], size: 999, contents: [] },
+            { type: "floor", rooms: [2], size: 999, contents: [] }
         ],
         potentialOrders: [
             { type: "tomato", attributes: ["sliced"], score: 5 },

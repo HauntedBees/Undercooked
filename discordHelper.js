@@ -2,7 +2,6 @@ module.exports = {
     DiscordHelper: function(b, c) {
         let SayFromCache = function() {
             if(messageCache.length === 0 || awaitingResponse) { return; }
-            awaitingResponse = true;
             bot.sendMessage({ to: channelID, message: messageCache[0] }, function(err, response) {
                 if(err === null) {
                     messageCache.shift();

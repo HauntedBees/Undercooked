@@ -1,4 +1,4 @@
-const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js");
+const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js"), GameHelper = require("./gameHelpers.js");
 module.exports = {
     Fry: function(gameData, userID, action) {
         const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
@@ -99,7 +99,17 @@ module.exports = {
             chosenPlace.modifier = Food.GetCookingModifier(chosenPlace);
             const newFood = Food.TransformFood(chosenPlace);
             chosenPlace.contents = [ newFood ];
-            gameData.discordHelper.SayP(`${actingUser.nick} turned ${action.displayPlace} ${placeNum + 1} off, and made ${Food.GetFoodDisplayNameFromObj(newFood)}!`);
+            gameData.discordHelper.SayP(`${actingUser.nick} turned ${action.displayPlace} ${placeNum + 1} off and made ${Food.GetFoodDisplayNameFromObj(newFood)}!`);
         }
+    },
+    Mix: function(gameData, currentRoom, actingUser, action) {
+        if(!GameHelper.EmptyHandsCheck(gameData.discordHelper, actingUser, "mix", "up a bowl")) { return; }
+        const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "bowl");
+        if(!GameHelper.NoPlacesCheck(gameData.discordHelper, actingUser, relevantPlaces, "mix the contents of", "mixing bowl")) { return; }
+        const chosenPlace = relevantPlaces[action.placeNum - 1];
+        if(!GameHelper.ChosenPlaceCheck(gameData.discordHelper, actingUser, chosenPlace, action, "some stuff", relevantPlaces.length, "mix", "mixing bowl")) { return; }
+        const newFood = Food.TransformFood(chosenPlace);
+        chosenPlace.contents = [ newFood ];
+        gameData.discordHelper.SayP(`${actingUser.nick} mixed the contents of mixing bowl ${action.placeNum} and made ${Food.GetFoodDisplayNameFromObj(newFood)}!`);
     }
 };

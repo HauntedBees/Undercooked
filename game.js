@@ -2,7 +2,7 @@ const Observers = require("./actionsObserve.js"), Cookers = require("./actionsCo
 const Maintainers = require("./actionsMaintenance.js"), Others = require("./actionsOther.js");
 const Food = require("./foodHelpers.js"), Strings = require("./strings.js");
 module.exports = {
-    ShowHelp: function() {
+    ShowHelp: function(gameData) {
         gameData.discordHelper.Say(Strings.HELP1);
         gameData.discordHelper.Say(Strings.HELP2);
         gameData.discordHelper.Say(Strings.HELP3);
@@ -39,6 +39,7 @@ module.exports = {
                 case "chop": return Cookers.Chop(gameData, userID, action);
                 case "fry": return Cookers.Fry(gameData, userID, action);
                 case "turn": return Cookers.Turn(gameData, userID, action);
+                case "mix": return Cookers.Mix(gameData, currentRoom, actingUser, action);
                 case "find": return Observers.Find(gameData, currentRoom, actingUser, action);
                 case "look": return Observers.Look(gameData, currentRoom, actingUser, action);
                 case "what": return Observers.What(gameData, actingUser, action.object);

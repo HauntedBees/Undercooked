@@ -3,7 +3,13 @@ const recipeDisplayNames = {
     "tomatosoup": { displayName: "tomato soup", recipe: "add two or more tomatos to a pot, then cook until ready" },
     "spicytomatosoup": { displayName: "spicy tomato soup", recipe: "add two or more tomatos and one or more peppers to a pot, then cook until ready" },
     "weirdsoup": { displayName: "weird soup", recipe: "add any ingredients to a pot and cook until ready" },
-    "badsoup": { displayName: "bad soup", recipe: "add any ingredients to a pot and either under- or over-cook them" }
+    "badsoup": { displayName: "bad soup", recipe: "add any ingredients to a pot and either under- or over-cook them" },
+    "pileoffood": { displayName: "pile of food", recipe: "add any ingredients to a mixing bowl and mix 'em up. I don't know why you'd do this" },
+    "salad": { displayName: "salad", recipe: "add one or more lettuce to a mixing bowl, plus any other ingredients, and mix 'em up" },
+    "tomatosalad": { displayName: "tomato salad", recipe: "add one or more lettuce and one or more chopped tomatoes to a mixing bowl, plus any other ingredients, and mix 'em up" },
+    "aaaa": { displayName: "aaaa", recipe: "" },
+    "aaaa": { displayName: "aaaa", recipe: "" },
+    "aaaa": { displayName: "aaaa", recipe: "" }
 };
 const self = module.exports = {
     GetBaseFood: function(name) {
@@ -46,6 +52,7 @@ const self = module.exports = {
     FormatPlaceName: function(placeName, noAorAn) {
         if(placeName === "cuttingboard") { placeName = "cutting board"; }
         else if(placeName === "pan") { placeName = "frying pan"; }
+        else if(placeName === "bowl") { placeName = "mixing bowl"; }
         if(noAorAn) { return placeName; }
 
         if("aeiou".indexOf(placeName[0]) >= 0) { return `an ${placeName}`; }
@@ -110,6 +117,7 @@ const self = module.exports = {
     },
     TransformFood: function(food) {
         if(food.type === "pot") { return self.BoiledFoods(food); }
+        if(food.type === "bowl") { return self.MixedFoods(food); }
 
         if(food.type === "potato" && food.attributes.length === 2) {
             if(self.HasAttribute(food, "fried") && self.HasAttribute(food, "sliced")) {
@@ -118,19 +126,28 @@ const self = module.exports = {
         }
         return food;
     },
+    MixedFoods: function(bowl) {
+        const ingredience = bowl.contents;
+        const newModifier = self.AvgModifier(ingredience);
+        const sorted = self.GetSortedFoodStruct(ingredience);
+        const badSalad = { type: "pileoffood", class: "garbage", modifier: 0.5 * newModifier, attributes: [] };
+        if(sorted["lettuce"] >= 1) {
+            if(sorted["tomato"] === sorted["tomato_sliced"] && sorted["tomato_sliced"] >= 1) {
+                return { type: "tomatosalad", class: "salad", modifier: newModifier, attributes: [] };
+            } else if(sorted["tomato"] >= 1) {
+                return badSalad;
+            }
+            return { type: "salad", class: "salad", modifier: newModifier, attributes: [] };
+        }
+        return badSalad;
+    },
     BoiledFoods: function(pot) {
         const ingredience = pot.contents;
         const newModifier = pot.modifier * self.AvgModifier(ingredience);
         if(newModifier < 0.25) {
-            return { type: "badsoup", class: "soup", modifier: 0.5 * newModifier, attributes: [] };
+            return { type: "badsoup", class: "garbage", modifier: 0.5 * newModifier, attributes: [] };
         }
-        const sorted = {};
-        for(let i = 0; i < ingredience.length; i++) {
-            const ing = ingredience[i];
-            const baseIngredient = ing.type; // TODO: account for attributes
-            if(sorted[baseIngredient] === undefined) { sorted[baseIngredient] = 0; }
-            sorted[baseIngredient] += 1;
-        }
+        const sorted = self.GetSortedFoodStruct(ingredience);
         if(sorted["tomato"] >= 2) {
             if(sorted["pepper"] >= 1) {
                 return { type: "spicytomatosoup", class: "soup", modifier: newModifier, attributes: [] };
@@ -139,5 +156,28 @@ const self = module.exports = {
         }
         return { type: "weirdsoup", class: "soup", modifier: 0.5 * newModifier, attributes: [] };
     },
-    AvgModifier: ingredience => ingredience.reduce((sum, curFood) => sum + curFood.modifier, 0) / ingredience.length
+    GetSortedFoodStruct: function(ingredience) {
+        const sorted = {};
+        for(let i = 0; i < ingredience.length; i++) {
+            const ing = ingredience[i];
+            const baseIngredient = ing.type;
+            if(sorted[baseIngredient] === undefined) { sorted[baseIngredient] = 0; }
+            sorted[baseIngredient] += 1;
+            ing.attributes.sort();
+            let fullIng = baseIngredient;
+            for(let j = 0; j < ing.attributes.length; j++) {
+                const attr = ing.attributes[j];
+                fullIng += `_${attr}`;
+                const attrIng = `${baseIngredient}_${attr}`;
+                if(sorted[attrIng] === undefined) { sorted[attrIng] = 0; }
+                sorted[attrIng] += 1;
+            }
+            if(ing.attributes.length >= 2) {
+                if(sorted[fullIng] === undefined) { sorted[fullIng] = 0; }
+                sorted[fullIng] += 1;
+            }
+        }
+        return sorted;
+    },
+    AvgModifier: ingredience => ingredience.reduce((sum, curFood) => sum + curFood.modifier + 0.1, 0) / ingredience.length
 };

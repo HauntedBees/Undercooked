@@ -85,5 +85,16 @@ ${t}`,
 * format: "who (is) here" or "who (is in) room number"
 * examples: "who is in room 2", "who here"
 * notes: "who is here" will tell you who is in the same room as you!
+
+< what > - look up a recipe
+* format: what is item
+* examples: "what is tomato soup" or "what is potato"
+* notes: will tell you how to make a recipe, or tell you if something is just a base item you can find from a dispenser.
+
+< mix > - mix foods in a mixing bowl
+* synonyms: 
+* format: mix (bowl) (number)
+* examples: "mix bowl 2", "mix 1"
+* notes: number is not necessary if only one mixing bowl is in the room.
 ${t}`
 }
