@@ -35,13 +35,6 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         }
         return;
     }
-    if(channelGameData.cancelled) {
-        console.log(`Timing out and cancelling the game on channel ${channelID}.`);
-        channelGameData.discordHelper.SayM(`Due to inactivity, the round has been cancelled. To start a new match, someone best be typin' INIT!`);
-        KillGameData(chGdM[channelID]);
-        delete chGdM[channelID];
-        return;
-    }
     if(channelGameData.players.indexOf(userID) < 0) { return; } // you don't get to do shit if you're not int he fucking game
     if(message === "!HELP") { return Game.ShowHelp(); }
     const parsedResult = Parser.Parse(message);
@@ -58,8 +51,12 @@ function GetNewGameData(bot, channelID) {
         gameTimer: 0, gameSpeed: 1, secondsPlayed: 0,
         lastActionTimeSecond: 0
     };
-    const dh = new DH.DiscordHelper(bot, channelID);
-    gameData.discordHelper = dh;
+    gameData.discordHelper = new DH.DiscordHelper(bot, channelID);
+    gameData.KillGame = function() {
+        const channelID = gameData.channelID;
+        KillGameData(chGdM[channelID]);
+        delete chGdM[channelID];
+    }
     return gameData;
 }
 function KillGameData(gameData) {

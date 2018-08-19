@@ -10,8 +10,12 @@ module.exports = {
     },
     MainLoop: function(gameData) {
         gameData.secondsPlayed += 1;
+        if(gameData.cancelled) { return; }
         if((gameData.secondsPlayed - gameData.lastActionTimeSecond) > 60) {
             gameData.cancelled = true;
+            console.log(`Timing out and cancelling the game on channel ${gameData.channelID}.`);
+            gameData.discordHelper.SayM(`Due to inactivity, the round has been cancelled. To start a new match, someone best be typin' INIT!`);
+            setTimeout(gameData.KillGame, 1000);
             return;
         }
         for(let i = 0; i < gameData.map.items.length; i++) {
