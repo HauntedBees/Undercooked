@@ -80,14 +80,17 @@ const self = module.exports = {
     GetFoodDisplayNameFromAction: (action, ignorePlated) => self.GetFoodDisplayNameFromObj({ type: action.object, attributes: (action.objAttrs || []) }, ignorePlated || false),
     GetFoodDisplayNameFromObj: function(food, ignorePlated) {
         let name = food.type;
-        if(recipeDisplayNames[name] !== undefined) { name = recipeDisplayNames[name].displayName; } // probably just sort and do it that way
+        if(recipeDisplayNames[name] !== undefined) { name = recipeDisplayNames[name].displayName; }
+        food.attributes.sort();
         for(let i = 0; i < food.attributes.length; i++) {
             switch(food.attributes[i]) {
                 case "sliced": name = `chopped ${name}`; break;
-                case "plated": if(!ignorePlated) { name = `plated ${name}` }; break;
                 case "fried": name = `fried ${name}`; break;
                 case "baked": name = `baked ${name}`; break;
             }
+        }
+        if(!ignorePlated && food.attributes.indexOf("plated") >= 0) {
+            name = `plated ${name}`;
         }
         if("aeiou".indexOf(name[0]) >= 0) {
             return `an ${name}`;
