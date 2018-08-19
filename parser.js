@@ -16,7 +16,8 @@ const synonyms = {
     "dishes": "plate",
     "search for": "search",
     "hunt for": "hunt",
-    "mixing bowl": "bowl"
+    "mixing bowl": "bowl",
+    "trash can": "trashcan"
 };
 const grabVerbs = ["grab", "take", "get", "acquire", "procure", "obtain"];
 const dropVerbs = ["drop", "put", "place", "plop", "set", "deposit", "position"];
@@ -52,8 +53,16 @@ const self = module.exports = {
         if(firstWord === "plate") { return self.Plate(remainingWords); }
         if(firstWord === "who") { return self.Who(remainingWords); }
         if(firstWord === "what") { return self.What(remainingWords); }
+        if(firstWord === "trash") { return self.Trash(remainingWords); }
 
         return null;
+    },
+    Trash: function(s) { // ${obj}
+        return {
+            type: "drop",
+            object: s, 
+            place: "trashcan", placeNum: 1
+        }
     },
     Mix: function(s) { // (bowl) {$optional_number}
         const splitStr = s.split(" ");
@@ -99,7 +108,7 @@ const self = module.exports = {
     },
     Look: function(s) { // around (Room ${number}) OR (at) $place(s/ {$optional_number}) -- number OR plural
         const splitStr = s.split(" ");
-        if(splitStr[0] === "around") {
+        if(splitStr[0] === "around" || splitStr[0] === "areund") {
             if(splitStr.length === 1) { return { type: "look", around: true, placeNum: -1 }; }
             splitStr.shift();
             if(splitStr[0] === "room") { splitStr.shift(); }

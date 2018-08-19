@@ -3,10 +3,10 @@ const maps = [
         name: "De Testbench!",
         img: `
 XXOVXPSXXXXXXXOUXXXX    OU = Food Delivery Area
-FP                DT    TT = Table
+FP                DT    TT = Table                  TC = Trash Can
 CB   1   TT   2   DD    DS = Potato Dispenser       DO = Onion Dispenser
 CB       TT       DS    DT = Tomato Dispenser       DM = Mushroom Dispenser
-XXXX   XXXXXXXXXXXXX    DD = Plate Dispenser        DP = Pepper Dispenser
+XXXX   XXXXXXXXXTCXX    DD = Plate Dispenser        DP = Pepper Dispenser
 DP       DM             DL = Lettuce Dispenser      DC = Cheese Dispenser
 DL   3   MB             FP = Frying Pan             Dd = Dough Dispenser
 DO       DC             PS = Pot on Stove           DM = Meat Dispenser
@@ -20,6 +20,7 @@ XXXXXXXXXXX             CB = Cutting Board
         ],
         items: [
             { type: "output", rooms: [1] },
+            { type: "trashcan", rooms: [1], size: 999, contents: [] },
             { type: "table", rooms: [0, 1], size: 4, contents: [] },
             { type: "dispenser", rooms: [1], dispensed: "potato", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "tomato", amount: 999 },

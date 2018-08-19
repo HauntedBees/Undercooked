@@ -20,7 +20,8 @@ module.exports = {
         }
         for(let i = 0; i < gameData.map.items.length; i++) {
             const place = gameData.map.items[i];
-            if(place.switchedOn) { place.cookingTime += 1; }
+            if(place.type === "trashcan") { place.contents = []; }
+            else if(place.switchedOn) { place.cookingTime += 1; }
         }
         if(gameData.secondsPlayed % 30 === 0) {
             const orders = gameData.map.potentialOrders;

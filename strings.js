@@ -96,5 +96,10 @@ ${t}`,
 * format: mix (bowl) (number)
 * examples: "mix bowl 2", "mix 1"
 * notes: number is not necessary if only one mixing bowl is in the room.
+
+< trash > - quickly toss whatever you're holding
+* format: trash item
+* examples: "trash burnt mess"
+* notes: shorthand for "put item in trash can 1."
 ${t}`
 }

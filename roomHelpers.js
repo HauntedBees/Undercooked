@@ -41,6 +41,7 @@ module.exports = {
     GetInspectionString: function(place, num, singular) {
         const formattedName = Food.FormatPlaceName(place.type, true);
         const opening = (singular ? "it" : (place.type === "floor" ? "the floor" : `${formattedName} ${num}`));
+        if(place.type === "trashcan") { return `${opening} is full of trash.`; }
         if(place.type === "dispenser") { return `${opening} has ${place.amount} ${place.dispensed}${place.amount === 1 ? "" : "s"} left in it.`; }
         if(place.contents === undefined) { return `${opening} definitely exists.`; }
 
