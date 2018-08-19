@@ -72,7 +72,7 @@ module.exports = {
                 const attempt = Room.TryPlateObjectOnPlace(relevantPlaces[i], actingUser.holding);
                 if(attempt === "ok") {
                     if(placeType === "") {
-                        gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${Food.FormatPlaceName(relevantPlaces[i].type)}!`); // EH: add number?
+                        gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${Food.FormatPlaceName(relevantPlaces[i].type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, relevantPlaces[i].type, i)}!`);
                     } else {
                         gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${i + 1}!`);
                     }
@@ -85,7 +85,6 @@ module.exports = {
     },
     Use: function(gameData, currentRoom, actingUser, action) {
         const objectDisplayName = Food.GetFoodDisplayNameFromAction(action);
-        //const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
         if(!GameHelper.HoldingCheck(gameData.discordHelper, actingUser, "use", action, objectDisplayName)) { return; }
         if(action.place === "stove") { action.place = "pot"; }
         const heldDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);
