@@ -48,6 +48,9 @@ const self = module.exports = {
         }
         return null;
     },
+    Holding: function(gameData, actingUser) {
+        gameData.discordHelper.SayP(`${actingUser.nick} is currently holding ${actingUser.holding === null ? "nothing" : Food.GetFoodDisplayNameFromObj(actingUser.holding)}.`);
+    },
     Who: function(gameData, currentRoom, actingUser, actingUserID, placeNum) {
         if(placeNum < 0) { placeNum = currentRoom + 1; }
         const internalRoomNum = placeNum - 1;

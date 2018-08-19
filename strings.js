@@ -94,12 +94,15 @@ ${t}`,
 < mix > - mix foods in a mixing bowl
 * synonyms: stir
 * format: mix (bowl) (number)
-* examples: "mix bowl 2", "mix 1"
+* examples: "mix bowl 2", "stir 1"
 * notes: number is not necessary if only one mixing bowl is in the room.
 
 < trash > - quickly toss whatever you're holding
 * format: trash item
 * examples: "trash burnt mess"
 * notes: shorthand for "put item in trash can 1."
+
+< holding > - check what you're currently holding
+* format: holding
 ${t}`
 }

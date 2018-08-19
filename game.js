@@ -45,6 +45,7 @@ module.exports = {
                 case "look": return Observers.Look(gameData, currentRoom, actingUser, action);
                 case "what": return Observers.What(gameData, actingUser, action.object);
                 case "who": return Observers.Who(gameData, currentRoom, actingUser, userID, action.placeNum);
+                case "holding": return Observers.Holding(gameData, actingUser);
                 case "grab": return Others.Grab(gameData, userID, action);
                 case "drop": return Others.Drop(gameData, userID, action);
                 case "move": return Others.Move(gameData, userID, action);

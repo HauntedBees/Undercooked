@@ -54,6 +54,7 @@ const self = module.exports = {
         if(firstWord === "who") { return self.Who(remainingWords); }
         if(firstWord === "what") { return self.What(remainingWords); }
         if(firstWord === "trash") { return self.Trash(remainingWords); }
+        if(firstWord === "holding" && splitWord.length === 1) { return { type: "holding" }; }
 
         return null;
     },
