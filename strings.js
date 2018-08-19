@@ -75,7 +75,7 @@ ${t}`,
 ${t}`,
     HELP3: `${t}md
 < look > - look at cooking equipment to see what's going on
-* synonyms: look, inspect, view, see
+* synonyms: look, inspect, view, see, check
 * format: "look around (room number)", "look (at) places" or "look (at) place number"
 * examples: "look around", "look around room 2", "inspect cutting board 1", "look at tables"
 * notes 1: this is only for cooking equipment and furniture, so things like "look at plates" or "look at tomato 2" won't work!

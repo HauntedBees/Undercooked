@@ -25,7 +25,7 @@ const serveVerbs = ["serve", "deliver", "provide", "supply"];
 const moveVerbs = ["walk", "move", "go"];
 const fryVerbs = ["fry", "sautee", "sauté", "sear", "brown", "sizzle"];
 const turnVerbs = ["turn", "switch", "flip"];
-const lookVerbs = ["look", "inspect", "view", "see"];
+const lookVerbs = ["look", "inspect", "view", "see", "check"];
 const findVerbs = ["find", "search", "locate", "hunt", "seek"];
 const mixVerbs = ["mix", "stir"];
 const self = module.exports = {

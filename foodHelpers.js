@@ -13,6 +13,10 @@ const recipeDisplayNames = {
     "fettucini": { displayName: "fettucini alfredo", recipe: "cook pasta dough and one or two cheese in a pot." },
     "spaghetti": { displayName: "spaghetti and meatballs", recipe: "cook pasta dough, tomato, and meat in a pot." },
     "macaroni": { displayName: "macaroni and cheese", recipe: "cook pasta dough and three cheese in a pot." },
+    "burntmess": { displayName: "burnt mess", recipe: "severely overcook anything in an oven." },
+    "weirdbake": { displayName: "weird baked dish", recipe: "add any ingredients to an oven and cook until ready." },
+    "aaaa": { displayName: "aaaa", recipe: "" },
+    "aaaa": { displayName: "aaaa", recipe: "" },
     "aaaa": { displayName: "aaaa", recipe: "" },
     "aaaa": { displayName: "aaaa", recipe: "" }
 };
@@ -76,13 +80,13 @@ const self = module.exports = {
     GetFoodDisplayNameFromAction: (action, ignorePlated) => self.GetFoodDisplayNameFromObj({ type: action.object, attributes: (action.objAttrs || []) }, ignorePlated || false),
     GetFoodDisplayNameFromObj: function(food, ignorePlated) {
         let name = food.type;
-        if(recipeDisplayNames[name] !== undefined) { name = recipeDisplayNames[name].displayName; }
+        if(recipeDisplayNames[name] !== undefined) { name = recipeDisplayNames[name].displayName; } // probably just sort and do it that way
         for(let i = 0; i < food.attributes.length; i++) {
             switch(food.attributes[i]) {
                 case "sliced": name = `chopped ${name}`; break;
                 case "plated": if(!ignorePlated) { name = `plated ${name}` }; break;
                 case "fried": name = `fried ${name}`; break;
-                case "cooked": name = `cooked ${name}`; break;
+                case "baked": name = `baked ${name}`; break;
             }
         }
         if("aeiou".indexOf(name[0]) >= 0) {
@@ -116,7 +120,7 @@ const self = module.exports = {
         return 0.25;
     },
 
-    AddAttribute: function(food, attr) { // sliced, plated, fried, cooked
+    AddAttribute: function(food, attr) { // sliced, plated, fried, baked
         if(food.attributes.indexOf(attr) >= 0) { return food; }
         food.attributes.push(attr);
         return self.TransformFood(food);
@@ -124,6 +128,7 @@ const self = module.exports = {
     TransformFood: function(food) {
         if(food.type === "pot") { return self.BoiledFoods(food); }
         if(food.type === "bowl") { return self.MixedFoods(food); }
+        if(food.type === "oven") { return self.BakedFoods(food); }
         if(food.type === "dough") {
             if(food.attributes.length === 1 && food.HasAttribute(food, "sliced")) {
                 return { type: "pastadough", modifier: food.modifier, attributes: [] };
@@ -135,6 +140,18 @@ const self = module.exports = {
             }
         }
         return food;
+    },
+    BakedFoods: function(oven) {
+        const ingredience = oven.contents;
+        if(oven.modifier <= 0.25 && oven.cookingTime > oven.cookRangeDetails.max) {
+            return { type: "burntmess", class: "garbage", modifier: 0.5 * newModifier, attributes: [] };
+        }
+        const newModifier = oven.modifier * self.AvgModifier(ingredience);
+        const sorted = self.GetSortedFoodStruct(ingredience);
+        if(sorted["potato"] === 1 & sorted["total"] === 1) {
+            return { type: "potato", modifier: newModifier, attributes: ["baked"] };
+        }
+        return { type: "weirdbake", class: "baked", modifier: newModifier, attributes: [] };
     },
     MixedFoods: function(bowl) {
         const ingredience = bowl.contents;

@@ -2,7 +2,7 @@ const maps = [
     {
         name: "De Testbench!",
         img: `
-XXXXXPSXXXXXXXOUXXXX    OU = Food Delivery Area
+XXOVXPSXXXXXXXOUXXXX    OU = Food Delivery Area
 FP                DT    TT = Table
 CB   1   TT   2   DD    DS = Potato Dispenser       DO = Onion Dispenser
 CB       TT       DS    DT = Tomato Dispenser       DM = Mushroom Dispenser
@@ -10,7 +10,7 @@ XXXX   XXXXXXXXXXXXX    DD = Plate Dispenser        DP = Pepper Dispenser
 DP       DM             DL = Lettuce Dispenser      DC = Cheese Dispenser
 DL   3   MB             FP = Frying Pan             Dd = Dough Dispenser
 DO       DC             PS = Pot on Stove           DM = Meat Dispenser
-DM       Dd             MB = Mixing Bowl
+DM       Dd             MB = Mixing Bowl            OV = Oven
 XXXXXXXXXXX             CB = Cutting Board
 `,
         rooms: [
@@ -36,6 +36,7 @@ XXXXXXXXXXX             CB = Cutting Board
             { type: "bowl", rooms: [2], size: 4, contents: [] },
             { type: "pan", rooms: [0], size: 1, contents: [] },
             { type: "pot", rooms: [0], switchedOn: false, size: 4, contents: [] },
+            { type: "oven", rooms: [0], switchedOn: false, size: 4, contents: [] },
             { type: "floor", rooms: [0], size: 999, contents: [] },
             { type: "floor", rooms: [1], size: 999, contents: [] },
             { type: "floor", rooms: [2], size: 999, contents: [] }
