@@ -1,6 +1,6 @@
 const Observers = require("./actionsObserve.js"), Cookers = require("./actionsCooking.js");
 const Maintainers = require("./actionsMaintenance.js"), Others = require("./actionsOther.js");
-const Food = require("./foodHelpers.js"), Strings = require("./strings.js");
+const Food = require("./foodHelpers.js"), Strings = require("./strings.js"), Room = require("./roomHelpers.js");
 module.exports = {
     ShowHelp: function(gameData) {
         gameData.discordHelper.Say(Strings.HELP1);
@@ -21,7 +21,13 @@ module.exports = {
         for(let i = 0; i < gameData.map.items.length; i++) {
             const place = gameData.map.items[i];
             if(place.type === "trashcan") { place.contents = []; }
-            else if(place.switchedOn) { place.cookingTime += 1; }
+            else if(place.switchedOn && !place.onFire) {
+                place.cookingTime += 1;
+                if(place.cookingTime >= place.burnTime) {
+                    place.onFire = true;
+                    gameData.discordHelper.SayM(`Oh yoink! ${Food.FormatPlaceName(place.type, true)} ${Room.GetPlaceNumber(gameData.map.items, place.rooms[0], place.type, i)} caught fire! Turn it off, then use a fire extinguisher to put out the fire!!`);
+                }
+            }
         }
         if(gameData.secondsPlayed % 30 === 0) {
             const orders = gameData.map.potentialOrders;

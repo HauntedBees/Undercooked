@@ -91,6 +91,7 @@ module.exports = {
             chosenPlace.modifier = 1;
             chosenPlace.cookingTime = 0;
             chosenPlace.cookRangeDetails = Food.GetCookTime(chosenPlace, gameData.gameSpeed);
+            chosenPlace.burnTime = chosenPlace.cookRangeDetails.time + chosenPlace.cookRangeDetails.range * 4;
             const newFood = Food.TransformFood(chosenPlace);
             gameData.discordHelper.SayP(`${actingUser.nick} turned ${action.displayPlace} ${placeNum + 1} on, and is now boiling ${Food.GetFoodDisplayNameFromObj(newFood)}!
 + It will be ready in ${chosenPlace.cookRangeDetails.time - chosenPlace.cookRangeDetails.range}-${chosenPlace.cookRangeDetails.time + chosenPlace.cookRangeDetails.range} seconds!`);

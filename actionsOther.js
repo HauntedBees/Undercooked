@@ -60,6 +60,9 @@ module.exports = {
                     actingUser.holding = null;
                     gameData.discordHelper.SayP(`${actingUser.nick} put ${heldDisplayName} ${onOrIn} ${specificPlace} ${action.placeNum}!`);
                     break;
+                case "onfire":
+                    gameData.discordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${specificPlace} ${action.placeNum}, but it's on fire! Use a fire extinguisher to put it out first!`);
+                    break;
                 case "full":
                     gameData.discordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${specificPlace} ${action.placeNum}, but there was no more room!`);
                     break;
@@ -80,12 +83,12 @@ module.exports = {
                     return;
                 }
             }
-            gameData.discordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${aPlace}, but there was no more room!`);
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${aPlace}, but there were none available!`);
         }
     },
     Grab: function(gameData, userID, action) { // TODO: maybe care about attributes
         const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
-        const objectDisplayName = Food.GetFoodDisplayNameFromAction(action);
+        const objectDisplayName = Food.GetFoodDisplayNameFromAction(action), objNoArticle = objectDisplayName.replace(/^an+ /, "");
         const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
         if(relevantPlaces.length === 0) {
@@ -97,6 +100,10 @@ module.exports = {
             const chosenPlace = relevantPlaces[action.placeNum - 1];
             if(chosenPlace === undefined) {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${specificPlace} ${action.placeNum}, but there are only ${relevantPlaces.length} of those!`);
+                return;
+            }
+            if(chosenPlace.onFire) {
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${specificPlace} ${action.placeNum}, but it's on fire! Use a fire extinguisher to put it out first!`);
                 return;
             }
             if(chosenPlace.switchedOn) {
@@ -112,8 +119,9 @@ module.exports = {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${specificPlace} ${action.placeNum}, but there was no ${action.object} there to grab!`);
             }
         } else {
-            let itemsOn = false;
+            let itemsOn = false, hasFires = false;
             for(let i = 0; i < relevantPlaces.length; i++) {
+                if(relevantPlaces[i].onFire) { hasFires = true; continue; }
                 if(relevantPlaces[i].switchedOn) { itemsOn = true; continue; }
                 const item = Room.TryTakeObjectFromPlace(relevantPlaces[i], action.object);
                 if(item !== null) {
@@ -122,11 +130,13 @@ module.exports = {
                     return;
                 }
             }
-            if(itemsOn) {
+            if(hasFires) {
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${aPlace}, but there was no ${objNoArticle} there to grab! And some of the ${specificPlace}s are on fire!`);
+            } else if(itemsOn) {
                 const type = specificPlace === "pot" ? "stove" : specificPlace;
-                gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${aPlace}, but the only ${action.object}s are in ${type}s that are turned on! Turn them off first!`);
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${aPlace}, but the only ${objNoArticle}s are in ${type}s that are turned on! Turn them off first!`);
             } else {
-                gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${aPlace}, but there was no ${action.object} there to grab!`);
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${aPlace}, but there was no ${objNoArticle} there to grab!`);
             }
         }
     }

@@ -60,6 +60,9 @@ module.exports = {
                 case "none":
                     gameData.discordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName} on ${specificPlace} ${action.placeNum}, but there was no plate there!`);
                     break;
+                case "onfire":
+                    gameData.discordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName} on ${specificPlace} ${action.placeNum}, but it's on fire! Use a fire extinguisher to put it out first!`);
+                    break;
                 case "invalid":
                     gameData.discordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName} on ${specificPlace} ${action.placeNum}, but you can't plate ${heldDisplayName} on ${aPlace}!!`);
                     break;
@@ -77,7 +80,7 @@ module.exports = {
                     return;
                 }
             }
-            gameData.discordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName}, but couldn't find any plates!`);
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName}, but couldn't find any available plates!`);
         }    
     }
 }
