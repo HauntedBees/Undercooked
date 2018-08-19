@@ -11,7 +11,10 @@ const synonyms = {
     "butcher board": "cuttingboard",
     "chopping block": "cuttingboard",
     "chopper": "cuttingboard",
-    "dish": "plate"
+    "dish": "plate",
+    "dishes": "plate",
+    "search for": "search",
+    "hunt for": "hunt"
 };
 const grabVerbs = ["grab", "take", "get", "acquire", "procure", "obtain"];
 const dropVerbs = ["drop", "put", "place", "plop", "set", "deposit", "position"];
@@ -21,6 +24,7 @@ const moveVerbs = ["walk", "move", "go"];
 const fryVerbs = ["fry", "sautee", "sauté", "sear", "brown", "sizzle"];
 const turnVerbs = ["turn", "switch", "flip"];
 const lookVerbs = ["look", "inspect", "view", "see"];
+const findVerbs = ["find", "search", "locate", "hunt", "seek"];
 const self = module.exports = {
     Parse: function(s) {
         if(s === "") { return null; }
@@ -40,10 +44,23 @@ const self = module.exports = {
         if(fryVerbs.indexOf(firstWord) >= 0) { return self.Fry(remainingWords); }
         if(turnVerbs.indexOf(firstWord) >= 0) { return self.Turn(remainingWords); }
         if(lookVerbs.indexOf(firstWord) >= 0) { return self.Look(remainingWords); }
+        if(findVerbs.indexOf(firstWord) >= 0) { return self.Find(remainingWords); }
         if(firstWord === "plate") { return self.Plate(remainingWords); }
         if(firstWord === "who") { return self.Who(remainingWords); }
 
         return null;
+    },
+    Find: function(s) { // ${obj} (in Room ${number}) OR {$obj} anywhere
+        const splitStr = s.split(" ");
+        const itemToFind = splitStr[0];
+        if(splitStr.length === 1) { return { type: "find", object: itemToFind, placeNum: -1 }; }
+        splitStr.shift();
+        if(splitStr[0] === "anywhere") { return { type: "find", object: itemToFind, all: true, placeNum: -1 }; }
+        if(splitStr[0] === "in") { splitStr.shift(); }
+        if(splitStr[0] === "room") { splitStr.shift(); }
+        const potentialNum = parseInt(splitStr[0]);
+        if(isNaN(potentialNum) || potentialNum <= 0) { return null; }
+        return { type: "find", object: itemToFind, placeNum: potentialNum };
     },
     Who: function(s) { // is here OR is in room $number
         const splitStr = s.split(" ");

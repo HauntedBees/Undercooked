@@ -1,6 +1,55 @@
 const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js");
 const DiscordHelper = require("./discordHelper.js");
 const self = module.exports = {
+    Find: function(gameData, currentRoom, actingUser, action) {
+        const roomNo = (action.placeNum < 0 ? currentRoom : (action.placeNum - 1));
+        const itemToFind = action.object, itemName = Food.GetFoodDisplayNameFromAction(action);
+        if(action.all) { // search every room
+            let found = self.FindInRoom(gameData.map, roomNo, itemToFind); // start with your room
+            if(found !== null) {
+                DiscordHelper.SayP(`${actingUser.nick} looked for ${itemName} and found one at ${found} in Room ${roomNo + 1}!`);
+                return;
+            }
+            for(let i = 0; i < gameData.map.rooms.length; i++) {
+                if(i === roomNo) { continue; } // don't search your room again!
+                found = self.FindInRoom(gameData.map, i, itemToFind);
+                if(found !== null) {
+                    DiscordHelper.SayP(`${actingUser.nick} looked for ${itemName} and found one at ${found} in Room ${i + 1}!`);
+                    return;
+                }
+            }
+            DiscordHelper.SayM(`${actingUser.nick} looked everywhere for ${itemName}, but found none! Check a dispenser!`);
+        } else {
+            const found = self.FindInRoom(gameData.map, roomNo, itemToFind);
+            if(found === null) {
+                DiscordHelper.SayM(`${actingUser.nick} looked for ${itemName} in Room ${roomNo + 1}, but found none! Check another room or a dispenser!`);
+            } else {
+                DiscordHelper.SayP(`${actingUser.nick} looked for ${itemName} in Room ${roomNo + 1} and found one at ${found}!`);
+            }
+        }
+    },
+    FindInRoom: function(map, roomNo, obj) {
+        const roomItems = Room.GetObjectsInRoom(map, roomNo);
+        roomItems.sort((a, b) => a.type.localeCompare(b.type));
+        let lastItemType = "", typeIter = 1;
+        for(let i = 0; i < roomItems.length; i++) {
+            const item = roomItems[i];
+            if(item.contents === undefined) { continue; }
+            if(item.type !== lastItemType) {
+                lastItemType = item.type;
+                typeIter = 1;
+            }
+            for(let j = 0; j < item.contents.length; j++) {
+                const food = item.contents[j];
+                if(food.type === obj) {
+                    if(item.type === "floor") { return "the floor"; }
+                    return `${Food.FormatPlaceName(item.type, true)} ${typeIter}`;
+                }
+            }
+            typeIter += 1;
+        }
+        return null;
+    },
     Who: function(gameData, currentRoom, actingUser, actingUserID, placeNum) {
         if(placeNum < 0) { placeNum = currentRoom + 1; }
         const internalRoomNum = placeNum - 1;
