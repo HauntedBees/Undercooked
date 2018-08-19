@@ -2,12 +2,23 @@ const CONSTS = require("./strings.js"), Server = require("./serverhelpers.js"), 
 const self = module.exports = {
     Init: function(gameData, channelID, userID, message) {
         if(message !== "INIT") { return; }
+        gameData.bot.sendMessage({ to: channelID, message: CONSTS.TITLE }, function(err) {
+            if(err === null) {
+                self.Init2(gameData, channelID, userID);
+            } else if(err.statusMessage !== "FORBIDDEN") { // don't initialize in blocked channels!
+                self.Init2(gameData, channelID, userID, true);
+            } else {
+                console.log(`Match in channel ${channelID} was not started due to insufficient permissions.`);
+            }
+        });
+    },
+    Init2: function(gameData, channelID, userID, tryTitleAgain) {
         gameData.channelID = channelID;
         gameData.serverID = gameData.bot.channels[channelID].guild_id;
         gameData.hostUserID = userID;
         gameData.hostUserName = Server.GetNickname(gameData.bot, gameData.serverID, userID);
         gameData.initialized = true;
-        gameData.discordHelper.Say(CONSTS.TITLE);
+        if(tryTitleAgain) { gameData.discordHelper.Say(CONSTS.TITLE); }
         gameData.discordHelper.SayP(`Current Settings -- Maximum Players: 4 -- Game Speed: Normal
 + Anyone can type "join" to join the next match or "leave" to leave it.
 + The host can type "!players #" to set the player count (valid values are 2-100).

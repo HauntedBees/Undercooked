@@ -1,7 +1,7 @@
 const IDtoNicknameMappings = {};
 module.exports = {
     GetNickname: function(bot, serverID, userID) {
-        if(IDtoNicknameMappings[userID] !== undefined) { console.log("already there!"); return IDtoNicknameMappings[userID]; }
+        if(IDtoNicknameMappings[userID] !== undefined) { return IDtoNicknameMappings[userID]; }
         let nick = bot.servers[serverID].members[userID].nick;
         if(nick === null) {
             nick = bot.users[userID].username;
