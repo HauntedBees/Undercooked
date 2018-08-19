@@ -79,8 +79,8 @@ ${t}`,
 
 < turn > - turn an oven or stove on
 * synonyms: switch, flip
-* format: turn item (number) on/off
-* examples: "turn stove on", "switch oven 2 off"
+* format: "turn on/off item (number)" or turn item (number) on/off"
+* examples: "turn on stove", "switch oven 2 off"
 * notes 1: number is only optional if there is only one of that item in the room.
 * notes 2: stoves are linked to pots. if you put items in "pot 2" then to cook the food in that pot, you'd type "turn stove 2 on."
 * notes 3: ovens and stoves do not need to be preheated or cleaned. pots do not need to be filled with water.

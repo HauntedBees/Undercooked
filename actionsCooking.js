@@ -79,6 +79,10 @@ module.exports = {
         }
         const placeNum = action.placeNum < 0 ? 0 : (action.placeNum - 1);
         const chosenPlace = relevantPlaces[placeNum];
+        if(chosenPlace === undefined) {
+            DiscordHelper.SayM(`${actingUser.nick} tried to turn ${action.switchType} ${action.displayPlace} ${action.placeNum}, but there are only ${relevantPlaces.length} of those!`);
+            return false;
+        }
         if(chosenPlace.switchedOn && action.switchType === "on") { return DiscordHelper.SayM(`${actingUser.nick} tried to turn on ${action.displayPlace} ${placeNum + 1}, but it's already on!`); }
         if(!chosenPlace.switchedOn && action.switchType === "off") { return DiscordHelper.SayM(`${actingUser.nick} tried to turn off ${action.displayPlace} ${placeNum + 1}, but it's already off!`); }
         if(chosenPlace.contents.length === 0 && !chosenPlace.switchedOn) { return DiscordHelper.SayM(`${actingUser.nick} tried to turn on ${action.displayPlace} ${placeNum + 1}, but it's empty! Put some food in it before turning it on!`); }

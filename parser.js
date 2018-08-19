@@ -84,17 +84,20 @@ const self = module.exports = {
         }
         return null;
     },
-    Turn: function(s) { // ${obj} (${optional_number}) ${on_off}
+    Turn: function(s) { // ${obj} (${optional_number}) ${on_off} OR ${on_off} ${obj} (${optional_number})
         const splitStr = s.split(" ");
-        const place = splitStr[0];
+
+        const reverseOrder = (["on", "off"].indexOf(splitStr[0]) >= 0);
+        
+        const place = splitStr[reverseOrder ? 1 : 0];
         if(["oven", "stove"].indexOf(place) < 0) { return null; }
         let placeNum = -1;
-        let potentialPlaceNum = parseInt(splitStr[1]);
+        let potentialPlaceNum = parseInt(splitStr[reverseOrder ? 2 : 1]);
         if(!isNaN(potentialPlaceNum)) {
             placeNum = potentialPlaceNum;
             if(placeNum <= 0) { return null; }
         }
-        const switchType = splitStr[placeNum > 0 ? 2 : 1];
+        const switchType = splitStr[reverseOrder ? 0 : (placeNum > 0 ? 2 : 1)];
         if(["on", "off"].indexOf(switchType) < 0) { return null; }
         return {
             type: "turn", displayPlace: place, 
