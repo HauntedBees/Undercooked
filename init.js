@@ -1,5 +1,15 @@
-const CONSTS = require("./strings.js"), Server = require("./serverhelpers.js"), Map = require("./maps.js");
+const CONSTS = require("./strings.js"), Map = require("./maps.js");
+const IDtoNicknameMappings = {};
 const self = module.exports = {
+    GetNickname: function(bot, serverID, userID) {
+        if(IDtoNicknameMappings[userID] !== undefined) { return IDtoNicknameMappings[userID]; }
+        let nick = bot.servers[serverID].members[userID].nick;
+        if(nick === null) {
+            nick = bot.users[userID].username;
+        }
+        IDtoNicknameMappings[userID] = nick;
+        return nick;
+    },
     Init: function(gameData, channelID, userID, message) {
         if(message !== "INIT") { return; }
         gameData.bot.sendMessage({ to: channelID, message: CONSTS.TITLE }, function(err) {
@@ -16,7 +26,7 @@ const self = module.exports = {
         gameData.channelID = channelID;
         gameData.serverID = gameData.bot.channels[channelID].guild_id;
         gameData.hostUserID = userID;
-        gameData.hostUserName = Server.GetNickname(gameData.bot, gameData.serverID, userID);
+        gameData.hostUserName = self.GetNickname(gameData.bot, gameData.serverID, userID);
         gameData.initialized = true;
         if(tryTitleAgain) { gameData.discordHelper.Say(CONSTS.TITLE); }
         gameData.discordHelper.SayP(`Current Settings -- Maximum Players: 4 -- Game Speed: Normal
@@ -33,12 +43,12 @@ const self = module.exports = {
         if(message === "who") {
             const users = [];
             for(let i = 0; i < gameData.players.length; i++) {
-                users.push(Server.GetNickname(gameData.bot, gameData.serverID, gameData.players[i]));
+                users.push(self.GetNickname(gameData.bot, gameData.serverID, gameData.players[i]));
             }
             gameData.discordHelper.SayP(`Current Players are: ${users.join(", ")}.`);
             return;
         }
-        const user = Server.GetNickname(gameData.bot, gameData.serverID, userID);
+        const user = self.GetNickname(gameData.bot, gameData.serverID, userID);
         if(message === "join") {
             if(gameData.players.indexOf(userID) >= 0) { return; }
             if(gameData.players.length >= gameData.numPlayers) {
@@ -96,7 +106,7 @@ const self = module.exports = {
             for(let i = 0; i < gameData.players.length; i++) {
                 const playerId = gameData.players[i];
                 const playerRoom = i % numRooms;
-                const playerNick = Server.GetNickname(gameData.bot, gameData.serverID, playerId);
+                const playerNick = self.GetNickname(gameData.bot, gameData.serverID, playerId);
                 gameData.playerDetails[playerId] = {
                     nick: playerNick, 
                     room: playerRoom,
@@ -111,8 +121,14 @@ ${gameData.map.img}
 `;
             for(let i = 0; i < roomsArray.length; i++) {
                 const peopleInRoom = roomsArray[i];
-                informationStr += `+ ${Server.GetListStringFromArray(peopleInRoom)} ${peopleInRoom.length === 1 ? "is" : "are"} in Room ${i + 1}.
-`;
+                let peopleName = "";
+                if(peopleInRoom.length === 1) { peopleName = peopleInRoom[0]; }
+                else if(peopleInRoom.length === 2) { peopleName = `${peopleInRoom[0]} and ${peopleInRoom[1]}`; }
+                else {
+                    const lastElement = peopleInRoom.splice(-1, 1)[0];
+                    peopleName = `${peopleInRoom.join(", ")}, and ${lastElement}`;
+                }
+                informationStr += `+ ${peopleName} ${peopleInRoom.length === 1 ? "is" : "are"} in Room ${i + 1}.\n`;
             }
             informationStr += `+ Bone Apple Tea!`;
             gameData.discordHelper.SayP(informationStr);
