@@ -1,7 +1,6 @@
 const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js"), GameHelper = require("./gameHelpers.js");
 module.exports = {
-    Fry: function(gameData, userID, action) {
-        const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
+    Fry: function(gameData, currentRoom, actingUser, action) {
         const objectDisplayName = Food.GetFoodDisplayNameFromAction(action);
         if(!GameHelper.EmptyHandsCheck(gameData.discordHelper, actingUser, "fry", objectDisplayName)) { return; }
        
@@ -34,8 +33,7 @@ module.exports = {
             gameData.discordHelper.SayM(`${actingUser.nick} tried to fry ${objectDisplayName}, but none of the frying pans had ${objectDisplayName} that needed frying on them!`);
         }
     },
-    Chop: function(gameData, userID, action) {
-        const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
+    Chop: function(gameData, currentRoom, actingUser, action) {
         const objectDisplayName = Food.GetFoodDisplayNameFromAction(action);
         if(!GameHelper.EmptyHandsCheck(gameData.discordHelper, actingUser, "chop", objectDisplayName)) { return; }
         
@@ -68,8 +66,7 @@ module.exports = {
             gameData.discordHelper.SayM(`${actingUser.nick} tried to chop ${objectDisplayName}, but none of the cutting boards had ${objectDisplayName} that needed chopping on them!`);
         }
     },
-    Turn: function(gameData, userID, action) {
-        const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
+    Turn: function(gameData, currentRoom, actingUser, action) {
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
         if(!GameHelper.NoPlacesCheck(gameData.discordHelper, actingUser, relevantPlaces, `turn ${action.switchType}`, action.displayPlace)) { return; }
         if(action.placeNum < 0 && relevantPlaces.length > 1) {

@@ -1,14 +1,13 @@
 const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js"), Maintainers = require("./actionsMaintenance.js"), GameHelper = require("./gameHelpers.js");
 module.exports = {
-    Move: function(gameData, userID, action) {
-        const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
+    Move: function(gameData, currentRoom, actingUser, action) {
         if(action.direction !== undefined) { // trying to move in a specific direction
             const nextRoom = gameData.map.rooms[currentRoom][action.direction];
             if(nextRoom === undefined) {
                 gameData.discordHelper.SayM(`${actingUser.nick} walked ${action.direction}, and successfully walked into a wall!`);
                 return;
             }
-            gameData.playerDetails[userID].room = nextRoom;
+            actingUser.room = nextRoom;
             gameData.discordHelper.SayP(`${actingUser.nick} walked ${action.direction} from room ${currentRoom + 1} to room ${nextRoom + 1}!`);
         } else { // trying to move to a specific room
             if(currentRoom === action.roomNo) {
@@ -18,7 +17,7 @@ module.exports = {
             const potentialRooms = gameData.map.rooms[currentRoom];
             for(const direction in potentialRooms) {
                 if(potentialRooms[direction] === action.roomNo) {
-                    gameData.playerDetails[userID].room = action.roomNo;
+                    actingUser.room = action.roomNo;
                     gameData.discordHelper.SayP(`${actingUser.nick} walked ${direction} from room ${currentRoom + 1} to room ${action.roomNo + 1}!`);
                     return;
                 }
@@ -82,8 +81,7 @@ module.exports = {
             gameData.discordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${aPlace}, but there were none available!`);
         }
     },
-    Grab: function(gameData, userID, action) { // TODO: maybe care about attributes
-        const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
+    Grab: function(gameData, currentRoom, actingUser, action) { // TODO: maybe care about attributes
         const objectDisplayName = Food.GetFoodDisplayNameFromAction(action), objNoArticle = objectDisplayName.replace(/^an? /, "");
         const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);

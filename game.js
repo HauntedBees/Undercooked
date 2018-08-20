@@ -62,18 +62,18 @@ module.exports = {
                 case "serve": return Maintainers.Serve(gameData, currentRoom, actingUser);
                 case "use": return Maintainers.Use(gameData, currentRoom, actingUser, action);
                 case "wash": return Maintainers.Wash(gameData, currentRoom, actingUser);
-                case "chop": return Cookers.Chop(gameData, userID, action);
-                case "fry": return Cookers.Fry(gameData, userID, action);
-                case "turn": return Cookers.Turn(gameData, userID, action);
+                case "chop": return Cookers.Chop(gameData, currentRoom, actingUser, action);
+                case "fry": return Cookers.Fry(gameData, currentRoom, actingUser, action);
+                case "turn": return Cookers.Turn(gameData, currentRoom, actingUser, action);
                 case "mix": return Cookers.Mix(gameData, currentRoom, actingUser, action);
                 case "find": return Observers.Find(gameData, currentRoom, actingUser, action);
                 case "look": return Observers.Look(gameData, currentRoom, actingUser, action);
                 case "what": return Observers.What(gameData, actingUser, action.object);
                 case "who": return Observers.Who(gameData, currentRoom, actingUser, userID, action.placeNum);
                 case "holding": return Observers.Holding(gameData, actingUser);
-                case "grab": return Others.Grab(gameData, userID, action);
+                case "grab": return Others.Grab(gameData, currentRoom, actingUser, action);
                 case "drop": return Others.Drop(gameData, currentRoom, actingUser, action);
-                case "move": return Others.Move(gameData, userID, action);
+                case "move": return Others.Move(gameData, currentRoom, actingUser, action);
                 case "throw": return Others.Throw(gameData, currentRoom, actingUser, action.to);
             }
         } catch(e) {
