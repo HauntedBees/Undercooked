@@ -170,7 +170,7 @@ const self = module.exports = {
         const reverseOrder = (["on", "off"].indexOf(splitStr[0]) >= 0);
         
         const place = splitStr[reverseOrder ? 1 : 0];
-        if(["oven", "stove"].indexOf(place) < 0) { return null; }
+        if(["oven", "stove", "o", "s"].indexOf(place) < 0) { return null; }
         let placeNum = -1;
         let potentialPlaceNum = parseInt(splitStr[reverseOrder ? 2 : 1]);
         if(!isNaN(potentialPlaceNum)) {
@@ -180,8 +180,8 @@ const self = module.exports = {
         const switchType = splitStr[reverseOrder ? 0 : (placeNum > 0 ? 2 : 1)];
         if(["on", "off"].indexOf(switchType) < 0) { return null; }
         return {
-            type: "turn", displayPlace: place, 
-            place: (place === "stove" ? "pot" : place), placeNum: placeNum,
+            type: "turn", displayPlace: (place === "s" ? "stove" : (place === "o" ? "oven" : place)), 
+            place: (place === "stove" || place === "s" ? "pot" : place), placeNum: placeNum,
             switchType: switchType
         }
     },

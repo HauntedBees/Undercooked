@@ -23,7 +23,7 @@ Say <INIT> to become the host. After that, follow the prompts to select the numb
 
 How do I play?
 ---------------
-Well, as a reminder, you can say <!HELP> at any time to see this message again! Once the game is started, only people actually playing the game can do this.
+You can type "!HELP" at any time to see this message again! Once the game is started, only people actually playing the game can do this.
 
 The following commands are available to you. For more information on how to use them, type "!HELP [action name]" at any time.
 
@@ -143,6 +143,17 @@ ${t}`,
 * notes 3: please refer to the user by their server nickname, or username if they do not have one. tagging the user with @handle will also work.`,
         "trash": `< trash > - quickly toss whatever you're holding
 * format: trash
-* notes: shorthand for "put in trash can 1."`
+* notes: shorthand for "put in trash can 1."`,
+        "shortcuts": `The following letters can be used instead of full names for places:
+- b: conveyor (b)elt
+- c: (c)utting board
+- d: (d)ispenser
+- f: (f)rying pan
+- m: (m)ixing bowl
+- o: (o)ven
+- p: (p)ot
+- s: (s)tove
+- t: (t)able
++ For example, you can type "grab tomato from t 2" instead of "grab tomato from table 2."`
     }
 }

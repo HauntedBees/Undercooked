@@ -1,7 +1,7 @@
 const Observers = require("./actionsObserve.js"), Cookers = require("./actionsCooking.js");
 const Maintainers = require("./actionsMaintenance.js"), Others = require("./actionsOther.js");
 const Food = require("./foodHelpers.js"), Strings = require("./strings.js"), Room = require("./roomHelpers.js");
-module.exports = {
+const self = module.exports = {
     ShowHelp: function(gameData, message) {
         const trimmed = message.replace(/^!HELP\s?/, "");
         if(trimmed === "") {
@@ -65,6 +65,7 @@ module.exports = {
                 return;
             }
             if(Room.TrySlipOnFloor(gameData, actingUser, action.type)) { return; }
+            if(action.place !== undefined) { action.place = self.GetExpandedPlaceName(action.place); }
             switch(action.type) {
                 case "plate": return Maintainers.Plate(gameData, currentRoom, actingUser, action);
                 case "serve": return Maintainers.Serve(gameData, currentRoom, actingUser);
@@ -89,5 +90,18 @@ module.exports = {
             gameData.discordHelper.SayM(`Something broke but we're all good. I recovered. I'm a big boy. We got this. We're good.`);
         }
     },
-    
+    GetExpandedPlaceName: function(place) {
+        switch(place) {
+            case "b": return "belt";
+            case "c": return "cuttingboard";
+            case "d": return "dispenser";
+            case "f": return "pan";
+            case "m": return "bowl";
+            case "o": return "oven";
+            case "p": return "pot";
+            case "s": return "stove";
+            case "t": return "table";
+            default: return place;
+        }
+    }
 };
