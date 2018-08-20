@@ -63,6 +63,7 @@ const self = module.exports = {
         else if(placeName === "pan") { placeName = "frying pan"; }
         else if(placeName === "bowl") { placeName = "mixing bowl"; }
         else if(placeName === "belt") { placeName = "conveyor belt"; }
+        else if(placeName === "trashcan") { placeName = "trash can"; }
         if(noAorAn) { return placeName; }
 
         if("aeiou".indexOf(placeName[0]) >= 0) { return `an ${placeName}`; }
