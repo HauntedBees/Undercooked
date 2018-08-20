@@ -50,6 +50,7 @@ module.exports = {
         for(let i = 0; i < contents.length; i++) {
             const itemInfo = contents[i];
             if(itemInfo.type !== "plate") { continue; }
+            if(Food.HasAttribute(itemInfo, "dirty")) { continue; }
             contents.splice(i, 1);
             obj.attributes.push("plated");
             contents.push(obj);
