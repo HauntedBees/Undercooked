@@ -122,6 +122,6 @@ ${t}`,
 * examples: "throw to ellen", "chuck at craig"
 * notes 1: if the player isn't in the same room, or a neighboring room, the item will land on the floor of your room.
 * notes 2: if the player's hands are full, the item will land on the floor of their room.
-* notes 3: please refer to the user by their server nickname, or username if they do not have one. do not @-tag them.
+* notes 3: please refer to the user by their server nickname, or username if they do not have one. tagging the user with @handle will also work.
 ${t}`
 }

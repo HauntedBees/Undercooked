@@ -137,6 +137,9 @@ module.exports = {
         }
     },
     Throw: function(gameData, currentRoom, actingUser, target) {
+        if(target.indexOf("<@") === 0) { // @-tagged users are in the format of <@userID> (technically <@!userID> but we strip exclamation points out of messages)
+            target = gameData.playerDetails[target.replace("<@", "").replace(">", "")].nick.toLowerCase();
+        }
         if(actingUser.holding === null) {
             gameData.discordHelper.SayM(`${actingUser.nick} tried to throw something to ${target}, but they aren't holding anything!`);
             return false;
