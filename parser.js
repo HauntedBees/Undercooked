@@ -43,27 +43,30 @@ const self = module.exports = {
         s = Food.FlattenFoodNames(s);
 
         const splitWord = s.split(" ");
-        const firstWord = splitWord[0], remainingWords = s.substring(s.indexOf(" ") + 1);
-        
-        if(remainingWords === "") { return null; } // EH: order these in likelihood of usage, since obviously the speed of comparing a few dozen strings is a big fucking bottleneck 
-        if(grabVerbs.indexOf(firstWord) >= 0) { return self.Grab(remainingWords); }
+        const firstWord = splitWord[0];
+        const remainingWords = splitWord.length === 1 ? "" : s.substring(s.indexOf(" ") + 1);
+
+        // verbs that don't need anything after the verb itself
+        if(firstWord === "use") { return self.Use(remainingWords); }
+        if(firstWord === "plate") { return self.Plate(remainingWords); }
+        if(firstWord === "trash") { return { type: "drop", place: "trashcan", placeNum: 1 }; }
+        if(firstWord === "holding") { return { type: "holding" }; }
         if(dropVerbs.indexOf(firstWord) >= 0) { return self.Drop(remainingWords); }
-        if(chopVerbs.indexOf(firstWord) >= 0) { return self.Chop(remainingWords); }
         if(serveVerbs.indexOf(firstWord) >= 0) { return self.Serve(remainingWords); }
+        if(mixVerbs.indexOf(firstWord) >= 0) { return self.Mix(remainingWords); }
+
+        if(remainingWords === "") { return null; }
+        if(grabVerbs.indexOf(firstWord) >= 0) { return self.Grab(remainingWords); }
+        if(chopVerbs.indexOf(firstWord) >= 0) { return self.Chop(remainingWords); }
         if(moveVerbs.indexOf(firstWord) >= 0) { return self.Move(remainingWords); }
         if(fryVerbs.indexOf(firstWord) >= 0) { return self.Fry(remainingWords); }
         if(turnVerbs.indexOf(firstWord) >= 0) { return self.Turn(remainingWords); }
         if(lookVerbs.indexOf(firstWord) >= 0) { return self.Look(remainingWords); }
         if(findVerbs.indexOf(firstWord) >= 0) { return self.Find(remainingWords); }
-        if(mixVerbs.indexOf(firstWord) >= 0) { return self.Mix(remainingWords); }
         if(throwVerbs.indexOf(firstWord) >= 0) { return self.Throw(remainingWords); }
         if(washVerbs.indexOf(firstWord) >= 0) { return { type: "wash" }; }
-        if(firstWord === "plate") { return self.Plate(remainingWords); }
         if(firstWord === "who") { return self.Who(remainingWords); }
-        if(firstWord === "use") { return self.Use(remainingWords); }
         if(firstWord === "what") { return self.What(remainingWords); }
-        if(firstWord === "trash") { return self.Trash(remainingWords); }
-        if(firstWord === "holding" && splitWord.length === 1) { return { type: "holding" }; }
 
         return null;
     },
@@ -72,16 +75,10 @@ const self = module.exports = {
         if(splitStr[0] === "to" || splitStr[0] === "at") { splitStr.shift(); }
         return { type: "throw", to: splitStr.join(" ") };
     },
-    Use: function(s) { // ${obj} on ${place} ${optional_number}
+    Use: function(s) { // (on ${place} ${optional_number})
         const splitStr = s.split(" ");
-        const objectName = splitStr[0];
-        if(splitStr.length === 1) {
-            return {
-                type: "use",
-                object: objectName,
-                place: "", placeNum: -1
-            }
-        }
+        if(splitStr.length === 1 && splitStr[0] === "") { return { type: "use", place: "", placeNum: -1 } }
+        
         if(splitStr.length < 3) { return null; }
         const placeName = splitStr[2];
         let placeNum = -1;
@@ -94,21 +91,13 @@ const self = module.exports = {
         }
         return {
             type: "use",
-            object: objectName,
             place: placeName, placeNum: placeNum
-        }
-    },
-    Trash: function(s) { // ${obj}
-        return {
-            type: "drop",
-            object: s, 
-            place: "trashcan", placeNum: 1
         }
     },
     Mix: function(s) { // (bowl) {$optional_number}
         const splitStr = s.split(" ");
         if(splitStr[0] === "bowl") { splitStr.shift(); }
-        if(splitStr.length === 0) { return { type: "mix", placeNum: 1 }; }
+        if(splitStr.length === 1 && splitStr[0] === "") { return { type: "mix", placeNum: 1 }; }
         if(splitStr.length !== 1) { return null; }
         const placeNum = parseInt(splitStr[0]);
         if(isNaN(placeNum) || placeNum <= 0) { return null; }
@@ -218,7 +207,7 @@ const self = module.exports = {
             place: "pan", placeNum: placeNum
         }
     },
-    Move: function(s) { // (to room ${number}) or (${direction})
+    Move: function(s) { // to room ${number} or ${direction}
         const splitStr = s.split(" ");
         if(splitStr.length === 1) { // direction
             const direction = splitStr[0].replace("east", "right").replace("west", "left").replace("north", "up").replace("south", "down");
@@ -234,33 +223,21 @@ const self = module.exports = {
         if(splitStr.length !== 1) { return null; }
         return { type: "serve", object: splitStr[0] }
     },
-    Plate: function(s) { // ${obj} (on ${place} {$optional_number}) -- if inner area is omitted, any plate
-        const info = self.FormatObjectName(s); // attributes don't matter since it's based on what you're holding anyway
-        if(info.invalid) { return; }
-        const splitStr = info.newStr.split(" ");
-        if(splitStr.length === 1) {
-            return {
-                type: "plate",
-                object: splitStr[0],
-                place: "", placeNum: -1
-            }
-        }
-        if(splitStr.length < 3) { return null; }
-        const objectName = splitStr[0];
-        const placeName = splitStr[2];
+    Plate: function(s) { // (on ${place} {$optional_number}) -- if inner area is omitted, any plate
+        const splitStr = s.split(" ");
+        if(splitStr.length === 1 && splitStr[0] === "") { return { type: "plate", place: "", placeNum: -1 } }
+
+        if(splitStr[0] === "on" || splitStr[0] === "in") { splitStr.shift(); }
+        const placeName = splitStr[0];
         let placeNum = -1;
-        if(splitStr[3] !== undefined) {
-            const potentialPlaceNum = parseInt(splitStr[3]);
+        if(splitStr[1] !== undefined) {
+            const potentialPlaceNum = parseInt(splitStr[1]);
             if(!isNaN(potentialPlaceNum)) {
                 placeNum = potentialPlaceNum;
-                if(placeNum <= 0) { return null; } // "plate tomato on table -1" isn't valid
+                if(placeNum <= 0) { return null; }
             }
         }
-        return {
-            type: "plate",
-            object: objectName, 
-            place: placeName, placeNum: placeNum
-        }
+        return { type: "plate", place: placeName, placeNum: placeNum }
     },
     Chop: function(s) { // ${obj} ({$optional_number})
         const info = self.FormatObjectName(s);
@@ -286,33 +263,21 @@ const self = module.exports = {
             place: "cuttingboard", placeNum: placeNum
         }
     },
-    Drop: function(s) { // ${obj} (on ${place} {$optional_number}) -- if inner area is omitted, assume floor 
-        const info = self.FormatObjectName(s); // attributes don't matter since it's based on what you're holding anyway
-        if(info.invalid) { return; }
-        const splitStr = info.newStr.split(" ");
-        if(splitStr.length === 1) {
-            return {
-                type: "drop",
-                object: splitStr[0],
-                place: "floor", placeNum: 0
-            }
-        }
-        if(splitStr.length < 3) { return null; }
-        const objectName = splitStr[0];
-        const placeName = splitStr[2];
+    Drop: function(s) { // (on ${place} {$optional_number}) -- if inner area is omitted, assume floor 
+        const splitStr = s.split(" ");
+        if(splitStr.length === 1 && splitStr[0] === "") { return { type: "drop", place: "floor", placeNum: 1 } }
+        
+        if(splitStr[0] === "on" || splitStr[0] === "in") { splitStr.shift(); }
+        const placeName = splitStr[0];
         let placeNum = -1;
-        if(splitStr[3] !== undefined) {
-            const potentialPlaceNum = parseInt(splitStr[3]);
+        if(splitStr[1] !== undefined) {
+            const potentialPlaceNum = parseInt(splitStr[1]);
             if(!isNaN(potentialPlaceNum)) {
                 placeNum = potentialPlaceNum;
                 if(placeNum <= 0) { return null; }
             }
         }
-        return {
-            type: "drop",
-            object: objectName, 
-            place: placeName, placeNum: placeNum
-        }
+        return { type: "drop", place: placeName, placeNum: placeNum }
     },
     Grab: function(s) { // ${obj} from ${place} ${optional_number}
         const info = self.FormatObjectName(s);

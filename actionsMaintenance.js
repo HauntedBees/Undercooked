@@ -1,10 +1,11 @@
 const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js"), GameHelper = require("./gameHelpers.js");
 module.exports = {
-    Serve: function(gameData, userID, action) {
-        const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
-        const objectDisplayName = Food.GetFoodDisplayNameFromAction(action, true);
-        if(!GameHelper.HoldingCheck(gameData.discordHelper, actingUser, "serve", action, objectDisplayName)) { return; }
-        
+    Serve: function(gameData, currentRoom, actingUser) {
+        if(actingUser.holding === null) {
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to serve some food, but they aren't holding anything!`);
+            return false;
+        }
+        const objectDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding, true);
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "output");
         if(!GameHelper.NoPlacesCheck(gameData.discordHelper, actingUser, relevantPlaces, "serve", "serving area")) { return; }
         
@@ -12,20 +13,24 @@ module.exports = {
         for(let i = 0; i < orders.length; i++) {
             const order = orders[i];
             if(Food.DoesFoodMatchOrder(actingUser.holding, order)) {
-                gameData.discordHelper.SayP(`${actingUser.nick} served ${Food.GetFoodDisplayNameFromObj(actingUser.holding, true)} and earned $${order.score}!`);
+                gameData.discordHelper.SayP(`${actingUser.nick} served ${objectDisplayName} and earned $${order.score}!`);
                 gameData.score += order.score;
                 actingUser.holding = null;
                 orders.splice(i, 1);
                 return;
+            } else if(!Food.HasAttribute(actingUser.holding, "plated")) {
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to serve ${objectDisplayName}, but it needs to be plated first!`);
             }
         }
         gameData.discordHelper.SayM(`${actingUser.nick} tried to serve ${objectDisplayName}, but nobody ordered that!`);
     },
-    Plate: function(gameData, userID, action) {
-        const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
-        const objectDisplayName = Food.GetFoodDisplayNameFromAction(action);
+    Plate: function(gameData, currentRoom, actingUser, action) {
+        if(actingUser.holding === null) {
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to plate something, but they aren't holding anything!`);
+            return false;
+        }
+        const objectDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);//Food.GetFoodDisplayNameFromAction(action);
         const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
-        if(!GameHelper.HoldingCheck(gameData.discordHelper, actingUser, "plate", action, objectDisplayName)) { return; }
         
         const heldDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);
         if(actingUser.holding.type === "plate") { return gameData.discordHelper.SayM(`${actingUser.nick} tried to plate a plate! Why would you do that? What is your goal here?!`); }
@@ -84,13 +89,15 @@ module.exports = {
         }    
     },
     Use: function(gameData, currentRoom, actingUser, action) {
-        const objectDisplayName = Food.GetFoodDisplayNameFromAction(action);
-        if(!GameHelper.HoldingCheck(gameData.discordHelper, actingUser, "use", action, objectDisplayName)) { return; }
+        if(actingUser.holding === null) {
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to use something, but they aren't holding anything!`);
+            return false;
+        }
         if(action.place === "stove") { action.place = "pot"; }
         const heldDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);
         const heldTheirDisplayName = heldDisplayName.replace(/^an? /, "their ");
         const relevantPlaces = (action.place === "") ? Room.GetObjectsInRoom(gameData.map, currentRoom) : Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
-        if(action.object === "extinguisher") {
+        if(actingUser.holding.type === "extinguisher") {
             if(action.placeNum > 0) {
                 const chosenPlace = relevantPlaces[action.placeNum - 1];
                 if(!chosenPlace.onFire) {

@@ -58,8 +58,8 @@ module.exports = {
                 return;
             }
             switch(action.type) {
-                case "plate": return Maintainers.Plate(gameData, userID, action);
-                case "serve": return Maintainers.Serve(gameData, userID, action);
+                case "plate": return Maintainers.Plate(gameData, currentRoom, actingUser, action);
+                case "serve": return Maintainers.Serve(gameData, currentRoom, actingUser);
                 case "use": return Maintainers.Use(gameData, currentRoom, actingUser, action);
                 case "wash": return Maintainers.Wash(gameData, currentRoom, actingUser);
                 case "chop": return Cookers.Chop(gameData, userID, action);
@@ -72,7 +72,7 @@ module.exports = {
                 case "who": return Observers.Who(gameData, currentRoom, actingUser, userID, action.placeNum);
                 case "holding": return Observers.Holding(gameData, actingUser);
                 case "grab": return Others.Grab(gameData, userID, action);
-                case "drop": return Others.Drop(gameData, userID, action);
+                case "drop": return Others.Drop(gameData, currentRoom, actingUser, action);
                 case "move": return Others.Move(gameData, userID, action);
                 case "throw": return Others.Throw(gameData, currentRoom, actingUser, action.to);
             }

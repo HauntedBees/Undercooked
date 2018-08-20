@@ -31,11 +31,11 @@ The following commands are available to you:
 * format: grab item from place (number)
 * examples: "grab tomato from dispenser", "take tomato from table 2"
 
-< drop > - put down an item
+< drop > - put down whatever you're currently holding item
 * synonyms: put, place, plop, set, deposit, position
-* format: put item on place (number)
-* examples: "put tomato on cutting board 1", "drop tomato on table"
-* notes: you can just write "drop tomato" to put it on the floor - anyone else in the room can pick it up then! items on the floor may be trampled, though.
+* format: put on place (number)
+* examples: "put on cutting board 1", "drop on table"
+* notes: you can just write "drop" to put it on the floor - anyone else in the room can pick it up then! items on the floor may be trampled, though.
 ${t}`,
     HELP2: `${t}md
 < chop > - cut an item that's on a cutting board
@@ -44,15 +44,15 @@ ${t}`,
 * examples: "chop tomato", "cut potato 2"
 * notes: the number here maps to the cutting board number, so "cut potato 2" is like saying "cut the potato on cutting board 2"
 
-< plate > - put an item on a plate so it's ready to serve!
-* format: plate item (on place (number))
-* examples: "plate tomato", "plate tomato on table", "plate tomato on table 2"
-* notes: "drop tomato on plate" also works - if you don't specify a place, it will look for any available plates in your room
+< plate > - put whatever item you're holding on a plate so it's ready to serve!
+* format: plate (on place (number))
+* examples: "plate", "plate on table", "plate on table 2"
+* notes: "drop on plate" also works - if you don't specify a place, it will look for any available plates in your room
 
-< serve > - serves an item to the hungry customers!
+< serve > - serves whatever you're holding to the hungry customers!
 * synonyms: deliver, provide, supply
-* examples: "serve tomato"
-* notes: you never need to specify additional details about an item - if you have a "plated chopped tomato", just refer to it by "tomato!" you'll be informed if a food has a new name (i.e. when "tomato" becomes "soup")!
+* examples: "serve"
+* notes: make sure you plated the food first! you can't serve food that isn't on a plate!
 
 < move > - move to another room!
 * synonyms: walk, go
@@ -105,9 +105,9 @@ ${t}`,
 < holding > - check what you're currently holding
 * format: holding
 
-< use > - for using special items like fire extinguishers
-* format: use item (on place)
-* examples: "use fire extinguisher on stove"
+< use > - use whatever item you're hodling
+* format: use (on place)
+* examples: "use on stove"
 * notes: you must be holding the item to use it. if no place is specified, a random relevant place will be chosen (i.e. any place that is on fire, if using a fire extinguisher).
 
 < wash > - if you are holding a dirty plate, you can wash it in a sink

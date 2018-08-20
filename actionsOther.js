@@ -26,21 +26,17 @@ module.exports = {
             gameData.discordHelper.SayM(`${actingUser.nick} tried to walk to room ${action.roomNo + 1}, but they can't reach it from room ${currentRoom + 1}!`);
         }
     },
-    Drop: function(gameData, userID, action) {
-        const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
-        const objectDisplayName = Food.GetFoodDisplayNameFromAction(action);
-        const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
-        if(!GameHelper.HoldingCheck(gameData.discordHelper, actingUser, "drop", action, objectDisplayName)) { return; }
-
+    Drop: function(gameData, currentRoom, actingUser, action) {
+        if(actingUser.holding === null) {
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to put something down, but they aren't holding anything!`);
+            return false;
+        }
         if(action.place === "plate") {
-            Maintainers.Plate(gameData, userID, {
-                type: "plate",
-                object: action.object,
-                place: "", placeNum: -1
-            });
+            Maintainers.Plate(gameData, currentRoom, actingUser, { type: "plate", place: "", placeNum: -1 });
             return;
         }
-        
+
+        const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
         const heldDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
         const onOrIn = (["table", "floor"].indexOf(action.place.type) < 0 ? "in" : "down on");
