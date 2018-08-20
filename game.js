@@ -21,7 +21,15 @@ module.exports = {
         for(let i = 0; i < gameData.map.items.length; i++) {
             const place = gameData.map.items[i];
             if(place.type === "trashcan") { place.contents = []; }
-            else if(place.switchedOn && !place.onFire) {
+            else if(place.type === "belt") {
+                if(!place.start) { continue; }
+                if(place.contents.length === 0) { continue; }
+                const otherConveyor = Room.FindReceiverConveyorBelt(gameData.map, place.to, place.rooms[0]);
+                if(otherConveyor === undefined || otherConveyor === null) { console.log("neighbor not found!"); continue; }
+                if(otherConveyor.contents.length >= otherConveyor.size) { console.log("neighbor is full!"); continue; }
+                const itemToTransport = place.contents.shift();
+                otherConveyor.contents.push(itemToTransport);
+            } else if(place.switchedOn && !place.onFire) {
                 place.cookingTime += 1;
                 if(place.cookingTime >= place.burnTime) {
                     place.onFire = true;

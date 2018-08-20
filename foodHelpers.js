@@ -62,6 +62,7 @@ const self = module.exports = {
         if(placeName === "cuttingboard") { placeName = "cutting board"; }
         else if(placeName === "pan") { placeName = "frying pan"; }
         else if(placeName === "bowl") { placeName = "mixing bowl"; }
+        else if(placeName === "belt") { placeName = "conveyor belt"; }
         if(noAorAn) { return placeName; }
 
         if("aeiou".indexOf(placeName[0]) >= 0) { return `an ${placeName}`; }
@@ -83,7 +84,7 @@ const self = module.exports = {
         if(recipeDisplayNames[name] !== undefined) { name = recipeDisplayNames[name].displayName; }
         food.attributes.sort();
         for(let i = 0; i < food.attributes.length; i++) {
-            switch(food.attributes[i]) {
+            switch(food.attributes[i]) { // plated chopped fried dirty baked tomato (tomatoes would never be dirty though)
                 case "sliced": name = `chopped ${name}`; break;
                 case "fried": name = `fried ${name}`; break;
                 case "baked": name = `baked ${name}`; break;

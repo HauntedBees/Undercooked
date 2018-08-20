@@ -18,7 +18,10 @@ const synonyms = {
     "hunt for": "hunt",
     "mixing bowl": "bowl",
     "trash can": "trashcan",
-    "fire extinguisher": "extinguisher"
+    "fire extinguisher": "extinguisher",
+    "conveyor belt": "belt",
+    "conveyor": "belt",
+    "assembly line": "belt"
 };
 const grabVerbs = ["grab", "take", "get", "acquire", "procure", "obtain"];
 const dropVerbs = ["drop", "put", "place", "plop", "set", "deposit", "position"];

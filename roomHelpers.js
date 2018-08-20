@@ -1,7 +1,8 @@
 const Food = require("./foodHelpers.js");
 module.exports = {
     GetObjectsInRoom: (map, roomNo) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0),
-    GetObjectsOfTypeInRoom: (map, roomNo, type) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0 && item.type === type), 
+    GetObjectsOfTypeInRoom:(map, roomNo, type) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0 && item.type === type), 
+    FindReceiverConveyorBelt:(map, to, from) => map.items.filter(item => item.rooms.indexOf(to) >= 0 && item.type === "belt" && item.from === from)[0], 
     GetPlaceNumber: function(roomContents, room, placeType, placeIdx) {
         let lastItemType = "", typeIter = 1;
         for(let i = 0; i < roomContents.length; i++) {
@@ -92,7 +93,13 @@ module.exports = {
                     }
                 }
             }
-            if(place.switchedOn !== undefined) {
+            if(place.type === "belt") {
+                if(place.to !== undefined) {
+                    resultStr += ` it sends items to the receiving end in Room ${place.to + 1}.`;
+                } else {
+                    resultStr += ` it receives items from the sending end in Room ${place.from + 1}.`;
+                }
+            } else if(place.switchedOn !== undefined) {
                 if(place.switchedOn) {
                     resultStr += " it is on and cooking; ";
                     const curTime = place.cookingTime;
