@@ -101,7 +101,7 @@ const self = module.exports = {
                     nick: playerNick, 
                     room: playerRoom,
                     holding: null,
-                    position: ""
+                    stuckTimer: 0
                 };
                 if(roomsArray[playerRoom] === undefined) { roomsArray[playerRoom] = []; }
                 roomsArray[playerRoom].push(playerNick);

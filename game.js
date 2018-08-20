@@ -6,6 +6,7 @@ module.exports = {
         gameData.discordHelper.Say(Strings.HELP1);
         gameData.discordHelper.Say(Strings.HELP2);
         gameData.discordHelper.Say(Strings.HELP3);
+        gameData.discordHelper.Say(Strings.HELP4);
         return true;
     },
     MainLoop: function(gameData) {
@@ -17,6 +18,10 @@ module.exports = {
             gameData.discordHelper.SayM(`Due to inactivity, the round has been cancelled. To start a new match, someone best be typin' INIT!`);
             setTimeout(gameData.KillGame, 1000);
             return;
+        }
+        for(const playerId in gameData.playerDetails) {
+            const player = gameData.playerDetails[playerId];
+            if(player.stuckTimer > 0) { player.stuckTimer -= 1; }
         }
         for(let i = 0; i < gameData.map.items.length; i++) {
             const place = gameData.map.items[i];
@@ -48,6 +53,10 @@ module.exports = {
         gameData.lastActionTimeSecond = gameData.secondsPlayed;
         try {
             const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
+            if(actingUser.stuckTimer > 0) {
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to move, but they're still unconscious for another ${actingUser.stuckTimer} second${actingUser.stuckTimer === 1 ? "" : "s"}.`);
+                return;
+            }
             switch(action.type) {
                 case "plate": return Maintainers.Plate(gameData, userID, action);
                 case "serve": return Maintainers.Serve(gameData, userID, action);
@@ -65,6 +74,7 @@ module.exports = {
                 case "grab": return Others.Grab(gameData, userID, action);
                 case "drop": return Others.Drop(gameData, userID, action);
                 case "move": return Others.Move(gameData, userID, action);
+                case "throw": return Others.Throw(gameData, currentRoom, actingUser, action.to);
             }
         } catch(e) {
             gameData.discordHelper.Log(e.stack);

@@ -34,6 +34,7 @@ const lookVerbs = ["look", "inspect", "view", "see", "check"];
 const findVerbs = ["find", "search", "locate", "hunt", "seek"];
 const mixVerbs = ["mix", "stir"];
 const washVerbs = ["wash", "clean", "scrub"];
+const throwVerbs = ["throw", "toss", "chuck", "lob", "fling"];
 const self = module.exports = {
     Parse: function(s) {
         if(s === "") { return null; }
@@ -55,6 +56,7 @@ const self = module.exports = {
         if(lookVerbs.indexOf(firstWord) >= 0) { return self.Look(remainingWords); }
         if(findVerbs.indexOf(firstWord) >= 0) { return self.Find(remainingWords); }
         if(mixVerbs.indexOf(firstWord) >= 0) { return self.Mix(remainingWords); }
+        if(throwVerbs.indexOf(firstWord) >= 0) { return self.Throw(remainingWords); }
         if(washVerbs.indexOf(firstWord) >= 0) { return { type: "wash" }; }
         if(firstWord === "plate") { return self.Plate(remainingWords); }
         if(firstWord === "who") { return self.Who(remainingWords); }
@@ -64,6 +66,11 @@ const self = module.exports = {
         if(firstWord === "holding" && splitWord.length === 1) { return { type: "holding" }; }
 
         return null;
+    },
+    Throw: function(s) { // to {name}
+        const splitStr = s.split(" ");
+        if(splitStr[0] === "to" || splitStr[0] === "at") { splitStr.shift(); }
+        return { type: "throw", to: splitStr.join(" ") };
     },
     Use: function(s) { // ${obj} on ${place} ${optional_number}
         const splitStr = s.split(" ");

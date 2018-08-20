@@ -3,6 +3,13 @@ module.exports = {
     GetObjectsInRoom: (map, roomNo) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0),
     GetObjectsOfTypeInRoom:(map, roomNo, type) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0 && item.type === type), 
     FindReceiverConveyorBelt:(map, to, from) => map.items.filter(item => item.rooms.indexOf(to) >= 0 && item.type === "belt" && item.from === from)[0], 
+    AreRoomsConnected: function(map, r1, r2) {
+        const room1 = map.rooms[r1];
+        for(const direction in room1) {
+            if(room1[direction] === r2) { return true; }
+        }
+        return false;
+    },
     GetPlaceNumber: function(roomContents, room, placeType, placeIdx) {
         let lastItemType = "", typeIter = 1;
         for(let i = 0; i < roomContents.length; i++) {
