@@ -77,7 +77,7 @@ ${t}`,
         "serve": `< serve > - serves whatever you're holding to the hungry customers!
 * synonyms: deliver, provide, supply
 * notes 1: make sure you plated the food first! you can't serve food that isn't on a plate!
-* notes 2: you must be in a room with a serving output area to do this!`,
+* notes 2: you must be in a room with a counter to do this!`,
         "use": `< use > - use whatever item you're hodling
 * format: use (on place)
 * examples: "use on stove"

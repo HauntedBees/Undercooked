@@ -52,7 +52,7 @@ const self = module.exports = {
         if(firstWord === "trash") { return { type: "drop", place: "trashcan", placeNum: 1 }; }
         if(firstWord === "holding") { return { type: "holding" }; }
         if(dropVerbs.indexOf(firstWord) >= 0) { return self.Drop(remainingWords); }
-        if(serveVerbs.indexOf(firstWord) >= 0) { return self.Serve(remainingWords); }
+        if(serveVerbs.indexOf(firstWord) >= 0) { return { type: "serve" }; }
         if(mixVerbs.indexOf(firstWord) >= 0) { return self.Mix(remainingWords); }
 
         if(remainingWords === "") { return null; }
@@ -220,11 +220,6 @@ const self = module.exports = {
             return { type: "move", roomNo: roomNo - 1 };
         } else { return null; }
     },
-    Serve: function(s) { // ${obj}
-        const splitStr = s.split(" ");
-        if(splitStr.length !== 1) { return null; }
-        return { type: "serve", object: splitStr[0] }
-    },
     Plate: function(s) { // (on ${place} {$optional_number}) -- if inner area is omitted, any plate
         const splitStr = s.split(" ");
         if(splitStr.length === 1 && splitStr[0] === "") { return { type: "plate", place: "", placeNum: -1 } }
@@ -271,6 +266,8 @@ const self = module.exports = {
         
         if(splitStr[0] === "on" || splitStr[0] === "in") { splitStr.shift(); }
         const placeName = splitStr[0];
+        if(placeName === "counter") { return { type: "serve" }; }
+        
         let placeNum = -1;
         if(splitStr[1] !== undefined) {
             const potentialPlaceNum = parseInt(splitStr[1]);

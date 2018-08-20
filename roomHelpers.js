@@ -92,7 +92,7 @@ const self = module.exports = {
         return "none";
     },
     TryAddObjectToPlace: function(place, obj) {
-        if(place.type === "dispenser" || place.type === "output") { return "invalid"; }
+        if(place.type === "dispenser" || place.type === "counter") { return "invalid"; }
         if(place.onFire) { return "onfire"; }
         if(obj.type === "plate" && ["cuttingboard", "pan", "pot"].indexOf(place.type) >= 0) { return "invalid"; }
         if(place.contents.length >= place.size) { return "full"; }

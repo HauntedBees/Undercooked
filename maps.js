@@ -2,7 +2,7 @@ const maps = [
     {
         name: "De Testbench!",
         img: `
-xxOVxPSxxxxINxOUxxxx    OU = Food Delivery Area     IN = Used Plate Pickup
+xxOVxPSxxxxxxxOUxxxx    OU = Counter for Food Delivery and Used Plate Pickup
 FP                DT    TT = Table                  TC = Trash Can
 CB   1   TT   2   DD    DS = Potato Dispenser       DO = Onion Dispenser
 CB FE    TT       DS    DT = Tomato Dispenser       DM = Mushroom Dispenser
@@ -20,13 +20,12 @@ xxxxxxxxxxx             SN = Sink                   CB = Conveyor Belt
             { up: 0 }
         ],
         items: [
-            { type: "output", rooms: [1] },
+            { type: "counter", rooms: [1], size: 3, contents: [ { type: "plate", modifier: 1, attributes: ["dirty"] } ] },
             { type: "sink", rooms: [1] },
             { type: "belt", rooms: [2], start: true, to: 1, size: 4, contents: [] },
             { type: "belt", rooms: [1], start: false, from: 2, size: 4, contents: [] },
             { type: "trashcan", rooms: [1], size: 999, contents: [] },
             { type: "table", rooms: [0, 1], size: 4, contents: [] },
-            { type: "counter", rooms: [1], size: 3, contents: [ { type: "plate", modifier: 1, attributes: ["dirty"] } ] },
             { type: "dispenser", rooms: [1], dispensed: "potato", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "tomato", amount: 999 },
             { type: "dispenser", rooms: [2], dispensed: "lettuce", amount: 999 },
@@ -57,7 +56,7 @@ xxxxxxxxxxx             SN = Sink                   CB = Conveyor Belt
         img: `
 xxxxxxxxxxxxxxxxxxx    DT = Tomato Dispenser
 xx       T       DT    DP = Plate Dispenser
-CB   1   T   2   DP    OU = Food Delivery Area
+CB   1   T   2   DP    OU = Counter for Food Delivery and Used Plate Pickup
 CB               OU    CB = Cutting Board
 xxxxxxxxxxxxxxxxxxx     T = Table
 `,
@@ -71,7 +70,7 @@ xxxxxxxxxxxxxxxxxxx     T = Table
             { type: "table", rooms: [0, 1], size: 2, contents: [] },
             { type: "dispenser", rooms: [1], contents: [{ item: "tomato", amount: 999 }] },
             { type: "dispenser", rooms: [1], contents: [{ item: "plate", amount: 999 }] },
-            { type: "output", rooms: [1] },
+            { type: "counter", rooms: [1], size: 3, contents: [] },
             { type: "floor", rooms: [0], size: 999, contents: [] },
             { type: "floor", rooms: [1], size: 999, contents: [] }
         ],

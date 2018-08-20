@@ -6,8 +6,8 @@ module.exports = {
             return false;
         }
         const objectDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding, true);
-        const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "output");
-        if(!GameHelper.NoPlacesCheck(gameData.discordHelper, actingUser, relevantPlaces, "serve", "serving area")) { return; }
+        const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "counter");
+        if(!GameHelper.NoPlacesCheck(gameData.discordHelper, actingUser, relevantPlaces, "serve", "counter")) { return; }
         
         const orders = gameData.orders;
         for(let i = 0; i < orders.length; i++) {
