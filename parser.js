@@ -317,6 +317,11 @@ const self = module.exports = {
                 case "fried":
                     attrs.push("fried");
                     break;
+                case "plain":
+                case "standard":
+                case "regular":
+                    attrs.push("standard");
+                    break;
                 default:
                     splitStr.splice(0, i);
                     return {

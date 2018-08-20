@@ -105,7 +105,7 @@ module.exports = {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${specificPlace} ${action.placeNum}, but the ${type} is on! Turn it off first!`);
                 return;
             }
-            const item = Room.TryTakeObjectFromPlace(chosenPlace, action.object);
+            const item = Room.TryTakeObjectFromPlace(chosenPlace, action.object, action.objAttrs);
             if(item !== null) {
                 gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${specificPlace} ${action.placeNum}!`);
                 actingUser.holding = item;
@@ -117,7 +117,7 @@ module.exports = {
             for(let i = 0; i < relevantPlaces.length; i++) {
                 if(relevantPlaces[i].onFire) { hasFires = true; continue; }
                 if(relevantPlaces[i].switchedOn) { itemsOn = true; continue; }
-                const item = Room.TryTakeObjectFromPlace(relevantPlaces[i], action.object);
+                const item = Room.TryTakeObjectFromPlace(relevantPlaces[i], action.object, action.objAttrs);
                 if(item !== null) {
                     gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${specificPlace} ${i + 1}!`);
                     actingUser.holding = item;

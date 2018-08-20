@@ -16,6 +16,10 @@ module.exports = {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to fry ${objectDisplayName} on frying pan ${action.placeNum}, but all that's on there is ${Food.GetFoodDisplayNameFromObj(itemInfo)}!`);
                 return;
             }
+            if(!Room.HasRightAttributes(itemInfo, action.objAttrs)) {
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to fry ${objectDisplayName} on frying pan ${action.placeNum}, but all that's on there is ${Food.GetFoodDisplayNameFromObj(itemInfo)}!`);
+                return;
+            }
             if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "fried", "fry")) { return false; }
             chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "fried");
             gameData.discordHelper.SayP(`${actingUser.nick} fried ${objectDisplayName} on frying pan ${action.placeNum}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
@@ -25,6 +29,7 @@ module.exports = {
                 if(chosenPlace.contents.length === 0) { continue; }
                 const itemInfo = chosenPlace.contents[0];
                 if(itemInfo.type !== action.object) { continue; }
+                if(!Room.HasRightAttributes(itemInfo, action.objAttrs)) { continue; }
                 if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "fried")) { continue; }
                 chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "fried");
                 gameData.discordHelper.SayP(`${actingUser.nick} fried ${objectDisplayName} on frying pan ${i + 1}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
@@ -49,6 +54,10 @@ module.exports = {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to chop ${objectDisplayName} on cutting board ${action.placeNum}, but all that's on there is ${Food.GetFoodDisplayNameFromObj(itemInfo)}!`);
                 return;
             }
+            if(!Room.HasRightAttributes(itemInfo, action.objAttrs)) {
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to chop ${objectDisplayName} on cutting board ${action.placeNum}, but all that's on there is ${Food.GetFoodDisplayNameFromObj(itemInfo)}!`);
+                return;
+            }
             if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "sliced", "chop")) { return false; }
             chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "sliced");
             gameData.discordHelper.SayP(`${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${action.placeNum}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
@@ -58,6 +67,7 @@ module.exports = {
                 if(chosenPlace.contents.length === 0) { continue; }
                 const itemInfo = chosenPlace.contents[0];
                 if(itemInfo.type !== action.object) { continue; }
+                if(!Room.HasRightAttributes(itemInfo, action.objAttrs)) { continue; }
                 if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "sliced")) { continue; }
                 chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "sliced");
                 gameData.discordHelper.SayP(`${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${i + 1}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);

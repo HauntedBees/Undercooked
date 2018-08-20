@@ -1,5 +1,5 @@
 const Food = require("./foodHelpers.js");
-module.exports = {
+const self = module.exports = {
     GetObjectsInRoom: (map, roomNo) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0),
     GetObjectsOfTypeInRoom:(map, roomNo, type) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0 && item.type === type), 
     FindReceiverConveyorBelt:(map, to, from) => map.items.filter(item => item.rooms.indexOf(to) >= 0 && item.type === "belt" && item.from === from)[0], 
@@ -26,7 +26,7 @@ module.exports = {
         }
         return 1;
     },
-    TryTakeObjectFromPlace: function(place, obj) {
+    TryTakeObjectFromPlace: function(place, obj, objAttrs) {
         if(place.type === "dispenser") {
             if(place.dispensed !== obj) { return null; }
             if(place.amount <= 0) { return null; }
@@ -38,10 +38,24 @@ module.exports = {
         for(let i = 0; i < contents.length; i++) {
             const placeItem = contents[i];
             if(placeItem.type !== obj) { continue; }
+            if(!self.HasRightAttributes(placeItem, objAttrs)) { continue; }
             contents.splice(i, 1);
             return placeItem;
         }
         return null;
+    },
+    HasRightAttributes: function(placeItem, objAttrs) {
+        for(let j = 0; j < objAttrs.length; j++) {
+            const attr = objAttrs[j];
+            if(attr === "standard") {
+                if(placeItem.attributes.length > 0) {
+                    return false;
+                }
+            } else if(placeItem.attributes.indexOf(attr) < 0) {
+                return false;
+            }
+        }
+        return true;
     },
     TryPlateObjectOnPlace: function(place, obj) {
         if(place.contents === undefined) { return "invalid"; }

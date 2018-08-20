@@ -57,7 +57,8 @@ ${t}`,
         "grab": `< grab > - pick up an item 
 * synonyms: take, get, acquire, procure, obtain
 * format: grab item from place (number)
-* examples: "grab tomato from dispenser", "take tomato from table 2"`,
+* examples: "grab tomato from dispenser", "take tomato from table 2"
+* notes: you can specify food attributes, too. "grab FRIED tomato from table" works too! specify a "PLAIN", "STANDARD" or "REGULAR" tomato if you want an unchanged one!`,
         "drop": `< drop > - put down whatever you're currently holding item
 * synonyms: put, place, plop, set, deposit, position
 * format: put on place (number)
@@ -67,7 +68,8 @@ ${t}`,
 * synonyms: cut, slice, dice, mince, stab, knife, julienne, chiffonade
 * format: chop item (number)
 * examples: "chop tomato", "cut potato 2"
-* notes: the number here maps to the cutting board number, so "cut potato 2" is like saying "cut the potato on cutting board 2"`,
+* notes 1: the number here maps to the cutting board number, so "cut potato 2" is like saying "cut the potato on cutting board 2"
+* notes 2: you can specify food attributes, too. "chop FRIED tomato" works too! specify a "PLAIN", "STANDARD" or "REGULAR" tomato if you want an unchanged one!`,
         "plate": `< plate > - put whatever item you're holding on a plate so it's ready to serve!
 * format: plate (on place (number))
 * examples: "plate", "plate on table", "plate on table 2"
@@ -93,7 +95,8 @@ ${t}`,
 * synonyms: sautee, sauté, sear, brown, sizzle
 * format: fry item (number)
 * examples: "fry potato", "fry egg 2"
-* notes: the number here maps to the frying pan number, so "fry potato 2" is like saying "fry the potato on pan 2"`,
+* notes 1: the number here maps to the frying pan number, so "fry potato 2" is like saying "fry the potato on pan 2"
+* notes 2: you can specify food attributes, too. "fry CHOPPED potato" works too! specify a "PLAIN", "STANDARD" or "REGULAR" potato if you want an unchanged one!`,
         "turn": `< turn > - turn an oven or stove on
 * synonyms: switch, flip
 * format: "turn on/off item (number)" or turn item (number) on/off"
