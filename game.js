@@ -64,6 +64,7 @@ module.exports = {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to move, but they're still unconscious for another ${actingUser.stuckTimer} second${actingUser.stuckTimer === 1 ? "" : "s"}.`);
                 return;
             }
+            if(Room.TrySlipOnFloor(gameData, actingUser, action.type)) { return; }
             switch(action.type) {
                 case "plate": return Maintainers.Plate(gameData, currentRoom, actingUser, action);
                 case "serve": return Maintainers.Serve(gameData, currentRoom, actingUser);

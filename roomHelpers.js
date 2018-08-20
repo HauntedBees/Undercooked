@@ -26,6 +26,25 @@ const self = module.exports = {
         }
         return 1;
     },
+    TrySlipOnFloor: function(gameData, actingUser, actionType) {
+        if(["find", "look", "what", "who", "holding"].indexOf(actionType) >= 0) { return false; } // passive actions can't slip you up!
+        const floors = self.GetObjectsOfTypeInRoom(gameData.map, actingUser.room, "floor");
+        if(floors.length === 0) { return false; }
+        const floorContents = floors[0].contents;
+        if(floorContents.length === 0) { return false; }
+        for(let i = 0; i < floorContents.length; i++) {
+            const item = floorContents[i];
+            if(item.type === "extinguisher") { continue; } // those are allowed to be on the floor
+            if(Math.random() < 0.25) {
+                actingUser.stuckTimer = 10;
+                const verb = (item.type === "plate" ? "shattering" : "ruining");
+                gameData.discordHelper.SayM(`${actingUser.nick} was about to do something really important, but they slipped on ${Food.GetFoodDisplayNameFromObj(item)}, ${verb} it, and fell on their ass, stunning them for 10 seconds!`);
+                floorContents.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
+    },
     TryTakeObjectFromPlace: function(place, obj, objAttrs) {
         if(place.type === "dispenser") {
             if(place.dispensed !== obj) { return null; }
