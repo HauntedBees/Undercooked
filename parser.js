@@ -106,6 +106,7 @@ const self = module.exports = {
     What: function(s) { // (is a/an) {$obj}
         const splitStr = s.split(" ");
         if(splitStr[0] === "is") { splitStr.shift(); }
+        if(splitStr[0] === "in") { splitStr.shift(); }
         if(splitStr[0] === "a") { splitStr.shift(); }
         if(splitStr[0] === "an") { splitStr.shift(); }
         if(splitStr.length !== 1) { return null; }
@@ -117,6 +118,7 @@ const self = module.exports = {
         if(splitStr.length === 1) { return { type: "find", object: itemToFind, placeNum: -1 }; }
         splitStr.shift();
         if(splitStr[0] === "anywhere") { return { type: "find", object: itemToFind, all: true, placeNum: -1 }; }
+        if(splitStr[0] === "for") { splitStr.shift(); }
         if(splitStr[0] === "in") { splitStr.shift(); }
         if(splitStr[0] === "room") { splitStr.shift(); }
         const potentialNum = parseInt(splitStr[0]);

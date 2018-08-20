@@ -21,7 +21,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         return;
     }
     if(!channelGameData.started) {
-        if(message === "!HELP") { return Game.ShowHelp(channelGameData); }
+        if(message.indexOf("!HELP") === 0) { return Game.ShowHelp(channelGameData, message); }
         Setup.HandlePostInitCommand(channelGameData, userID, message.toLowerCase());
         if(channelGameData.cancelled) {
             console.log(`Cancelling the game on channel ${channelID}.`);
@@ -36,7 +36,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         return;
     }
     if(channelGameData.players.indexOf(userID) < 0) { return; } // you don't get to do shit if you're not int he fucking game
-    if(message === "!HELP") { return Game.ShowHelp(channelGameData); }
+    if(message.indexOf("!HELP") === 0) { return Game.ShowHelp(channelGameData, message); }
     const parsedResult = Parser.Parse(message);
     if(parsedResult === null) { return; }
     Game.HandleAction(channelGameData, userID, parsedResult);

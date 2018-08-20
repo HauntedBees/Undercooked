@@ -31,6 +31,7 @@ const self = module.exports = {
         if(tryTitleAgain) { gameData.discordHelper.Say(CONSTS.TITLE); }
         gameData.discordHelper.SayP(`Current Settings -- Maximum Players: 4 -- Game Speed: Normal
 + Anyone can type "join" to join the next match or "leave" to leave it.
++ Anyone can type "!HELP" to see how to play, or "!HELP [action]" to learn more about a specific command.
 + The host can type "!players #" to set the player count (valid values are 2-100).
 + The host can type "!speed #" to set the speed (valid values are Fast, Normal, Slow, Very Slow).
 + The host can type "start" to begin the game or "cancel" to end the game.

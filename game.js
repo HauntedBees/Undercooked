@@ -2,11 +2,18 @@ const Observers = require("./actionsObserve.js"), Cookers = require("./actionsCo
 const Maintainers = require("./actionsMaintenance.js"), Others = require("./actionsOther.js");
 const Food = require("./foodHelpers.js"), Strings = require("./strings.js"), Room = require("./roomHelpers.js");
 module.exports = {
-    ShowHelp: function(gameData) {
-        gameData.discordHelper.Say(Strings.HELP1);
-        gameData.discordHelper.Say(Strings.HELP2);
-        gameData.discordHelper.Say(Strings.HELP3);
-        gameData.discordHelper.Say(Strings.HELP4);
+    ShowHelp: function(gameData, message) {
+        const trimmed = message.replace(/^!HELP\s?/, "");
+        if(trimmed === "") {
+            gameData.discordHelper.Say(Strings.HELP);
+        } else {
+            const cmdHelp = Strings.INDIVIDUALINSTRUCTIONS[trimmed];
+            if(cmdHelp === undefined) {
+                gameData.discordHelper.SayM(`I don't know how to ${trimmed}. Available verbs are: grab, put, move, trash, use, throw, chop, fry, turn, mix, plate, serve, wash, look, who, find, what, holding.`);
+            } else {
+                gameData.discordHelper.SayP(cmdHelp);
+            }
+        }
         return true;
     },
     MainLoop: function(gameData) {
