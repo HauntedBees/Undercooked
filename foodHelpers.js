@@ -87,6 +87,7 @@ const self = module.exports = {
                 case "sliced": name = `chopped ${name}`; break;
                 case "fried": name = `fried ${name}`; break;
                 case "baked": name = `baked ${name}`; break;
+                case "dirty": name = `dirty ${name}`; break;
             }
         }
         if(!ignorePlated && food.attributes.indexOf("plated") >= 0) {

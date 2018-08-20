@@ -30,6 +30,7 @@ const turnVerbs = ["turn", "switch", "flip"];
 const lookVerbs = ["look", "inspect", "view", "see", "check"];
 const findVerbs = ["find", "search", "locate", "hunt", "seek"];
 const mixVerbs = ["mix", "stir"];
+const washVerbs = ["wash", "clean", "scrub"];
 const self = module.exports = {
     Parse: function(s) {
         if(s === "") { return null; }
@@ -51,6 +52,7 @@ const self = module.exports = {
         if(lookVerbs.indexOf(firstWord) >= 0) { return self.Look(remainingWords); }
         if(findVerbs.indexOf(firstWord) >= 0) { return self.Find(remainingWords); }
         if(mixVerbs.indexOf(firstWord) >= 0) { return self.Mix(remainingWords); }
+        if(washVerbs.indexOf(firstWord) >= 0) { return { type: "wash" }; }
         if(firstWord === "plate") { return self.Plate(remainingWords); }
         if(firstWord === "who") { return self.Who(remainingWords); }
         if(firstWord === "use") { return self.Use(remainingWords); }

@@ -44,6 +44,7 @@ module.exports = {
                 case "plate": return Maintainers.Plate(gameData, userID, action);
                 case "serve": return Maintainers.Serve(gameData, userID, action);
                 case "use": return Maintainers.Use(gameData, currentRoom, actingUser, action);
+                case "wash": return Maintainers.Wash(gameData, currentRoom, actingUser);
                 case "chop": return Cookers.Chop(gameData, userID, action);
                 case "fry": return Cookers.Fry(gameData, userID, action);
                 case "turn": return Cookers.Turn(gameData, userID, action);

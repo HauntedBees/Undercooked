@@ -118,5 +118,12 @@ module.exports = {
             return;
         }
         
+    },
+    Wash: function(gameData, currentRoom, actingUser) {
+        if(!GameHelper.HoldingCheck(gameData.discordHelper, actingUser, "wash", { object: "plate" }, "a plate")) { return; }
+        const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "sink");
+        if(!GameHelper.NoPlacesCheck(gameData.discordHelper, actingUser, relevantPlaces, "wash a plate", "sink")) { return; }
+        actingUser.holding.attributes = [];
+        gameData.discordHelper.SayP(`${actingUser.nick} washed a plate. Good for them!`);
     }
 }

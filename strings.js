@@ -109,5 +109,10 @@ ${t}`,
 * format: use item (on place)
 * examples: "use fire extinguisher on stove"
 * notes: you must be holding the item to use it. if no place is specified, a random relevant place will be chosen (i.e. any place that is on fire, if using a fire extinguisher).
+
+< wash > - if you are holding a dirty plate, you can wash it in a sink
+* synonyms: clean, scrub
+* format: wash (plate)
+* examples: "wash plate", "scrub"
 ${t}`
 }

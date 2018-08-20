@@ -2,16 +2,17 @@ const maps = [
     {
         name: "De Testbench!",
         img: `
-XXOVXPSXXXXXXXOUXXXX    OU = Food Delivery Area
+xxOVxPSxxxxINxOUxxxx    OU = Food Delivery Area     IN = Used Plate Pickup
 FP                DT    TT = Table                  TC = Trash Can
 CB   1   TT   2   DD    DS = Potato Dispenser       DO = Onion Dispenser
 CB FE    TT       DS    DT = Tomato Dispenser       DM = Mushroom Dispenser
-XXXX   XXXXXXXXXTCXX    DD = Plate Dispenser        DP = Pepper Dispenser
+xxxx   xxxxSNxxxTCxx    DD = Plate Dispenser        DP = Pepper Dispenser
 DP       DM             DL = Lettuce Dispenser      DC = Cheese Dispenser
-DL   3   MB             FP = Frying Pan             Dd = Dough Dispenser
-DO       DC             PS = Pot on Stove           DM = Meat Dispenser
+DL       MB             FP = Frying Pan             Dd = Dough Dispenser
+DO   3   DC             PS = Pot on Stove           DM = Meat Dispenser
 DM       Dd             MB = Mixing Bowl            OV = Oven
-XXXXXXXXXXX             CB = Cutting Board          FE = Fire Extinguisher
+xx       xx             CB = Cutting Board          FE = Fire Extinguisher
+xxxxxxxxxxx             SN = Sink
 `,
         rooms: [
             { right: 1, down: 2 },
@@ -20,8 +21,10 @@ XXXXXXXXXXX             CB = Cutting Board          FE = Fire Extinguisher
         ],
         items: [
             { type: "output", rooms: [1] },
+            { type: "sink", rooms: [1] },
             { type: "trashcan", rooms: [1], size: 999, contents: [] },
             { type: "table", rooms: [0, 1], size: 4, contents: [] },
+            { type: "counter", rooms: [1], size: 3, contents: [ { type: "plate", modifier: 1, attributes: ["dirty"] } ] },
             { type: "dispenser", rooms: [1], dispensed: "potato", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "tomato", amount: 999 },
             { type: "dispenser", rooms: [2], dispensed: "lettuce", amount: 999 },
@@ -50,11 +53,11 @@ XXXXXXXXXXX             CB = Cutting Board          FE = Fire Extinguisher
     {
         name: "Hello Hi! Let's Some Tomatoes!",
         img: `
-XXXXXXXXXXXXXXXXXXX    DT = Tomato Dispenser
-XX       T       DT    DP = Plate Dispenser
+xxxxxxxxxxxxxxxxxxx    DT = Tomato Dispenser
+xx       T       DT    DP = Plate Dispenser
 CB   1   T   2   DP    OU = Food Delivery Area
 CB               OU    CB = Cutting Board
-XXXXXXXXXXXXXXXXXXX     T = Table
+xxxxxxxxxxxxxxxxxxx     T = Table
 `,
         rooms: [
             { right: 1 },

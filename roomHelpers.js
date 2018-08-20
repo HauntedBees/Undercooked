@@ -26,6 +26,7 @@ module.exports = {
             return Food.GetBaseFood(place.dispensed);
         }
         const contents = place.contents;
+        if(contents === undefined) { return null; }
         for(let i = 0; i < contents.length; i++) {
             const placeItem = contents[i];
             if(placeItem.type !== obj) { continue; }
