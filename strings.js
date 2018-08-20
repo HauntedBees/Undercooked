@@ -7,8 +7,6 @@ module.exports = {
  \\____/_//_/\\_,_/\\__/_/  \\__/\\___/\\___/_/\\_\\\\__/\\_,_/ 
 ======================================================== 
  America's Favorite Text-Based Co-Op Cooking Adventure!${t}`,
-    CANCELROUND: `${d}
-- Round Cancelled! To start a new match, someone best be typin' INIT!${t}`,
     HELP: `${t}md
 # Undercooked Instruction Manual
 ---------------------------------
