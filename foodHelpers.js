@@ -14,9 +14,9 @@ const recipeDisplayNames = {
     "spaghetti": { displayName: "spaghetti and meatballs", recipe: "cook pasta dough, tomato, and meat in a pot" },
     "macaroni": { displayName: "macaroni and cheese", recipe: "cook pasta dough and three cheese in a pot" },
     "burntmess": { displayName: "burnt mess", recipe: "severely overcook anything in an oven" },
-    "weirdbake": { displayName: "weird baked dish", recipe: "add any ingredients to an oven and cook until ready" },
+    "weirdbake": { displayName: "weird baked thing", recipe: "add any ingredients to an oven and cook until ready" },
     "extinguisher": { displayName: "fire extinguisher", recipe: "combine nitrogen and pressure can" },
-    "aaaa": { displayName: "aaaa", recipe: "" },
+    "lasagna": { displayName: "lasagna", recipe: "bake pasta dough, tomato, and meat in an oven" },
     "aaaa": { displayName: "aaaa", recipe: "" },
     "aaaa": { displayName: "aaaa", recipe: "" }
 };
@@ -155,6 +155,11 @@ const self = module.exports = {
         }
         const newModifier = oven.modifier * self.AvgModifier(ingredience);
         const sorted = self.GetSortedFoodStruct(ingredience);
+        if(sorted["pastadough"] >= 1) {
+            if(sorted["tomato"] >= 1 && sorted["meat"] >= 1) {
+                return { type: "lasagna", class: "pasta", modifier: newModifier, attributes: [] };
+            }
+        }
         if(sorted["potato"] === 1 & sorted["total"] === 1) {
             return { type: "potato", modifier: newModifier, attributes: ["baked"] };
         }
