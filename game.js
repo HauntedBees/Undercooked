@@ -1,6 +1,7 @@
 const Observers = require("./actionsObserve.js"), Cookers = require("./actionsCooking.js");
 const Maintainers = require("./actionsMaintenance.js"), Others = require("./actionsOther.js");
 const Food = require("./foodHelpers.js"), Strings = require("./strings.js"), Room = require("./roomHelpers.js");
+const Tutorial = require("./tutorial.js");
 const self = module.exports = {
     ShowHelp: function(gameData, message) {
         const trimmed = message.replace(/^!HELP\s?/, "");
@@ -36,6 +37,13 @@ const self = module.exports = {
             gameData.discordHelper.SayM(`Due to inactivity, the round has been cancelled. To start a new match, someone best be typin' INIT!`);
             setTimeout(gameData.KillGame, 1000);
             return;
+        }
+        if(gameData.isTutorial) {
+            gameData.tutorialState = Tutorial.Toot(gameData, gameData.tutorialState);
+            if(gameData.tutorialState < 0) { // tutorial complete!
+                self.LevelComplete(gameData);
+                return;
+            }
         }
         for(const playerId in gameData.playerDetails) {
             const player = gameData.playerDetails[playerId];

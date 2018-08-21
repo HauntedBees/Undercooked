@@ -1,6 +1,34 @@
 const maps = [
     {
+        name: "Hey Let's Tutorial!", isTutorial: true, 
+        difficulty: "Easy", minPlayers: 2, time: 3599,
+        img: `
+xxCBxCBxxxDLxDTxx   DL = Lettuce Dispenser
+x       T       x   DT = Tomato Dispenser
+x   1   T   2   O   CB = Cutting Board
+x       T       x    T = Table
+x       T       x    O = Delivery Counter
+xxxxxxxxxxxxxDPxx   DP = Plate Dispenser`,
+        rooms: [
+            { neighboring: 1 },
+            { neighboring: 0 }
+        ],
+        items: [
+            { type: "counter", rooms: [1], size: 3, contents: [] },
+            { type: "dispenser", rooms: [1], dispensed: "lettuce", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "tomato", amount: 999 },
+            { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
+            { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
+            { type: "table", rooms: [0, 1], size: 4, contents: [] },
+            { type: "dispenser", rooms: [1], dispensed: "plate", amount: 999 },
+            { type: "floor", rooms: [0], size: 999, contents: [] },
+            { type: "floor", rooms: [1], size: 999, contents: [] }
+        ],
+        potentialOrders: []
+    },
+    {
         name: "De Testbench!",
+        difficulty: "Easy", minPlayers: 1, 
         img: `
 xxOVxPSxxxxxxxOUxxxx    OU = Counter for Food Delivery and Used Plate Pickup
 FP                DT    TT = Table                  TC = Trash Can
@@ -80,7 +108,8 @@ xxxxxxxxxxxxxxxxxxx     T = Table
     }
 ];
 module.exports = {
-    GetMap: function() {
+    GetMapName: idx => maps[idx].name,
+    GetMap: function(numPlayers, specificMapName) {
         const newMap = JSON.parse(JSON.stringify(maps[0]));
         newMap.items.sort((a, b) => a.type.localeCompare(b.type));
         return newMap;
