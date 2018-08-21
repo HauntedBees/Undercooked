@@ -152,11 +152,13 @@ const self = module.exports = {
         }
         rewards.unshift(`Most Active: ${mostActivePlayer}`);
         console.log(`Game completed on channel ${gameData.channelID}.`);
+        if(gameData.score > 9999999) { gameData.score = 9999999; }
+        if(gameData.ordersCleared > 99999) { gameData.ordersCleared = 99999; }
         gameData.discordHelper.Say(`\`\`\`asciidoc
 === Level Complete ===
 ======================
-Orders Served :: ${gameData.ordersCleared}
-Money Made :: $${gameData.score}       
+Orders Served :: ${" ".repeat(5 - gameData.ordersCleared.toString().length)}${gameData.ordersCleared}
+Money Made :: ${" ".repeat(7 - gameData.score.toString().length)}$${gameData.score}       
 ${rewards.join("\n")}
 \`\`\``);
         gameData.discordHelper.SayP(`${gameData.hostUserName}, say "AGAIN" in the next 60 seconds to set up another round with the same team, or "CANCEL" to disband the team!`);
