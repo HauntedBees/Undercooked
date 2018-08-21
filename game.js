@@ -38,6 +38,11 @@ const self = module.exports = {
             setTimeout(gameData.KillGame, 1000);
             return;
         }
+        if(gameData.secondsPlayed >= gameData.endingTime) {
+            gameData.discordHelper.SayP("Time's up!");
+            self.LevelComplete(gameData);
+            return;
+        }
         if(gameData.isTutorial) {
             gameData.tutorialState = Tutorial.Toot(gameData, gameData.tutorialState);
             if(gameData.tutorialState < 0) { // tutorial complete!
