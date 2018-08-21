@@ -1,6 +1,7 @@
 const Food = require("./foodHelpers.js");
 const synonyms = {
     "pick up": "grab",
+    "put down": "drop",
     "frying pan": "pan",
     "cooking pan": "pan",
     "skillet": "pan",
@@ -23,18 +24,6 @@ const synonyms = {
     "conveyor": "belt",
     "assembly line": "belt"
 };
-const grabVerbs = ["grab", "take", "get", "acquire", "procure", "obtain"];
-const dropVerbs = ["drop", "put", "place", "plop", "set", "deposit", "position"];
-const chopVerbs = ["cut", "chop", "slice", "dice", "mince", "stab", "knife", "julienne", "chiffonade"];
-const serveVerbs = ["serve", "deliver", "provide", "supply"];
-const moveVerbs = ["walk", "move", "go"];
-const fryVerbs = ["fry", "sautee", "sauté", "sear", "brown", "sizzle"];
-const turnVerbs = ["turn", "switch", "flip"];
-const lookVerbs = ["look", "inspect", "view", "see", "check"];
-const findVerbs = ["find", "search", "locate", "hunt", "seek"];
-const mixVerbs = ["mix", "stir"];
-const washVerbs = ["wash", "clean", "scrub"];
-const throwVerbs = ["throw", "toss", "chuck", "lob", "fling"];
 const self = module.exports = {
     Parse: function(s) {
         if(s === "") { return null; }
@@ -42,34 +31,82 @@ const self = module.exports = {
         for(const word in synonyms) { s = s.replace(word, synonyms[word]); }
         s = Food.FlattenFoodNames(s);
 
-        const splitWord = s.split(" ");
-        const firstWord = splitWord[0];
+        const splitWord = s.split(" "), firstWord = splitWord[0];
         const remainingWords = splitWord.length === 1 ? "" : s.substring(s.indexOf(" ") + 1);
-
-        // verbs that don't need anything after the verb itself
-        if(firstWord === "use") { return self.Use(remainingWords); }
-        if(firstWord === "plate") { return self.Plate(remainingWords); }
-        if(firstWord === "trash") { return { type: "drop", place: "trashcan", placeNum: 1 }; }
-        if(firstWord === "holding") { return { type: "holding" }; }
-        if(firstWord === "level") { return { type: "level" }; }
-        if(firstWord === "orders" || remainingWords === "orders") { return { type: "orders" }; }
-        if(dropVerbs.indexOf(firstWord) >= 0) { return self.Drop(remainingWords); }
-        if(serveVerbs.indexOf(firstWord) >= 0) { return { type: "serve" }; }
-        if(mixVerbs.indexOf(firstWord) >= 0) { return self.Mix(remainingWords); }
+        
+        switch(firstWord) { // verbs that don't need anything after the verb itself
+            case "use": return self.Use(remainingWords);
+            case "plate": return self.Plate(remainingWords);
+            case "trash": return { type: "drop", place: "trashcan", placeNum: 1 };
+            case "holding": return { type: "holding" };
+            case "level": return { type: "level" };
+            case "orders":
+            case "view": return { type: "orders" };
+            case "drop":
+            case "put":
+            case "place":
+            case "plop":
+            case "set":
+            case "deposit":
+            case "position": return self.Drop(remainingWords);
+            case "serve":
+            case "deliver":
+            case "provide":
+            case "supply": return { type: "serve" };
+            case "mix":
+            case "stir": return self.Mix(remainingWords);
+        }
 
         if(remainingWords === "") { return null; }
-        if(grabVerbs.indexOf(firstWord) >= 0) { return self.Grab(remainingWords); }
-        if(chopVerbs.indexOf(firstWord) >= 0) { return self.Chop(remainingWords); }
-        if(moveVerbs.indexOf(firstWord) >= 0) { return self.Move(remainingWords); }
-        if(fryVerbs.indexOf(firstWord) >= 0) { return self.Fry(remainingWords); }
-        if(turnVerbs.indexOf(firstWord) >= 0) { return self.Turn(remainingWords); }
-        if(lookVerbs.indexOf(firstWord) >= 0) { return self.Look(remainingWords); }
-        if(findVerbs.indexOf(firstWord) >= 0) { return self.Find(remainingWords); }
-        if(throwVerbs.indexOf(firstWord) >= 0) { return self.Throw(remainingWords); }
-        if(washVerbs.indexOf(firstWord) >= 0) { return { type: "wash" }; }
-        if(firstWord === "who") { return self.Who(remainingWords); }
-        if(firstWord === "what") { return self.What(remainingWords); }
-
+        switch(firstWord) {
+            case "grab":
+            case "take":
+            case "get":
+            case "acquire":
+            case "procure":
+            case "obtain": return self.Grab(remainingWords);
+            case "cut":
+            case "chop":
+            case "slice":
+            case "dice":
+            case "mince":
+            case "stab":
+            case "knife":
+            case "julienne":
+            case "chiffonade": return self.Chop(remainingWords);
+            case "walk":
+            case "move":
+            case "go": return self.Move(remainingWords);
+            case "fry":
+            case "sautee":
+            case "sauté":
+            case "sear":
+            case "brown":
+            case "sizzle": return self.Fry(remainingWords);
+            case "turn":
+            case "switch":
+            case "flip": return self.Turn(remainingWords);
+            case "look":
+            case "inspect":
+            case "view":
+            case "see":
+            case "check": return self.Look(remainingWords);
+            case "find":
+            case "search":
+            case "locate":
+            case "hunt":
+            case "seek": return self.Find(remainingWords);
+            case "throw":
+            case "toss":
+            case "chuck":
+            case "lob":
+            case "fling": return self.Throw(remainingWords);
+            case "wash":
+            case "clean":
+            case "scrub": return { type: "wash" };
+            case "who": return self.Who(remainingWords);
+            case "what": return self.What(remainingWords);
+        }
         return null;
     },
     Throw: function(s) { // to {name}
