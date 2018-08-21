@@ -12,7 +12,7 @@ module.exports = {
                         iter = setInterval(SayFromCache, 250);
                     }, 1000);
                 } else {
-                    console.log(JSON.stringify(err));
+                    console.log((new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" }) + " " + JSON.stringify(err));
                     messageCache.shift();
                 }
                 awaitingResponse = false;
@@ -23,7 +23,7 @@ module.exports = {
         this.Say = function(message) { messageCache.push(message); };
         this.SayP = function(message) { messageCache.push(`\`\`\`diff\n+ ${message}\`\`\``); }; // "Say" wrapped in the "diff" formatting wrapper, first line prefixed with +
         this.SayM = function(message) { messageCache.push(`\`\`\`diff\n- ${message}\`\`\``); }; // "Say" wrapped in the "diff" formatting wrapper, first line prefixed with -
-        this.Log = function(message) { console.log(message); };
+        this.Log = function(message) { console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] ${message}`); };
         this.CleanUp = function() { clearInterval(iter); messageCache = []; }
     }
 };

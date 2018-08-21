@@ -25,7 +25,7 @@ const self = module.exports = {
             if(gameData.restartTimer < 0) {
                 gameData.cancelled = true;
                 gameData.complete = false;
-                console.log(`New round not started on channel ${gameData.channelID}.`);
+                console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] New round not started on channel ${gameData.channelID}.`);
                 gameData.discordHelper.SayM(`Game over! Good game, everybody! To start a new match, someone best be typin' INIT!`);
                 setTimeout(gameData.KillGame, 1000);
             }
@@ -33,7 +33,7 @@ const self = module.exports = {
         }
         if((gameData.secondsPlayed - gameData.lastActionTimeSecond) > 60) {
             gameData.cancelled = true;
-            console.log(`Timing out and cancelling the game on channel ${gameData.channelID}.`);
+            console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Timing out and cancelling the game on channel ${gameData.channelID}.`);
             gameData.discordHelper.SayM(`Due to inactivity, the round has been cancelled. To start a new match, someone best be typin' INIT!`);
             setTimeout(gameData.KillGame, 1000);
             return;
@@ -155,7 +155,7 @@ const self = module.exports = {
             if(rewardName !== "") { rewards.push(`${rewardName}:  ${player.nick}`); }
         }
         rewards.unshift(`Most Active: ${mostActivePlayer}`);
-        console.log(`Game completed on channel ${gameData.channelID}.`);
+        console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Game completed on channel ${gameData.channelID}.`);
         if(gameData.score > 9999999) { gameData.score = 9999999; }
         if(gameData.ordersCleared > 99999) { gameData.ordersCleared = 99999; }
         gameData.discordHelper.Say(`\`\`\`asciidoc

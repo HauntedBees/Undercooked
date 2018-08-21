@@ -30,7 +30,7 @@ const self = module.exports = {
             } else if(err.statusMessage !== "FORBIDDEN") { // don't initialize in blocked channels!
                 self.Init2(gameData, channelID, userID, true);
             } else {
-                console.log(`Match in channel ${channelID} was not started due to insufficient permissions.`);
+                console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Match in channel ${channelID} was not started due to insufficient permissions.`);
             }
         });
     },
@@ -180,7 +180,6 @@ ${gameData.map.img}\n`;
             gameData.initialized = false;
             gameData.cancelled = true;
             gameData.players = [];
-            gameData.discordHelper.SayM(`${gameData.hostUserName} cancelled the round! To start a new match, someone best be typin' INIT!`);
             return false;
         }
         return false;

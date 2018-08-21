@@ -3,14 +3,14 @@ const Setup = require("./init.js"), Game = require("./game.js"), Parser = requir
 const bot = new Discord.Client({ token: auth.token, autorun: true });
 const chGdM = {}; // channel gamedata mappings
 bot.on("ready", function (evt) {
-    console.log("Connected! Logged in as: " + bot.username + " - (" + bot.id + ")");
+    console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Connected! Logged in as: ${bot.username} - (${bot.id})`);
     bot.setPresence({ game: { name: "Undercooked" } });
 });
 bot.on("message", function (user, userID, channelID, message, evt) {
     if(userID === bot.id) { return; }
     
     if(chGdM[channelID] === undefined && message === "INIT") {
-        console.log(`Initializing up a game on channel ${channelID}.`);
+        console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Initializing up a game on channel ${channelID}.`);
         chGdM[channelID] = GetNewGameData(bot, channelID);
     }
     const channelGameData = chGdM[channelID];
@@ -24,13 +24,13 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         if(message.indexOf("!HELP") === 0) { return Game.ShowHelp(channelGameData, message); }
         Setup.HandlePostInitCommand(channelGameData, userID, message.toLowerCase());
         if(channelGameData.cancelled) {
-            console.log(`Cancelling the game on channel ${channelID}.`);
-            gameData.discordHelper.SayM(`Round cancelled! To start a new match, someone best be typin' INIT!`);
+            console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Cancelling the game on channel ${channelID}.`);
+            channelGameData.discordHelper.SayM(`Round cancelled! To start a new match, someone best be typin' INIT!`);
             setTimeout(channelGameData.KillGame, 1000);
             return;
         }
         if(channelGameData.started) {
-            console.log(`The game on channel ${channelID} has began.`);
+            console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] The game on channel ${channelID} has began.`);
             channelGameData.gameTimer = setInterval(function() { Game.MainLoop(channelGameData); }, 1000);
         }
         return;
@@ -38,7 +38,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     if(channelGameData.players.indexOf(userID) < 0) { return; } // you don't get to do shit if you're not int he fucking game
     if(channelGameData.complete && channelGameData.hostUserID === userID) {
         if(message === "AGAIN") {
-            console.log(`Starting a follow-up round on channel ${channelID}.`);
+            console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Starting a follow-up round on channel ${channelID}.`);
             const numPlayers = channelGameData.numPlayers;
             const mapIdx = channelGameData.selectedMapIdx === 0 ? -1 : channelGameData.selectedMapIdx;
             const speed = channelGameData.gameSpeed;
@@ -52,7 +52,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
             Setup.Init2(chGdM[channelID], channelID, userID);
             return;
         } else if(message === "CANCEL") {
-            console.log(`Not continuing the game on channel ${channelID}.`);
+            console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Not continuing the game on channel ${channelID}.`);
             channelGameData.discordHelper.SayM(`New round cancelled! To start a new match, someone best be typin' INIT!`);
             setTimeout(channelGameData.KillGame, 1000);
             return;
