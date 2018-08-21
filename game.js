@@ -96,7 +96,7 @@ const self = module.exports = {
         }
         if(gameData.map.gimmick !== null) {
             if(gameData.secondsPlayed % gameData.map.gimmick.interval === 0 && Math.random() <= gameData.map.gimmick.chance) {
-                const resStr = gameData.map.gimmick.Happen(gameData.map);
+                const resStr = gameData.map.gimmick.Happen(gameData);
                 if(resStr !== "") { gameData.discordHelper.SayP(resStr); }
             }
         }

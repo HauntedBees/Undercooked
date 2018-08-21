@@ -84,7 +84,8 @@ xxxxxxxxxxx             SN = Sink                   CB = Conveyor Belt
             { type: "floor", rooms: [1], size: 999, contents: [] },
             { type: "floor", rooms: [2], size: 999, contents: [] }
         ],
-        gimmick: "earthquake", gimmickArgs: { rooms: [0, 1], interval: 5, chance: 1 },
+        gimmick: "teleport", gimmickArgs: { interval: 5, chance: 1 },
+        //gimmick: "earthquake", gimmickArgs: { rooms: [0, 1], interval: 5, chance: 1 },
         potentialOrders: [
             { type: "tomato", attributes: ["sliced"], score: 5 },
             { type: "frenchfries", attributes: [], score: 10 }
