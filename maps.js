@@ -120,7 +120,25 @@ const self = module.exports = {
     GetMapName: idx => maps[idx].name,
     GetMapImg: idx => maps[idx].img,
     GetMap: function(gameData) {
-        const staticMap = maps[gameData.selectedMapIdx];
+        let mapIdx = gameData.selectedMapIdx;
+        if(gameData.selectedMapIdx < 0) {
+            let numAttempts = 8;
+            while(numAttempts > 0 && mapIdx < 0) {
+                const potentialIdx = Math.floor(Math.random() * Maps.length);
+                if(gameData.players.length >= maps[potentialIdx].minPlayers) {
+                    mapIdx = potentialIdx;
+                }
+                numAttempts--;
+            }
+            if(mapIdx < 0) { // picking randomly didn't work, just grab the first one that fits
+                for(let i = 0; i < maps.length; i++) {
+                    if(gameData.players.length < maps[i].minPlayers) { continue; }
+                    mapIdx = i;
+                    break;
+                }
+            }
+        }
+        const staticMap = maps[mapIdx];
         if(gameData.players.length < staticMap.minPlayers) {
             gameData.discordHelper.SayM(`The level you selected needs at least ${staticMap.minPlayers} to play! You only have ${gameData.players.length}! Please wait for more players or pick another level.`);
             return null;
