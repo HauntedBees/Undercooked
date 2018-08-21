@@ -38,11 +38,23 @@ const self = module.exports = {
             setTimeout(gameData.KillGame, 1000);
             return;
         }
-        if(gameData.secondsPlayed >= gameData.endingTime) {
+        const timeRemaining = gameData.endingTime - gameData.secondsPlayed;
+        if(timeRemaining < 0) {
             gameData.discordHelper.SayP("Time's up!");
             gameData.complete = true;
             self.LevelComplete(gameData);
             return;
+        } else if(timeRemaining % 60 === 0) {
+            const minutesRemaining = timeRemaining / 60;
+            if([2, 5, 10].indexOf(minutesRemaining) >= 0) {
+                gameData.discordHelper.SayP(`${minutesRemaining} minutes remaining!`);
+            } else if(minutesRemaining === 1) {
+                gameData.discordHelper.SayP(`One minute remaining!`);
+            }
+        } else if(timeRemaining === 30) {
+            gameData.discordHelper.SayP(`30 seconds remaining!`);
+        } else if(timeRemaining === 10) {
+            gameData.discordHelper.SayP(`10 seconds remaining!`);
         }
         if(gameData.isTutorial) {
             gameData.tutorialState = Tutorial.Toot(gameData, gameData.tutorialState);
