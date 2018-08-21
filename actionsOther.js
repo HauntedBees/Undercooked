@@ -81,7 +81,7 @@ module.exports = {
             gameData.discordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${aPlace}, but there were none available!`);
         }
     },
-    Grab: function(gameData, currentRoom, actingUser, action) { // TODO: maybe care about attributes
+    Grab: function(gameData, currentRoom, actingUser, action) {
         const objectDisplayName = Food.GetFoodDisplayNameFromAction(action), objNoArticle = objectDisplayName.replace(/^an? /, "");
         const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);

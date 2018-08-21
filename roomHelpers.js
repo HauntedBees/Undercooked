@@ -55,14 +55,16 @@ const self = module.exports = {
         }
         const contents = place.contents;
         if(contents === undefined) { return null; }
+        let potentialFoodBasedOnClass = null;
         for(let i = 0; i < contents.length; i++) {
             const placeItem = contents[i];
+            if(placeItem.class === obj) { potentialFoodBasedOnClass = placeItem; }
             if(placeItem.type !== obj) { continue; }
             if(!self.HasRightAttributes(placeItem, objAttrs)) { continue; }
             contents.splice(i, 1);
             return placeItem;
         }
-        return null;
+        return potentialFoodBasedOnClass;
     },
     HasRightAttributes: function(placeItem, objAttrs) {
         for(let j = 0; j < objAttrs.length; j++) {
