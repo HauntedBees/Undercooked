@@ -28,7 +28,7 @@ const self = module.exports = {
         return 1;
     },
     TrySlipOnFloor: function(gameData, actingUser, actionType) {
-        if(["find", "look", "what", "who", "holding"].indexOf(actionType) >= 0) { return false; } // passive actions can't slip you up!
+        if(["find", "look", "what", "who", "holding", "orders", "level"].indexOf(actionType) >= 0) { return false; } // passive actions can't slip you up!
         const floors = self.GetObjectsOfTypeInRoom(gameData.map, actingUser.room, "floor");
         if(floors.length === 0) { return false; }
         const floorContents = floors[0].contents;

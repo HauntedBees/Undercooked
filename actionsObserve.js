@@ -165,5 +165,17 @@ ${gameData.map.img}\n`;
             informationStr += `+ ${peopleName} ${peopleInRoom.length <= 1 ? "is" : "are"} in Room ${i + 1}.\n`;
         }
         gameData.discordHelper.SayP(informationStr);
+    },
+    Orders: function(gameData) {
+        if(gameData.orders.length === 0) {
+            gameData.discordHelper.SayP("There are no active orders right now.");
+            return;
+        }
+        const orders = [];
+        for(let i = 0; i < gameData.orders.length; i++) {
+            const order = gameData.orders[i];
+            orders.push(`+ ${Food.GetFoodDisplayNameFromObj(order)} for ${order.score}`);
+        }
+        gameData.discordHelper.SayP(`Current Orders are:\n${orders.join("\n")}`);
     }
 };
