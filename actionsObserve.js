@@ -1,4 +1,4 @@
-const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js");
+const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js"), Map = require("./maps.js");
 const self = module.exports = {
     Find: function(gameData, currentRoom, actingUser, action) {
         const roomNo = (action.placeNum < 0 ? currentRoom : (action.placeNum - 1));
@@ -141,5 +141,29 @@ const self = module.exports = {
             typeIter += 1;
         }
         gameData.discordHelper.SayP(fullStr);
+    },
+    Level: function(gameData) {
+        const roomsArray = [];
+        for(const playerId in gameData.playerDetails) {
+            const player = gameData.playerDetails[playerId];
+            const playerRoom = player.room;
+            if(roomsArray[playerRoom] === undefined) { roomsArray[playerRoom] = []; }
+            roomsArray[playerRoom].push(player.nick);
+        }
+        let informationStr = `The game has begun! You are on the map "${gameData.map.name}!" You have ${Map.FormatTime(gameData.endingTime - gameData.secondsPlayed, 1)} remaining! 
+${gameData.map.img}\n`;
+        for(let i = 0; i < roomsArray.length; i++) {
+            const peopleInRoom = roomsArray[i];
+            let peopleName = "";
+            if(peopleInRoom === undefined) { continue; }
+            else if(peopleInRoom.length === 1) { peopleName = peopleInRoom[0]; }
+            else if(peopleInRoom.length === 2) { peopleName = `${peopleInRoom[0]} and ${peopleInRoom[1]}`; }
+            else {
+                const lastElement = peopleInRoom.splice(-1, 1)[0];
+                peopleName = `${peopleInRoom.join(", ")}, and ${lastElement}`;
+            }
+            informationStr += `+ ${peopleName} ${peopleInRoom.length <= 1 ? "is" : "are"} in Room ${i + 1}.\n`;
+        }
+        gameData.discordHelper.SayP(informationStr);
     }
 };

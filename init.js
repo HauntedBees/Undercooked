@@ -160,9 +160,8 @@ const self = module.exports = {
                 if(roomsArray[playerRoom] === undefined) { roomsArray[playerRoom] = []; }
                 roomsArray[playerRoom].push(playerNick);
             }
-            let informationStr = `The game has begun! You are on the map "${gameData.map.name}! You have ${Map.FormatTime(gameData.map.time, 1)} remaining!" 
-${gameData.map.img}
-`;
+            let informationStr = `The game has begun! You are on the map "${gameData.map.name}!" You have ${Map.FormatTime(gameData.map.time, 1)} remaining!
+${gameData.map.img}\n`;
             for(let i = 0; i < roomsArray.length; i++) {
                 const peopleInRoom = roomsArray[i];
                 let peopleName = "";

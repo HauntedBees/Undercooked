@@ -51,6 +51,7 @@ const self = module.exports = {
         if(firstWord === "plate") { return self.Plate(remainingWords); }
         if(firstWord === "trash") { return { type: "drop", place: "trashcan", placeNum: 1 }; }
         if(firstWord === "holding") { return { type: "holding" }; }
+        if(firstWord === "level") { return { type: "level" }; }
         if(dropVerbs.indexOf(firstWord) >= 0) { return self.Drop(remainingWords); }
         if(serveVerbs.indexOf(firstWord) >= 0) { return { type: "serve" }; }
         if(mixVerbs.indexOf(firstWord) >= 0) { return self.Mix(remainingWords); }

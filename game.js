@@ -10,7 +10,7 @@ const self = module.exports = {
         } else {
             const cmdHelp = Strings.INDIVIDUALINSTRUCTIONS[trimmed];
             if(cmdHelp === undefined) {
-                gameData.discordHelper.SayM(`I don't know how to ${trimmed}. Available verbs are: grab, put, move, trash, use, throw, chop, fry, turn, mix, plate, serve, wash, look, who, find, what, holding.`);
+                gameData.discordHelper.SayM(`I don't know how to ${trimmed}. Available verbs are: grab, put, move, trash, use, throw, chop, fry, turn, mix, plate, serve, wash, look, who, find, what, holding, level.`);
             } else {
                 gameData.discordHelper.SayP(cmdHelp);
             }
@@ -172,6 +172,7 @@ ${rewards.join("\n")}
                 case "look": return Observers.Look(gameData, currentRoom, actingUser, action);
                 case "what": return Observers.What(gameData, actingUser, action.object);
                 case "who": return Observers.Who(gameData, currentRoom, actingUser, userID, action.placeNum);
+                case "level": return Observers.Level(gameData);
                 case "holding": return Observers.Holding(gameData, actingUser);
                 case "grab": return Others.Grab(gameData, currentRoom, actingUser, action);
                 case "drop": return Others.Drop(gameData, currentRoom, actingUser, action);

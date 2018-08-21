@@ -50,8 +50,12 @@ Observing Actions:
 * < find > - "find tomato in room 2" or "find potato anywhere" 
 * < what > - "what is tomato soup" or "what is in fettucini alfredo"
 * < holding > - tells you what you're currently holding
+* < level > - check level info such as the map layout and time remaining
 ${t}`,
     INDIVIDUALINSTRUCTIONS: {
+        "level": `< level > - check information about the current level
+notes: will show you a rendition of the map and tell you who is in which room and how much time is left on the clock. 
+`,
         "grab": `< grab > - pick up an item 
 * synonyms: take, get, acquire, procure, obtain
 * format: grab item from place (number)
