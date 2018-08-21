@@ -8,23 +8,23 @@ module.exports = {
                 return;
             }
             actingUser.room = nextRoom;
-            gameData.discordHelper.SayP(`${actingUser.nick} walked ${action.direction} from room ${currentRoom + 1} to room ${nextRoom + 1}!`);
+            gameData.discordHelper.SayP(`${actingUser.nick} walked ${action.direction} from Room ${currentRoom + 1} to Room ${nextRoom + 1}!`);
             actingUser.activeActions.push("walk");
         } else { // trying to move to a specific room
             if(currentRoom === action.roomNo) {
-                gameData.discordHelper.SayM(`${actingUser.nick} successfully walked to room ${action.roomNo + 1} from... room ${currentRoom + 1}. Good job.`);
+                gameData.discordHelper.SayM(`${actingUser.nick} successfully walked to Room ${action.roomNo + 1} from... Room ${currentRoom + 1}. Good job.`);
                 return;
             }
             const potentialRooms = gameData.map.rooms[currentRoom];
             for(const direction in potentialRooms) {
                 if(potentialRooms[direction] === action.roomNo) {
                     actingUser.room = action.roomNo;
-                    gameData.discordHelper.SayP(`${actingUser.nick} walked ${direction} from room ${currentRoom + 1} to room ${action.roomNo + 1}!`);
+                    gameData.discordHelper.SayP(`${actingUser.nick} walked ${direction} from Room ${currentRoom + 1} to Room ${action.roomNo + 1}!`);
                     actingUser.activeActions.push("walk");
                     return;
                 }
             }
-            gameData.discordHelper.SayM(`${actingUser.nick} tried to walk to room ${action.roomNo + 1}, but they can't reach it from room ${currentRoom + 1}!`);
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to walk to Room ${action.roomNo + 1}, but they can't reach it from Room ${currentRoom + 1}!`);
         }
     },
     Drop: function(gameData, currentRoom, actingUser, action) {

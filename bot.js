@@ -62,6 +62,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     const parsedResult = Parser.Parse(message);
     if(parsedResult === null) { return; }
     Game.HandleAction(channelGameData, userID, parsedResult);
+    bot.deleteMessage({ channelID: channelID, messageID: evt.d.id });
 });
 
 function GetNewGameData(bot, channelID) {
