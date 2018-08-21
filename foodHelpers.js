@@ -137,7 +137,7 @@ const self = module.exports = {
         if(food.type === "bowl") { return self.MixedFoods(food); }
         if(food.type === "oven") { return self.BakedFoods(food); }
         if(food.type === "dough") {
-            if(food.attributes.length === 1 && food.HasAttribute(food, "sliced")) {
+            if(food.attributes.length === 1 && self.HasAttribute(food, "sliced")) {
                 return { type: "pastadough", modifier: food.modifier, attributes: [] };
             }
         }
