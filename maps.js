@@ -124,7 +124,7 @@ const self = module.exports = {
         if(gameData.selectedMapIdx < 0) {
             let numAttempts = 8;
             while(numAttempts > 0 && mapIdx < 0) {
-                const potentialIdx = Math.floor(Math.random() * Maps.length);
+                const potentialIdx = Math.floor(Math.random() * maps.length);
                 if(gameData.players.length >= maps[potentialIdx].minPlayers) {
                     mapIdx = potentialIdx;
                 }
