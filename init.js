@@ -143,6 +143,7 @@ const self = module.exports = {
             }
             gameData.started = true;
             gameData.playerDetails = {};
+            gameData.endingTime = gameData.map.time;
             const numRooms = gameData.map.rooms.length;
             const roomsArray = [];
             for(let i = 0; i < gameData.players.length; i++) {

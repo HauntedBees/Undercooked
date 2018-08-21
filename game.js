@@ -40,6 +40,7 @@ const self = module.exports = {
         }
         if(gameData.secondsPlayed >= gameData.endingTime) {
             gameData.discordHelper.SayP("Time's up!");
+            gameData.complete = true;
             self.LevelComplete(gameData);
             return;
         }
@@ -91,6 +92,12 @@ const self = module.exports = {
                     plateArea.contents.push({ type: "plate", modifier: 1, attributes: ["dirty"] });
                     gameData.discordHelper.SayP(`A new dirty dish has been added to the counter! Wash it if you're low on dishes!`);
                 }
+            }
+        }
+        if(gameData.map.gimmick !== null) {
+            if(gameData.secondsPlayed % gameData.map.gimmick.interval === 0 && Math.random() <= gameData.map.gimmick.chance) {
+                const resStr = gameData.map.gimmick.Happen(gameData.map);
+                if(resStr !== "") { gameData.discordHelper.SayP(resStr); }
             }
         }
     },

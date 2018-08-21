@@ -3,7 +3,7 @@ module.exports = {
     Move: function(gameData, currentRoom, actingUser, action) {
         if(action.direction !== undefined) { // trying to move in a specific direction
             const nextRoom = gameData.map.rooms[currentRoom][action.direction];
-            if(nextRoom === undefined) {
+            if(nextRoom === undefined || nextRoom < 0) {
                 gameData.discordHelper.SayM(`${actingUser.nick} walked ${action.direction}, and successfully walked into a wall!`);
                 return;
             }

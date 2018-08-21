@@ -1,3 +1,4 @@
+const Gimmicks = require("./levelGimmicks.js");
 function GetTimeFromSpeed(time, speed) {
     switch(speed) {
         case 0.75: time *= 0.8; break;
@@ -83,6 +84,7 @@ xxxxxxxxxxx             SN = Sink                   CB = Conveyor Belt
             { type: "floor", rooms: [1], size: 999, contents: [] },
             { type: "floor", rooms: [2], size: 999, contents: [] }
         ],
+        gimmick: "earthquake", gimmickArgs: { rooms: [0, 1], interval: 5, chance: 1 },
         potentialOrders: [
             { type: "tomato", attributes: ["sliced"], score: 5 },
             { type: "frenchfries", attributes: [], score: 10 }
@@ -147,6 +149,7 @@ const self = module.exports = {
         const newMap = JSON.parse(JSON.stringify(staticMap));
         newMap.items.sort((a, b) => a.type.localeCompare(b.type));
         newMap.time = GetTimeFromSpeed(newMap.time, gameData.gameSpeed);
+        newMap.gimmick = Gimmicks.GetGimmick(newMap.gimmick, newMap.gimmickArgs);
         return newMap;
     },
     FormatTime: function(time, speed) {
