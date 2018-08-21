@@ -12,16 +12,16 @@ function GetMapName(mapIdx) {
     if(mapIdx < 0) { return "Random"; }
     return Map.GetMapName(mapIdx);
 }
+function GetNickname(bot, serverID, userID) {
+    if(IDtoNicknameMappings[userID] !== undefined) { return IDtoNicknameMappings[userID]; }
+    let nick = bot.servers[serverID].members[userID].nick;
+    if(nick === null) {
+        nick = bot.users[userID].username;
+    }
+    IDtoNicknameMappings[userID] = nick;
+    return nick;
+}
 const self = module.exports = {
-    GetNickname: function(bot, serverID, userID) {
-        if(IDtoNicknameMappings[userID] !== undefined) { return IDtoNicknameMappings[userID]; }
-        let nick = bot.servers[serverID].members[userID].nick;
-        if(nick === null) {
-            nick = bot.users[userID].username;
-        }
-        IDtoNicknameMappings[userID] = nick;
-        return nick;
-    },
     Init: function(gameData, channelID, userID, message) {
         if(message !== "INIT") { return; }
         gameData.bot.sendMessage({ to: channelID, message: CONSTS.TITLE }, function(err) {
@@ -38,16 +38,16 @@ const self = module.exports = {
         gameData.channelID = channelID;
         gameData.serverID = gameData.bot.channels[channelID].guild_id;
         gameData.hostUserID = userID;
-        gameData.hostUserName = self.GetNickname(gameData.bot, gameData.serverID, userID);
+        gameData.hostUserName = GetNickname(gameData.bot, gameData.serverID, userID);
         gameData.initialized = true;
         if(tryTitleAgain) { gameData.discordHelper.Say(CONSTS.TITLE); }
-        const playerStr = gameData.players.length === 0 ? "" : `\n+ Current Players: ${gameData.players.map(e => self.GetNickname(gameData.bot, gameData.serverID, e)).join(", ")}.`;
+        const playerStr = gameData.players.length === 0 ? "" : `\n+ Current Players: ${gameData.players.map(e => GetNickname(gameData.bot, gameData.serverID, e)).join(", ")}.`;
         gameData.discordHelper.SayP(`Current Settings -- Maximum Players: ${gameData.numPlayers} -- Game Speed: ${GetSpeedName(gameData.gameSpeed)} -- Level: ${GetMapName(gameData.selectedMapIdx)}
 + Anyone can type "join" to join the next match or "leave" to leave it.
 + Anyone can type "!HELP" to see how to play, or "!HELP [action]" to learn more about a specific command.
 - The host can type "!players #" to set the player count (valid values are 2-100).
 - The host can type "!speed #" to set the speed (valid values are Fast, Normal, Slow, Very Slow).
-- The host can type "!changelevel XXX", "!changelevel Random", "!viewlevels" or "!viewlevel XXX" to specify a level!
+- The host can type "!changelevel LEVELNUMBER", "!changelevel Random", "!viewlevels" or "!viewlevel LEVELNUMBER"!
 - The host can type "start" to begin the game or "cancel" to end the game.
 - ${gameData.hostUserName} is the host!${playerStr}`);
     },
@@ -58,12 +58,12 @@ const self = module.exports = {
         if(message === "who") {
             const users = [];
             for(let i = 0; i < gameData.players.length; i++) {
-                users.push(self.GetNickname(gameData.bot, gameData.serverID, gameData.players[i]));
+                users.push(GetNickname(gameData.bot, gameData.serverID, gameData.players[i]));
             }
             gameData.discordHelper.SayP(`Current Players are: ${users.join(", ")}.`);
             return;
         }
-        const user = self.GetNickname(gameData.bot, gameData.serverID, userID);
+        const user = GetNickname(gameData.bot, gameData.serverID, userID);
         if(message === "join") {
             if(gameData.players.indexOf(userID) >= 0) { return; }
             if(gameData.players.length >= gameData.numPlayers) {
@@ -80,11 +80,32 @@ const self = module.exports = {
         }
     },
     JustHostyThings: function(gameData, message) {
-        if(message.indexOf("!players") === 0) {
+        if(message.indexOf("!changelevel") === 0) {
+            const potentialNum = message.replace("!changelevel ", "");
+            if(potentialNum === "random") {
+                gameData.selectedMapIdx = -1;
+                gameData.discordHelper.SayP(`The current level will now be randomly selected when the game starts!`);
+            } else {
+                const tryNum = parseInt(potentialNum);
+                if(isNaN(tryNum) || tryNum <= 0 || !Map.IsValidMap(tryNum - 1)) { gameData.discordHelper.SayM(`Invalid level number. Please specify a valid level number or "RANDOM."`); return true; }
+                gameData.selectedMapIdx = tryNum - 1;
+                gameData.discordHelper.SayP(`The current level is now "${Map.GetMapName(gameData.selectedMapIdx)}"`);
+            }
+            return true;
+        } else if(message.indexOf("!viewlevels") === 0) {
+            gameData.discordHelper.SayM(`Here are the available maps. Type "!changelevel LEVELNUMBER" to specify one, or "!changelevel Random" to pick a random level.\n${Map.GetMaps(gameData.gameSpeed)}`);
+            return true;
+        } else if(message.indexOf("!viewlevel") === 0) {
+            const potentialNum = message.replace("!viewlevel ", "");
+            const tryNum = parseInt(potentialNum);
+            if(isNaN(tryNum) || tryNum <= 0 || !Map.IsValidMap(tryNum - 1)) { gameData.discordHelper.SayM(`Invalid level number. Please specify a valid level number.`); return true; }
+            gameData.discordHelper.SayP(`Viewing Level ${Map.GetMapStr(tryNum - 1, gameData.gameSpeed)}\n${Map.GetMapImg(tryNum - 1)}`);
+            return true;
+        } else if(message.indexOf("!players") === 0) {
             const potentialNum = message.replace("!players ", "");
             const tryNum = parseInt(potentialNum);
-            if(isNaN(tryNum) || tryNum < 2 || tryNum > 100) {
-                gameData.discordHelper.SayM(`Invalid player count. Please enter a number from 2 to 100.`);
+            if(isNaN(tryNum) || tryNum < 2 || tryNum > 99) {
+                gameData.discordHelper.SayM(`Invalid player count. Please enter a number from 2 to 99.`);
             } else {
                 const clearNumPlayers = (tryNum < gameData.players.length);
                 gameData.numPlayers = tryNum;
@@ -111,9 +132,10 @@ const self = module.exports = {
         } else if(message === "start") {
             if(gameData.players.length === 0) {
                 gameData.discordHelper.SayM(`Come on, bro, at least wait until the match has someone in it before starting it!`);
-                return;
+                return true;
             }
-            gameData.map = Map.GetMap();
+            gameData.map = Map.GetMap(gameData);
+            if(gameData.map === null) { return true; }
             if(gameData.map.isTutorial) {
                 gameData.isTutorial = true;
                 gameData.tutorialState = 0;
@@ -126,7 +148,7 @@ const self = module.exports = {
             for(let i = 0; i < gameData.players.length; i++) {
                 const playerId = gameData.players[i];
                 const playerRoom = i % numRooms;
-                const playerNick = self.GetNickname(gameData.bot, gameData.serverID, playerId);
+                const playerNick = GetNickname(gameData.bot, gameData.serverID, playerId);
                 gameData.playerDetails[playerId] = {
                     nick: playerNick, 
                     room: playerRoom,
@@ -137,7 +159,7 @@ const self = module.exports = {
                 if(roomsArray[playerRoom] === undefined) { roomsArray[playerRoom] = []; }
                 roomsArray[playerRoom].push(playerNick);
             }
-            let informationStr = `The game has begun! You are on the map "${gameData.map.name}!" 
+            let informationStr = `The game has begun! You are on the map "${gameData.map.name}! You have ${Map.FormatTime(gameData.map.time, 1)} remaining!" 
 ${gameData.map.img}
 `;
             for(let i = 0; i < roomsArray.length; i++) {

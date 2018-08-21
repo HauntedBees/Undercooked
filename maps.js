@@ -1,7 +1,15 @@
+function GetTimeFromSpeed(time, speed) {
+    switch(speed) {
+        case 0.75: time *= 0.8; break;
+        case 2: time *= 1.5; break;
+        case 4: time *= 2.5; break;
+    }
+    return Math.round(time);
+}
 const maps = [
     {
         name: "Hey Let's Tutorial!", isTutorial: true, 
-        difficulty: "Easy", minPlayers: 2, time: 3599,
+        difficulty: "Trivial", minPlayers: 2, time: 3599,
         img: `
 xxCBxCBxxxDLxDTxx   DL = Lettuce Dispenser
 x       T       x   DT = Tomato Dispenser
@@ -28,7 +36,7 @@ xxxxxxxxxxxxxDPxx   DP = Plate Dispenser`,
     },
     {
         name: "De Testbench!",
-        difficulty: "Easy", minPlayers: 1, 
+        difficulty: "Easy", minPlayers: 1, time: 3599,
         img: `
 xxOVxPSxxxxxxxOUxxxx    OU = Counter for Food Delivery and Used Plate Pickup
 FP                DT    TT = Table                  TC = Trash Can
@@ -80,7 +88,7 @@ xxxxxxxxxxx             SN = Sink                   CB = Conveyor Belt
         ]
     },
     {
-        name: "Hello Hi! Let's Some Tomatoes!",
+        name: "Hello Hi! Let's Some Tomatoes!", minPlayers: 2, time: 3599, difficulty: "Easy", 
         img: `
 xxxxxxxxxxxxxxxxxxx    DT = Tomato Dispenser
 xx       T       DT    DP = Plate Dispenser
@@ -107,11 +115,36 @@ xxxxxxxxxxxxxxxxxxx     T = Table
         ]
     }
 ];
-module.exports = {
+const self = module.exports = {
+    IsValidMap: idx => idx < maps.length, 
     GetMapName: idx => maps[idx].name,
-    GetMap: function(numPlayers, specificMapName) {
-        const newMap = JSON.parse(JSON.stringify(maps[0]));
+    GetMapImg: idx => maps[idx].img,
+    GetMap: function(gameData) {
+        const staticMap = maps[gameData.selectedMapIdx];
+        if(gameData.players.length < staticMap.minPlayers) {
+            gameData.discordHelper.SayM(`The level you selected needs at least ${staticMap.minPlayers} to play! You only have ${gameData.players.length}! Please wait for more players or pick another level.`);
+            return null;
+        }
+        const newMap = JSON.parse(JSON.stringify(staticMap));
         newMap.items.sort((a, b) => a.type.localeCompare(b.type));
+        newMap.time = GetTimeFromSpeed(newMap.time, gameData.gameSpeed);
         return newMap;
+    },
+    FormatTime: function(time, speed) {
+        const realTime = GetTimeFromSpeed(time, speed);
+        const minutes = Math.floor(realTime / 60), seconds = realTime % 60;
+        return `${minutes < 10 ? "0" : ""}${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    },
+    GetMapStr: function(i, gameSpeed) {
+        const map = maps[i];
+        return `#${i + 1}: ${map.name} ${PadSpaces(map.name, 32)} + Difficulty: ${PadSpaces(map.difficulty, 7)}${map.difficulty}. Minimum Players: ${PadSpaces(map.minPlayers.toString(), 2)}${map.minPlayers}. Time: ${self.FormatTime(map.time, gameSpeed)}`;
+    },
+    GetMaps: function(gameSpeed) {
+        let results = [];
+        for(let i = 0; i < maps.length; i++) {
+            results.push(`+ ${self.GetMapStr(i, gameSpeed)}`);
+        }
+        return results.join("\n");
     }
 };
+const PadSpaces = (str, desiredLen) => " ".repeat(desiredLen - str.length);
