@@ -2,7 +2,8 @@ const Food = require("./foodHelpers.js");
 const self = module.exports = {
     GetObjectsInRoom: (map, roomNo) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0),
     GetObjectsOfTypeInRoom:(map, roomNo, type) => map.items.filter(item => item.rooms.indexOf(roomNo) >= 0 && item.type === type), 
-    FindReceiverConveyorBelt:(map, to, from) => map.items.filter(item => item.rooms.indexOf(to) >= 0 && item.type === "belt" && item.from === from)[0], 
+    FindReceiverConveyorBelt:(map, to, from) => map.items.filter(item => item.type === "belt" && item.rooms.indexOf(to) >= 0 && item.from === from)[0], 
+    FindCounter:(map) => map.items.filter(item => item.type === "counter")[0], 
     AreRoomsConnected: function(map, r1, r2) {
         const room1 = map.rooms[r1];
         for(const direction in room1) {

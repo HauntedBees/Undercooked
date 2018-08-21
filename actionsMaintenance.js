@@ -17,6 +17,7 @@ module.exports = {
                 actingUser.activeActions.push("serve");
                 gameData.score += order.score;
                 gameData.ordersCleared += 1;
+                gameData.platesOnField += 1;
                 actingUser.holding = null;
                 orders.splice(i, 1);
                 return;

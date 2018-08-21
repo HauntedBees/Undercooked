@@ -70,7 +70,7 @@ function GetNewGameData(bot, channelID) {
         serverID: "", channelID: channelID, hostUserID: "", hostUserName: "", 
         numPlayers: 4, players: [], playerDetails: null, 
         bot: bot, map: null, orders: [],
-        score: 0, ordersCleared: 0, 
+        score: 0, ordersCleared: 0, platesOnField: 0, 
         gameTimer: 0, gameSpeed: 1,
         secondsPlayed: 0, endingTime: 0, 
         lastActionTimeSecond: 0

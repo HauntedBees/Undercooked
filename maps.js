@@ -10,6 +10,7 @@ const maps = [
     {
         name: "Hey Let's Tutorial!", isTutorial: true, 
         difficulty: "Trivial", minPlayers: 2, time: 3599,
+        newOrderChance: 0, maxOrders: 5, plateChance: 1, // new orders are checked every 10 seconds, plates every 8
         img: `
 xxCBxCBxxxDLxDTxx   DL = Lettuce Dispenser
 x       T       x   DT = Tomato Dispenser
@@ -22,7 +23,7 @@ xxxxxxxxxxxxxDPxx   DP = Plate Dispenser`,
             { neighboring: 0 }
         ],
         items: [
-            { type: "counter", rooms: [1], size: 3, contents: [] },
+            { type: "counter", rooms: [1], size: 99, contents: [] },
             { type: "dispenser", rooms: [1], dispensed: "lettuce", amount: 999 },
             { type: "dispenser", rooms: [1], dispensed: "tomato", amount: 999 },
             { type: "cuttingboard", rooms: [0], size: 1, contents: [] },

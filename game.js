@@ -68,12 +68,24 @@ const self = module.exports = {
                 }
             }
         }
-        if(gameData.secondsPlayed % 30 === 0) {
-            const orders = gameData.map.potentialOrders;
-            if(orders.length > 0) {
-                const order = orders[Math.floor(Math.random() * orders.length)];
-                gameData.orders.push(order);
-                gameData.discordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
+        if(gameData.secondsPlayed % 10 === 0) {
+            if(gameData.orders.length < gameData.map.maxOrders && Math.random() <= gameData.map.newOrderChance) {
+                const orders = gameData.map.potentialOrders;
+                if(orders.length > 0) {
+                    const order = orders[Math.floor(Math.random() * orders.length)];
+                    gameData.orders.push(order);
+                    gameData.discordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
+                }
+            }
+        }
+        if(gameData.secondsPlayed % 8 === 0) {
+            if(gameData.platesOnField > 0 && Math.random() < gameData.map.plateChance) {
+                const plateArea = Room.FindCounter(gameData.map);
+                if(plateArea !== undefined) {
+                    gameData.platesOnField -= 1;
+                    plateArea.contents.push({ type: "plate", modifier: 1, attributes: ["dirty"] });
+                    gameData.discordHelper.SayP(`A new dirty dish has been added to the counter! Wash it if you're low on dishes!`);
+                }
             }
         }
     },
