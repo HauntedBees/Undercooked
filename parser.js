@@ -266,6 +266,8 @@ const self = module.exports = {
         const splitStr = s.split(" ");
         if(splitStr.length === 1 && splitStr[0] === "") { return { type: "drop", place: "floor", placeNum: 1 } }
         
+        while(splitStr[0] !== "on" && splitStr[0] !== "in" && splitStr.length > 0) { splitStr.shift(); }
+        if(splitStr.length === 0) { return null; }
         if(splitStr[0] === "on" || splitStr[0] === "in") { splitStr.shift(); }
         const placeName = splitStr[0];
         if(placeName === "counter") { return { type: "serve" }; }
