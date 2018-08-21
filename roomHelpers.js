@@ -109,7 +109,7 @@ const self = module.exports = {
         if(place.type === "trashcan") {
             resultStr = `${opening} is full of trash.`;
         } else if(place.type === "dispenser") {
-            resultStr = `${opening} has ${place.amount} ${place.dispensed}${place.amount === 1 ? "" : "s"} left in it.`;
+            resultStr = `${opening} has ${place.amount > 500 ? "a lot of" : place.amount} ${place.dispensed}${place.amount === 1 ? "" : "s"} left in it.`;
         } else if(place.contents === undefined) {
             resultStr = `${opening} definitely exists.`;
         } else {
