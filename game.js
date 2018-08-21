@@ -148,7 +148,7 @@ const self = module.exports = {
                 case "throw_bad": rewardName = "Butterfingers"; break;
                 case "assault": rewardName = "Violent Tendencies"; break;
             }
-            if(rewardName !== "") { rewards.push(`${rewardName} :: ${player.nick}`); }
+            if(rewardName !== "") { rewards.push(`${rewardName}:  ${player.nick}`); }
         }
         rewards.unshift(`Most Active: ${mostActivePlayer}`);
         console.log(`Game completed on channel ${gameData.channelID}.`);
@@ -157,8 +157,8 @@ const self = module.exports = {
         gameData.discordHelper.Say(`\`\`\`asciidoc
 === Level Complete ===
 ======================
-Orders Served :: ${" ".repeat(5 - gameData.ordersCleared.toString().length)}${gameData.ordersCleared}
-Money Made :: ${" ".repeat(7 - gameData.score.toString().length)}$${gameData.score}       
+Orders Served:   ${" ".repeat(5 - gameData.ordersCleared.toString().length)}${gameData.ordersCleared}
+Money Made:   ${" ".repeat(7 - gameData.score.toString().length)}$${gameData.score}       
 ${rewards.join("\n")}
 \`\`\``);
         gameData.discordHelper.SayP(`${gameData.hostUserName}, say "AGAIN" in the next 60 seconds to set up another round with the same team, or "CANCEL" to disband the team!`);
