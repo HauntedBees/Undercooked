@@ -23,6 +23,7 @@ module.exports = {
                 return;
             } else if(!Food.HasAttribute(actingUser.holding, "plated")) {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to serve ${objectDisplayName}, but it needs to be plated first!`);
+                return;
             }
         }
         gameData.discordHelper.SayM(`${actingUser.nick} tried to serve ${objectDisplayName}, but nobody ordered that!`);
