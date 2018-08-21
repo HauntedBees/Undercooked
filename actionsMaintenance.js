@@ -14,7 +14,9 @@ module.exports = {
             const order = orders[i];
             if(Food.DoesFoodMatchOrder(actingUser.holding, order)) {
                 gameData.discordHelper.SayP(`${actingUser.nick} served ${objectDisplayName} and earned $${order.score}!`);
+                actingUser.activeActions.push("serve");
                 gameData.score += order.score;
+                gameData.ordersCleared += 1;
                 actingUser.holding = null;
                 orders.splice(i, 1);
                 return;
@@ -61,6 +63,7 @@ module.exports = {
                 case "ok":
                     actingUser.holding = null;
                     gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${action.placeNum}!`);
+                    actingUser.activeActions.push("plate");
                     break;
                 case "none":
                     gameData.discordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName} on ${specificPlace} ${action.placeNum}, but there was no plate there!`);
@@ -81,6 +84,7 @@ module.exports = {
                     } else {
                         gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${i + 1}!`);
                     }
+                    actingUser.activeActions.push("plate");
                     actingUser.holding = null;
                     return;
                 }
@@ -106,12 +110,14 @@ module.exports = {
                 }
                 chosenPlace.onFire = false;
                 gameData.discordHelper.SayP(`${actingUser.nick} used ${heldTheirDisplayName} on ${Food.FormatPlaceName(chosenPlace.type, true)} ${action.placeNum}, putting out the fire! Hooray!`);
+                actingUser.activeActions.push("extinguish");
             } else {
                 for(let i = 0; i < relevantPlaces.length; i++) {
                     const chosenPlace = relevantPlaces[i];
                     if(!chosenPlace.onFire) { continue; }
                     chosenPlace.onFire = false;
                     gameData.discordHelper.SayP(`${actingUser.nick} used ${heldTheirDisplayName} on ${Food.FormatPlaceName(chosenPlace.type)}, putting out the fire! Hooray!`);
+                    actingUser.activeActions.push("extinguish");
                     return;
                 }
                 if(action.place === "") {
@@ -132,5 +138,6 @@ module.exports = {
         if(!GameHelper.NoPlacesCheck(gameData.discordHelper, actingUser, relevantPlaces, "wash a plate", "sink")) { return; }
         actingUser.holding.attributes = [];
         gameData.discordHelper.SayP(`${actingUser.nick} washed a plate. Good for them!`);
+        actingUser.activeActions.push("wash");
     }
 }

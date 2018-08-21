@@ -25,8 +25,8 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         Setup.HandlePostInitCommand(channelGameData, userID, message.toLowerCase());
         if(channelGameData.cancelled) {
             console.log(`Cancelling the game on channel ${channelID}.`);
-            KillGameData(chGdM[channelID]);
-            delete chGdM[channelID];
+            gameData.discordHelper.SayM(`Round cancelled! To start a new match, someone best be typin' INIT!`);
+            setTimeout(channelGameData.KillGame, 1000);
             return;
         }
         if(channelGameData.started) {
@@ -36,6 +36,28 @@ bot.on("message", function (user, userID, channelID, message, evt) {
         return;
     }
     if(channelGameData.players.indexOf(userID) < 0) { return; } // you don't get to do shit if you're not int he fucking game
+    if(channelGameData.complete && channelGameData.hostUserID === userID) {
+        if(message === "AGAIN") {
+            console.log(`Starting a follow-up round on channel ${channelID}.`);
+            const numPlayers = channelGameData.numPlayers;
+            const mapIdx = channelGameData.selectedMapIdx === 0 ? -1 : channelGameData.selectedMapIdx;
+            const speed = channelGameData.gameSpeed;
+            const players = channelGameData.players.slice(0);
+            KillGameData(channelGameData);
+            chGdM[channelID] = GetNewGameData(bot, channelID);
+            chGdM[channelID].numPlayers = numPlayers;
+            chGdM[channelID].selectedMapIdx = mapIdx;
+            chGdM[channelID].gameSpeed = speed;
+            chGdM[channelID].players = players;
+            Setup.Init2(chGdM[channelID], channelID, userID);
+            return;
+        } else if(message === "CANCEL") {
+            console.log(`Not continuing the game on channel ${channelID}.`);
+            channelGameData.discordHelper.SayM(`New round cancelled! To start a new match, someone best be typin' INIT!`);
+            setTimeout(channelGameData.KillGame, 1000);
+            return;
+        }
+    }
     if(message.indexOf("!HELP") === 0) { return Game.ShowHelp(channelGameData, message); }
     const parsedResult = Parser.Parse(message);
     if(parsedResult === null) { return; }
@@ -44,11 +66,13 @@ bot.on("message", function (user, userID, channelID, message, evt) {
 
 function GetNewGameData(bot, channelID) {
     const gameData = {
-        initialized: false, started: false, 
+        initialized: false, started: false, selectedMapIdx: 0, 
         serverID: "", channelID: channelID, hostUserID: "", hostUserName: "", 
         numPlayers: 4, players: [], playerDetails: null, 
-        bot: bot, map: null, orders: [], score: 0,
-        gameTimer: 0, gameSpeed: 1, secondsPlayed: 0,
+        bot: bot, map: null, orders: [],
+        score: 0, ordersCleared: 0, 
+        gameTimer: 0, gameSpeed: 1,
+        secondsPlayed: 0, endingTime: 0, 
         lastActionTimeSecond: 0
     };
     gameData.discordHelper = new DH.DiscordHelper(bot, channelID);

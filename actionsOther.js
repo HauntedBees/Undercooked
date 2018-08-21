@@ -107,6 +107,7 @@ module.exports = {
             }
             const item = Room.TryTakeObjectFromPlace(chosenPlace, action.object, action.objAttrs);
             if(item !== null) {
+                if(chosenPlace.type === "dispenser") { actingUser.activeActions.push("dispense"); }
                 gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${specificPlace} ${action.placeNum}!`);
                 actingUser.holding = item;
             } else {
@@ -119,6 +120,7 @@ module.exports = {
                 if(relevantPlaces[i].switchedOn) { itemsOn = true; continue; }
                 const item = Room.TryTakeObjectFromPlace(relevantPlaces[i], action.object, action.objAttrs);
                 if(item !== null) {
+                    if(relevantPlaces[i].type === "dispenser") { actingUser.activeActions.push("dispense"); }
                     gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${specificPlace} ${i + 1}!`);
                     actingUser.holding = item;
                     return;
@@ -155,6 +157,7 @@ module.exports = {
                     gameData.discordHelper.SayP(`${actingUser.nick} threw ${objectDisplayName} to ${target}!`);
                     player.holding = actingUser.holding;
                     actingUser.holding = null;
+                    actingUser.activeActions.push("throw");
                 } else {
                     if(actingUser.holding.type === "extinguisher") {
                         gameData.discordHelper.SayM(`${actingUser.nick} tried to throw ${objectDisplayName} to ${target}, but their hands are full, so it hit them on the head, knocking them unconscious for 30 seconds, then fell onto the floor of Room ${player.room + 1}!`);
@@ -164,12 +167,14 @@ module.exports = {
                         if(floor === undefined) { return; }
                         floor.contents.push(actingUser.holding);
                         actingUser.holding = null;
+                        actingUser.activeActions.push("assault");
                     } else {
                         gameData.discordHelper.SayM(`${actingUser.nick} tried to throw ${objectDisplayName} to ${target}, but their hands are full, so it hit them on the head, then fell onto the floor of Room ${player.room + 1}!`);
                         const floor = Room.GetObjectsOfTypeInRoom(gameData.map, player.room, "floor")[0];
                         if(floor === undefined) { return; }
                         floor.contents.push(actingUser.holding);
                         actingUser.holding = null;
+                        actingUser.activeActions.push("throw_bad");
                     }
                 }
                 return;
@@ -179,6 +184,7 @@ module.exports = {
                 if(floor === undefined) { return; }
                 floor.contents.push(actingUser.holding);
                 actingUser.holding = null;
+                actingUser.activeActions.push("throw_bad");
                 return;
             }
         }

@@ -1,5 +1,17 @@
 const CONSTS = require("./strings.js"), Map = require("./maps.js");
 const IDtoNicknameMappings = {};
+function GetSpeedName(i) {
+    switch(i) {
+        case 0.75: return "Fast";
+        case 1: return "Normal";
+        case 2: return "Slow";
+        case 4: return "Very Slow";
+    }
+}
+function GetMapName(mapIdx) {
+    if(mapIdx < 0) { return "Random"; }
+    return Map.GetMapName(mapIdx);
+}
 const self = module.exports = {
     GetNickname: function(bot, serverID, userID) {
         if(IDtoNicknameMappings[userID] !== undefined) { return IDtoNicknameMappings[userID]; }
@@ -29,13 +41,15 @@ const self = module.exports = {
         gameData.hostUserName = self.GetNickname(gameData.bot, gameData.serverID, userID);
         gameData.initialized = true;
         if(tryTitleAgain) { gameData.discordHelper.Say(CONSTS.TITLE); }
-        gameData.discordHelper.SayP(`Current Settings -- Maximum Players: 4 -- Game Speed: Normal
+        const playerStr = gameData.players.length === 0 ? "" : `\n+ Current Players: ${gameData.players.map(e => self.GetNickname(gameData.bot, gameData.serverID, e)).join(", ")}.`;
+        gameData.discordHelper.SayP(`Current Settings -- Maximum Players: ${gameData.numPlayers} -- Game Speed: ${GetSpeedName(gameData.gameSpeed)} -- Level: ${GetMapName(gameData.selectedMapIdx)}
 + Anyone can type "join" to join the next match or "leave" to leave it.
 + Anyone can type "!HELP" to see how to play, or "!HELP [action]" to learn more about a specific command.
-+ The host can type "!players #" to set the player count (valid values are 2-100).
-+ The host can type "!speed #" to set the speed (valid values are Fast, Normal, Slow, Very Slow).
-+ The host can type "start" to begin the game or "cancel" to end the game.
-+ ${gameData.hostUserName} is the host!`);
+- The host can type "!players #" to set the player count (valid values are 2-100).
+- The host can type "!speed #" to set the speed (valid values are Fast, Normal, Slow, Very Slow).
+- The host can type "!changelevel XXX", "!changelevel Random", "!viewlevels" or "!viewlevel XXX" to specify a level!
+- The host can type "start" to begin the game or "cancel" to end the game.
+- ${gameData.hostUserName} is the host!${playerStr}`);
     },
     HandlePostInitCommand: function(gameData, userID, message) {
         if(userID == gameData.hostUserID) {
@@ -100,6 +114,11 @@ const self = module.exports = {
                 return;
             }
             gameData.map = Map.GetMap();
+            if(gameData.map.isTutorial) {
+                gameData.isTutorial = true;
+                gameData.tutorialState = 0;
+                gameData.tutWaiting = false;
+            }
             gameData.started = true;
             gameData.playerDetails = {};
             const numRooms = gameData.map.rooms.length;
@@ -112,7 +131,8 @@ const self = module.exports = {
                     nick: playerNick, 
                     room: playerRoom,
                     holding: null,
-                    stuckTimer: 0
+                    stuckTimer: 0,
+                    activeActions: [],
                 };
                 if(roomsArray[playerRoom] === undefined) { roomsArray[playerRoom] = []; }
                 roomsArray[playerRoom].push(playerNick);

@@ -213,6 +213,7 @@ const self = module.exports = {
         const splitStr = s.split(" ");
         if(splitStr.length === 1) { // direction
             const direction = splitStr[0].replace("east", "right").replace("west", "left").replace("north", "up").replace("south", "down");
+            if(direction === "neighboring") { return null; }
             return { type: "move", direction: direction };
         } else if(splitStr.length === 3) { // to room #
             const roomNo = parseInt(splitStr[2]);
@@ -267,7 +268,7 @@ const self = module.exports = {
         if(splitStr[0] === "on" || splitStr[0] === "in") { splitStr.shift(); }
         const placeName = splitStr[0];
         if(placeName === "counter") { return { type: "serve" }; }
-        
+
         let placeNum = -1;
         if(splitStr[1] !== undefined) {
             const potentialPlaceNum = parseInt(splitStr[1]);

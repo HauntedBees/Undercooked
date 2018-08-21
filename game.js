@@ -19,6 +19,17 @@ const self = module.exports = {
     MainLoop: function(gameData) {
         gameData.secondsPlayed += 1;
         if(gameData.cancelled) { return; }
+        if(gameData.complete) {
+            gameData.restartTimer -= 1;
+            if(gameData.restartTimer < 0) {
+                gameData.cancelled = true;
+                gameData.complete = false;
+                console.log(`New round not started on channel ${gameData.channelID}.`);
+                gameData.discordHelper.SayM(`Game over! Good game, everybody! To start a new match, someone best be typin' INIT!`);
+                setTimeout(gameData.KillGame, 1000);
+            }
+            return;
+        }
         if((gameData.secondsPlayed - gameData.lastActionTimeSecond) > 60) {
             gameData.cancelled = true;
             console.log(`Timing out and cancelling the game on channel ${gameData.channelID}.`);
@@ -51,10 +62,60 @@ const self = module.exports = {
         }
         if(gameData.secondsPlayed % 30 === 0) {
             const orders = gameData.map.potentialOrders;
-            const order = orders[Math.floor(Math.random() * orders.length)];
-            gameData.orders.push(order);
-            gameData.discordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
+            if(orders.length > 0) {
+                const order = orders[Math.floor(Math.random() * orders.length)];
+                gameData.orders.push(order);
+                gameData.discordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
+            }
         }
+    },
+    LevelComplete: function(gameData) {
+        gameData.complete = true;
+        gameData.restartTimer = 60;
+        const rewards = [];
+        let mostActivePlayer = "", mostActiveCount = 0;
+        for(const pID in gameData.playerDetails) {
+            const player = gameData.playerDetails[pID];
+            if(player.activeActions.length > mostActiveCount) {
+                mostActiveCount = player.activeActions.length;
+                mostActivePlayer = player.nick;
+            }
+            const rankedActions = {};
+            player.activeActions.forEach(e => rankedActions[e] = (rankedActions[e] !== undefined ? rankedActions[e] + 1 : 1));
+            let highestAction = "", highestActionCount = 0;
+            for(const action in rankedActions) {
+                const thisActionCount = rankedActions[action];
+                if(thisActionCount > highestActionCount) {
+                    highestAction = action;
+                    highestActionCount = thisActionCount;
+                }
+            }
+            let rewardName = "";
+            switch(highestAction) {
+                case "fry": rewardName = "Fryer Friar"; break;
+                case "chop": rewardName = "Chopper"; break;
+                case "oven": rewardName = "Master Baker"; break;
+                case "stove": rewardName = "Pot Head"; break;
+                case "serve": rewardName = "Serving Champ"; break;
+                case "extinguish": rewardName = "Firestopper"; break;
+                case "wash": rewardName = "Dishwasher Guru"; break;
+                case "dispense": rewardName = "Food Grabber"; break;
+                case "throw": rewardName = "Tosser"; break;
+                case "throw_bad": rewardName = "Butterfingers"; break;
+                case "assault": rewardName = "Violent Tendencies"; break;
+            }
+            if(rewardName !== "") { rewards.push(`${rewardName} :: ${player.nick}`); }
+        }
+        rewards.unshift(`Most Active: ${mostActivePlayer}`);
+        console.log(`Game completed on channel ${gameData.channelID}.`);
+        gameData.discordHelper.Say(`\`\`\`asciidoc
+=== Level Complete ===
+======================
+Orders Served :: ${gameData.ordersCleared}
+Money Made :: $${gameData.score}       
+${rewards.join("\n")}
+\`\`\``);
+        gameData.discordHelper.SayP(`${gameData.hostUserName}, say "AGAIN" in the next 60 seconds to set up another round with the same team, or "CANCEL" to disband the team!`);
     },
     HandleAction: function(gameData, userID, action) {
         gameData.lastActionTimeSecond = gameData.secondsPlayed;
