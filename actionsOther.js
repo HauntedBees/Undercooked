@@ -9,6 +9,7 @@ module.exports = {
             }
             actingUser.room = nextRoom;
             gameData.discordHelper.SayP(`${actingUser.nick} walked ${action.direction} from room ${currentRoom + 1} to room ${nextRoom + 1}!`);
+            actingUser.activeActions.push("walk");
         } else { // trying to move to a specific room
             if(currentRoom === action.roomNo) {
                 gameData.discordHelper.SayM(`${actingUser.nick} successfully walked to room ${action.roomNo + 1} from... room ${currentRoom + 1}. Good job.`);
@@ -19,6 +20,7 @@ module.exports = {
                 if(potentialRooms[direction] === action.roomNo) {
                     actingUser.room = action.roomNo;
                     gameData.discordHelper.SayP(`${actingUser.nick} walked ${direction} from room ${currentRoom + 1} to room ${action.roomNo + 1}!`);
+                    actingUser.activeActions.push("walk");
                     return;
                 }
             }

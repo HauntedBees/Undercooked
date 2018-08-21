@@ -141,12 +141,16 @@ const self = module.exports = {
                 case "oven": rewardName = "Master Baker"; break;
                 case "stove": rewardName = "Pot Head"; break;
                 case "serve": rewardName = "Serving Champ"; break;
+                case "walk": rewardName = "Leg Day Champ"; break;
                 case "extinguish": rewardName = "Firestopper"; break;
                 case "wash": rewardName = "Dishwasher Guru"; break;
                 case "dispense": rewardName = "Food Grabber"; break;
                 case "throw": rewardName = "Tosser"; break;
                 case "throw_bad": rewardName = "Butterfingers"; break;
-                case "assault": rewardName = "Violent Tendencies"; break;
+                case "assault": rewardName = "Cyberbully"; break;
+            }
+            if(highestAction !== "assault" && player.activeActions.indexOf("assault") >= 1) {
+                rewards.push(`Violent Tendencies:  ${player.nick}`);
             }
             if(rewardName !== "") { rewards.push(`${rewardName}:  ${player.nick}`); }
         }
