@@ -170,46 +170,46 @@ const self = module.exports = {
     },
     TryGrabAnywhere: function(gameData, currentRoom, actingUser, action) {
         const relevantPlaces = Room.GetObjectsInRoom(gameData.map, currentRoom);
-        if(action.objAttrs.length === 0) { // prioritize grabbing a standard one over settling for any, if no attributes are specified (not counting dispensers)
-            for(let i = 0; i < relevantPlaces.length; i++) {
-                const currentPlace = relevantPlaces[i];
-                if(currentPlace.onFire) { continue; }
-                if(currentPlace.switchedOn) { continue; }
-                if(currentPlace.type === "dispenser") { continue; }
-                const item = Room.TryTakeObjectFromPlace(currentPlace, action.object, action.objAttrs);
-                if(item !== null) {
-                    gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${Food.FormatPlaceName(currentPlace.type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, currentPlace.type, i)}!`);
-                    actingUser.holding = item;
-                    return;
-                }
-            }
-        }
-        for(let i = 0; i < relevantPlaces.length; i++) { // then try anywhere (not counting dispensers)
-            const currentPlace = relevantPlaces[i];
-            if(currentPlace.onFire) { continue; }
-            if(currentPlace.switchedOn) { continue; }
-            if(currentPlace.type === "dispenser") { continue; }
-            const item = Room.TryTakeObjectFromPlace(currentPlace, action.object, action.objAttrs);
-            if(item !== null) {
-                gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${Food.FormatPlaceName(currentPlace.type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, currentPlace.type, i)}!`);
-                actingUser.holding = item;
-                return;
-            }
-        }
         const dispensers = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "dispenser");
-        for(let i = 0; i < dispensers.length; i++) { // okay NOW check dispensers
-            const currentPlace = dispensers[i];
-            if(currentPlace.onFire) { continue; }
-            const item = Room.TryTakeObjectFromPlace(currentPlace, action.object, action.objAttrs);
-            if(item !== null) {
-                actingUser.activeActions.push("dispense");
-                gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${Food.FormatPlaceName(currentPlace.type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, currentPlace.type, i)}!`);
-                actingUser.holding = item;
-                return;
+        if(action.objAttrs.length === 0) { // prioritize grabbing a standard one over settling for any, if no attributes are specified (not counting dispensers)
+            for(let i = 0; i < relevantPlaces.length; i++) { // then try anywhere (not counting dispensers and combining items)
+                const currentPlace = relevantPlaces[i];
+                if(["dispenser", "oven", "pot", "bowl"].indexOf(currentPlace.type) >= 0) { continue; }
+                if(self.TryGrabFromList(gameData, actingUser, action, relevantPlaces, currentPlace, currentRoom, i)) { return true; }
             }
+            for(let i = 0; i < dispensers.length; i++) { // okay NOW check dispensers
+                if(self.TryGrabFromList(gameData, actingUser, action, dispensers, dispensers[i], currentRoom, i)) { return true; }
+            }
+            for(let i = 0; i < relevantPlaces.length; i++) { // then try the rest
+                const currentPlace = relevantPlaces[i];
+                if(self.TryGrabFromList(gameData, actingUser, action, relevantPlaces, currentPlace, currentRoom, i)) { return true; }
+            }
+        }
+        for(let i = 0; i < relevantPlaces.length; i++) { // then try anywhere (not counting dispensers and combining items)
+            const currentPlace = relevantPlaces[i];
+            if(["dispenser", "oven", "pot", "bowl"].indexOf(currentPlace.type) >= 0) { continue; }
+            if(self.TryGrabFromList(gameData, actingUser, action, relevantPlaces, currentPlace, currentRoom, i)) { return true; }
+        }
+        
+        for(let i = 0; i < dispensers.length; i++) { // okay NOW check dispensers
+            if(self.TryGrabFromList(gameData, actingUser, action, dispensers, dispensers[i], currentRoom, i)) { return true; }
+        }
+        for(let i = 0; i < relevantPlaces.length; i++) { // then try the rest
+            const currentPlace = relevantPlaces[i];
+            if(self.TryGrabFromList(gameData, actingUser, action, relevantPlaces, currentPlace, currentRoom, i)) { return true; }
         }
         const objectDisplayName = Food.GetFoodDisplayNameFromAction(action), objNoArticle = objectDisplayName.replace(/^an? /, "");
         gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName}, but there was no ${objNoArticle} in Room ${currentRoom + 1} to grab!`);
+    },
+    TryGrabFromList: function(gameData, actingUser, action, relevantPlaces, currentPlace, currentRoom, i) {
+        if(currentPlace.onFire) { return false; }
+        if(currentPlace.switchedOn) { return false; }
+        const item = Room.TryTakeObjectFromPlace(currentPlace, action.object, action.objAttrs);
+        if(item !== null) {
+            gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${Food.FormatPlaceName(currentPlace.type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, currentPlace.type, i)}!`);
+            actingUser.holding = item;
+            return true;
+        }
     },
     Throw: function(gameData, currentRoom, actingUser, action) {
         let target = action.to;

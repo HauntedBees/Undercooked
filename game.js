@@ -31,7 +31,7 @@ const self = module.exports = {
             }
             return;
         }
-        if((gameData.secondsPlayed - gameData.lastActionTimeSecond) > 60) {
+        if((gameData.secondsPlayed - gameData.lastActionTimeSecond) > 120) {
             gameData.cancelled = true;
             console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Timing out and cancelling the game on channel ${gameData.channelID}.`);
             gameData.discordHelper.SayM(`Due to inactivity, the round has been cancelled. To start a new match, someone best be typin' INIT!`);

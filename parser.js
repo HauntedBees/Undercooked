@@ -6,7 +6,8 @@ const synonyms = {
     "cooking pan": "pan",
     "skillet": "pan",
     "frypan": "pan",
-    "french fries": "fries",
+    "mushroom pot pie": "potpie",
+    "cream of mushroom soup": "mushroomsoup",
     "cboard": "cuttingboard",
     "cutting board": "cuttingboard",
     "chopping board": "cuttingboard",
@@ -150,7 +151,7 @@ const self = module.exports = {
     Mix: function(s) { // (bowl) {$optional_number}
         const splitStr = s.split(" ");
         if(splitStr[0] === "bowl") { splitStr.shift(); }
-        if(splitStr.length === 1 && splitStr[0] === "") { return { type: "mix", placeNum: 1 }; }
+        if(splitStr.length === 0 || splitStr[0] === "") { return { type: "mix", placeNum: 1 }; }
         if(splitStr.length !== 1) { return null; }
         const placeNum = parseInt(splitStr[0]);
         if(isNaN(placeNum) || placeNum <= 0) { return null; }
