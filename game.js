@@ -69,7 +69,14 @@ const self = module.exports = {
         }
         for(let i = 0; i < gameData.map.items.length; i++) {
             const place = gameData.map.items[i];
-            if(place.type === "trashcan") { place.contents = []; }
+            if(place.onFire) {
+                if(Math.random() > 0.05) { continue; } // 5% chance of fire spreading
+                const objectsInRoom = Room.GetObjectsInRoom(gameData.map, place.rooms[0]);
+                const randomObjInRoom = objectsInRoom[Math.floor(Math.random() * objectsInRoom.length)];
+                if(randomObjInRoom.type === "floor" || randomObjInRoom.onFire) { continue; } // they got lucky this time
+                randomObjInRoom.onFire = true;
+                gameData.discordHelper.SayM(`Oh yoink! The fire from ${Food.FormatPlaceName(place.type, true)} ${Room.GetPlaceNumber(gameData.map.items, place.rooms[0], place.type, i)} spread to ${Food.FormatPlaceName(randomObjInRoom.type)}! Use a fire extinguisher to put out the fire!!`);
+            } else if(place.type === "trashcan") { place.contents = []; }
             else if(place.type === "belt") {
                 if(!place.start) { continue; }
                 if(place.contents.length === 0) { continue; }
@@ -78,7 +85,7 @@ const self = module.exports = {
                 if(otherConveyor.contents.length >= otherConveyor.size) { console.log("neighbor is full!"); continue; }
                 const itemToTransport = place.contents.shift();
                 otherConveyor.contents.push(itemToTransport);
-            } else if(place.switchedOn && !place.onFire) {
+            } else if(place.switchedOn) {
                 place.cookingTime += 1;
                 if(place.cookingTime >= place.burnTime) {
                     place.onFire = true;
