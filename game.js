@@ -200,7 +200,7 @@ ${rewards.join("\n")}
             }
         } catch(e) {
             gameData.discordHelper.Log(e.stack);
-            gameData.discordHelper.log(JSON.stringify(action));
+            gameData.discordHelper.Log(JSON.stringify(action));
             gameData.discordHelper.SayM(`Something broke but we're all good. I recovered. I'm a big boy. We got this. We're good.`);
         }
     },

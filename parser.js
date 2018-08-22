@@ -6,6 +6,7 @@ const synonyms = {
     "cooking pan": "pan",
     "skillet": "pan",
     "frypan": "pan",
+    "french fries": "fries",
     "cboard": "cuttingboard",
     "cutting board": "cuttingboard",
     "chopping board": "cuttingboard",

@@ -1,5 +1,5 @@
 const recipeDisplayNames = {
-    "frenchfries": { displayName: "french fries", recipe: "slice a potato on a cutting board, then fry it in a pan" },
+    "fries": { displayName: "french fries", recipe: "slice a potato on a cutting board, then fry it in a pan" },
     "tomatosoup": { displayName: "tomato soup", recipe: "add two or more tomatos to a pot, then cook until ready" },
     "spicytomatosoup": { displayName: "spicy tomato soup", recipe: "add two or more tomatos and one or more peppers to a pot, then cook until ready" },
     "weirdsoup": { displayName: "weird soup", recipe: "add any ingredients to a pot and cook until ready" },

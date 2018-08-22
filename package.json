@@ -1,9 +1,14 @@
 {
   "name": "undercooked",
   "version": "1.0.0",
+  "license": "GPL-3.0-or-later",
   "description": "America's Favorite Text-Based Co-Op Cooking Adventure",
   "main": "bot.js",
   "author": "Haunted Bees Productions",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/HauntedBees/Undercooked.git"
+  },
   "dependencies": {
     "discord.io": "^2.5.3"
   }
