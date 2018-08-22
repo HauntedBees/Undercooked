@@ -89,8 +89,7 @@ const self = module.exports = {
             if(Food.HasAttribute(itemInfo, "dirty")) { continue; }
             contents.splice(i, 1);
             obj.attributes.push("plated");
-            contents.push(obj);
-            return "ok";
+            return obj;
         }
         return "none";
     },

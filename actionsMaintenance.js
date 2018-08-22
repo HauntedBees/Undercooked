@@ -61,12 +61,13 @@ module.exports = {
                 return;
             }
             const plateStatus = Room.TryPlateObjectOnPlace(chosenPlace, actingUser.holding);
+            if(typeof plateStatus === "object") {
+                actingUser.holding = plateStatus;
+                gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${action.placeNum}, and is now holding ${Food.GetFoodDisplayNameFromObj(actingUser.holding)}!`);
+                actingUser.activeActions.push("plate");
+                return;
+            }
             switch(plateStatus) {
-                case "ok":
-                    actingUser.holding = null;
-                    gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${action.placeNum}!`);
-                    actingUser.activeActions.push("plate");
-                    break;
                 case "none":
                     gameData.discordHelper.SayM(`${actingUser.nick} tried to plate ${heldDisplayName} on ${specificPlace} ${action.placeNum}, but there was no plate there!`);
                     break;
@@ -80,14 +81,14 @@ module.exports = {
         } else {
             for(let i = 0; i < relevantPlaces.length; i++) {
                 const attempt = Room.TryPlateObjectOnPlace(relevantPlaces[i], actingUser.holding);
-                if(attempt === "ok") {
+                if(typeof attempt === "object") {
                     if(placeType === "") {
-                        gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${Food.FormatPlaceName(relevantPlaces[i].type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, relevantPlaces[i].type, i)}!`);
+                        gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${Food.FormatPlaceName(relevantPlaces[i].type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, relevantPlaces[i].type, i)}, and is now holding ${Food.GetFoodDisplayNameFromObj(actingUser.holding)}!`);
                     } else {
-                        gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${i + 1}!`);
+                        gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${i + 1}, and is now holding ${Food.GetFoodDisplayNameFromObj(actingUser.holding)}!`);
                     }
+                    actingUser.holding = attempt;
                     actingUser.activeActions.push("plate");
-                    actingUser.holding = null;
                     return;
                 }
             }
