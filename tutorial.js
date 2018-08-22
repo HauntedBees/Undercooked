@@ -51,7 +51,7 @@ const states = [
                 if(cuttingboard.contents.some(item => item.type === "tomato" && Food.HasAttribute(item, "sliced"))) {
                     const order = { type: "tomato", attributes: ["sliced"], score: 5 };
                     gameData.orders.push(order);
-                    gameData.discordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
+                    gameData.discordHelper.SayF(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
                     return true;
                 }
             }
@@ -87,21 +87,21 @@ const states = [
         text: "", advanceCondition: function(gameData) {
             const order = { type: "lettuce", attributes: ["sliced"], score: 4 };
             gameData.orders.push(order);
-            gameData.discordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
+            gameData.discordHelper.SayF(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
             return true;
         }
     }, {
         text: "", advanceCondition: function(gameData) {
             const order = { type: "tomato", attributes: ["sliced"], score: 5 };
             gameData.orders.push(order);
-            gameData.discordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
+            gameData.discordHelper.SayF(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
             return true;
         }
     }, {
         text: "", advanceCondition: function(gameData) {
             const order = { type: "lettuce", attributes: ["sliced"], score: 4 };
             gameData.orders.push(order);
-            gameData.discordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
+            gameData.discordHelper.SayF(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
             return true;
         }
     }, {

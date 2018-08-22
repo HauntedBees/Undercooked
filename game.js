@@ -92,7 +92,7 @@ const self = module.exports = {
                 if(orders.length > 0) {
                     const order = orders[Math.floor(Math.random() * orders.length)];
                     gameData.orders.push(order);
-                    gameData.discordHelper.SayP(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
+                    gameData.discordHelper.SayF(`Order up! Somebody wants ${Food.GetFoodDisplayNameFromObj(order)}, an order worth $${order.score}!`);
                 }
             }
         }

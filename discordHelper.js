@@ -21,6 +21,7 @@ module.exports = {
         let messageCache = [], bot = b, channelID = c, iter = setInterval(SayFromCache, 250);
         let awaitingResponse = false;
         this.Say = function(message) { messageCache.push(message); };
+        this.SayF = function(message) { messageCache.push(`\`\`\`fix\n${message}\`\`\``); }; // "Say" wrapped in the "diff" formatting wrapper, first line prefixed with +
         this.SayP = function(message) { messageCache.push(`\`\`\`diff\n+ ${message}\`\`\``); }; // "Say" wrapped in the "diff" formatting wrapper, first line prefixed with +
         this.SayM = function(message) { messageCache.push(`\`\`\`diff\n- ${message}\`\`\``); }; // "Say" wrapped in the "diff" formatting wrapper, first line prefixed with -
         this.Log = function(message) { console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] ${message}`); };

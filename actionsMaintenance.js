@@ -13,7 +13,7 @@ module.exports = {
         for(let i = 0; i < orders.length; i++) {
             const order = orders[i];
             if(Food.DoesFoodMatchOrder(actingUser.holding, order)) {
-                gameData.discordHelper.SayP(`${actingUser.nick} served ${objectDisplayName} and earned $${order.score}!`);
+                gameData.discordHelper.SayF(`${actingUser.nick} served ${objectDisplayName} and earned $${order.score}!`);
                 actingUser.activeActions.push("serve");
                 gameData.score += order.score;
                 gameData.ordersCleared += 1;
