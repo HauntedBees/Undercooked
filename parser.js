@@ -261,12 +261,14 @@ const self = module.exports = {
             return { type: "move", roomNo: roomNo - 1 };
         } else { return null; }
     },
-    Plate: function(s) { // (on ${place} {$optional_number}) -- if inner area is omitted, any plate
+    Plate: function(s) { // (${obj}) (on ${place} {$optional_number}) -- if inner area is omitted, any plate
         const splitStr = s.split(" ");
-        if(splitStr.length === 1 && splitStr[0] === "") { return { type: "plate", place: "", placeNum: -1 } }
+        if(splitStr.length === 1) { return { type: "plate", place: "", placeNum: -1 } }
 
+        while(splitStr[0] !== "on" && splitStr[0] !== "in" && splitStr.length > 0) { splitStr.shift(); }
         if(splitStr[0] === "on" || splitStr[0] === "in") { splitStr.shift(); }
         const placeName = splitStr[0];
+        if(placeName === "") { return null; }
         let placeNum = -1;
         if(splitStr[1] !== undefined) {
             const potentialPlaceNum = parseInt(splitStr[1]);
@@ -301,15 +303,16 @@ const self = module.exports = {
             place: "cuttingboard", placeNum: placeNum
         }
     },
-    Drop: function(s) { // (on ${place} {$optional_number}) -- if inner area is omitted, assume floor 
+    Drop: function(s) { // (${obj}) (on ${place} {$optional_number}) -- if inner area is omitted, assume floor 
         const splitStr = s.split(" ");
-        if(splitStr.length === 1 && splitStr[0] === "") { return { type: "drop", place: "floor", placeNum: 1 } }
+        if(splitStr.length === 1) { return { type: "drop", place: "floor", placeNum: 1 } }
         
         while(splitStr[0] !== "on" && splitStr[0] !== "in" && splitStr.length > 0) { splitStr.shift(); }
         if(splitStr.length === 0) { return null; }
         if(splitStr[0] === "on" || splitStr[0] === "in") { splitStr.shift(); }
         const placeName = splitStr[0];
         if(placeName === "counter") { return { type: "serve" }; }
+        if(placeName === "") { return null; }
 
         let placeNum = -1;
         if(splitStr[1] !== undefined) {
