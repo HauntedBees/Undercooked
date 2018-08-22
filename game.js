@@ -155,9 +155,18 @@ const self = module.exports = {
                 case "throw": rewardName = "Tosser"; break;
                 case "throw_bad": rewardName = "Butterfingers"; break;
                 case "assault": rewardName = "Cyberbully"; break;
+                case "defend": rewardName = "Animal Expert"; break;
+                case "strip": rewardName = "Master-Class Stripper"; break;
             }
             if(highestAction !== "assault" && player.activeActions.indexOf("assault") >= 1) {
                 rewards.push(`Violent Tendencies:  ${player.nick}`);
+            }
+            if(highestAction !== "strip" && player.activeActions.indexOf("strip") >= 1) {
+                rewards.push(`Stripper:  ${player.nick}`);
+            }
+            if(!player.shirt && !player.pants && !player.underwear && player.shoes === 0 && player.socks === 0) {
+                if(player.hat) { rewards.push(`Mad Hatter:  ${player.nick}`); }
+                else { rewards.push(`Nudist:  ${player.nick}`); }
             }
             if(rewardName !== "") { rewards.push(`${rewardName}:  ${player.nick}`); }
         }
@@ -203,7 +212,7 @@ ${rewards.join("\n")}
                 case "grab": return Others.Grab(gameData, currentRoom, actingUser, action);
                 case "drop": return Others.Drop(gameData, currentRoom, actingUser, action);
                 case "move": return Others.Move(gameData, currentRoom, actingUser, action);
-                case "throw": return Others.Throw(gameData, currentRoom, actingUser, action.to);
+                case "throw": return Others.Throw(gameData, currentRoom, actingUser, action);
             }
         } catch(e) {
             gameData.discordHelper.Log(e.stack);

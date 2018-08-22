@@ -140,6 +140,9 @@ const self = module.exports = {
             fullStr += `\n+ ${Room.GetInspectionString(chosenPlace, typeIter, false)}`;
             typeIter += 1;
         }
+        if(gameData.map.gimmick !== null && gameData.map.gimmick.isAnimalGimmick) {
+            fullStr += gameData.map.gimmick.GetAnimalsString(currentRoom);
+        }
         gameData.discordHelper.SayP(fullStr);
     },
     Level: function(gameData) {

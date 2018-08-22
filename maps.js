@@ -39,6 +39,7 @@ xxxxxxxxxxxxxDPxx   DP = Plate Dispenser`,
     {
         name: "De Testbench!",
         difficulty: "Easy", minPlayers: 1, time: 3599,
+        newOrderChance: 0.5, maxOrders: 5, plateChance: 0.5, // new orders are checked every 10 seconds, plates every 8
         img: `
 xxOVxPSxxxxxxxOUxxxx    OU = Counter for Food Delivery and Used Plate Pickup
 FP                DT    TT = Table                  TC = Trash Can
@@ -84,11 +85,15 @@ xxxxxxxxxxx             SN = Sink                   CB = Conveyor Belt
             { type: "floor", rooms: [1], size: 999, contents: [] },
             { type: "floor", rooms: [2], size: 999, contents: [] }
         ],
-        gimmick: "teleport", gimmickArgs: { interval: 5, chance: 1 },
+        gimmick: "animals", gimmickArgs: { interval: 2, moveChance: 0, appearChance: 0.5, maxAnimalsAtOnce: 1 },
+        //gimmick: "teleport", gimmickArgs: { interval: 5, chance: 1 },
         //gimmick: "earthquake", gimmickArgs: { rooms: [0, 1], interval: 5, chance: 1 },
         potentialOrders: [
             { type: "tomato", attributes: ["sliced"], score: 5 },
-            { type: "frenchfries", attributes: [], score: 10 }
+            { type: "frenchfries", attributes: [], score: 10 },
+            { type: "tomatosoup", attributes: [], score: 20 },
+            { type: "fettucini", attributes: [], score: 15 },
+            { type: "spaghetti", attributes: [], score: 30 }
         ]
     },
     {

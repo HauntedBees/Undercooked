@@ -1,4 +1,33 @@
 const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js"), Maintainers = require("./actionsMaintenance.js"), GameHelper = require("./gameHelpers.js");
+function ClothingToss(actingUser, clothing) {
+    switch(clothing) {
+        case "sock":
+            if(actingUser.socks <= 0) { return false; }
+            actingUser.socks--;
+            return true;
+        case "shirt":
+            if(!actingUser.shirt) { return false; }
+            actingUser.shirt = false;
+            return true;
+        case "shoe":
+            if(actingUser.shoes <= 0) { return false; }
+            actingUser.shoes--;
+            return true;
+        case "pants":
+            if(!actingUser.pants) { return false; }
+            actingUser.pants = false;
+            return true;
+        case "hat":
+            if(!actingUser.hat) { return false; }
+            actingUser.hat = false;
+            return true;
+        case "underwear":
+            if(!actingUser.underwear) { return false; }
+            actingUser.underwear = false;
+            return true;
+    }
+    return false;
+}
 const self = module.exports = {
     Move: function(gameData, currentRoom, actingUser, action) {
         if(action.direction !== undefined) { // trying to move in a specific direction
@@ -182,22 +211,26 @@ const self = module.exports = {
         const objectDisplayName = Food.GetFoodDisplayNameFromAction(action), objNoArticle = objectDisplayName.replace(/^an? /, "");
         gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName}, but there was no ${objNoArticle} in Room ${currentRoom + 1} to grab!`);
     },
-    Throw: function(gameData, currentRoom, actingUser, target) {
+    Throw: function(gameData, currentRoom, actingUser, action) {
+        let target = action.to;
         if(target.indexOf("<@") === 0) { // @-tagged users are in the format of <@userID> (technically <@!userID> but we strip exclamation points out of messages)
             target = gameData.playerDetails[target.replace("<@", "").replace(">", "")].nick.toLowerCase();
         }
+        const targetLowercase = target.toLowerCase();
+        if(["monkey", "snake", "toucan", "ants", "bear"].indexOf(target) >= 0) { return self.ThrowAtAnimal(gameData, currentRoom, actingUser, action); }
+        if(action.special !== "") { return self.ThrowClothing(gameData, actingUser, target, action.special); }
         if(actingUser.holding === null) {
             gameData.discordHelper.SayM(`${actingUser.nick} tried to throw something to ${target}, but they aren't holding anything!`);
             return false;
         }
         const objectDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);
-        if(actingUser.nick.toLowerCase() === target) {
+        if(actingUser.nick.toLowerCase() === targetLowercase) {
             gameData.discordHelper.SayP(`${actingUser.nick} juggles ${objectDisplayName} areund in their hands. Fun!`);
             return false;
         }
         for(const playerId in gameData.playerDetails) {
             const player = gameData.playerDetails[playerId];
-            if(player.nick.toLowerCase() !== target) { continue; }
+            if(player.nick.toLowerCase() !== targetLowercase) { continue; }
             if(player.room === currentRoom || Room.AreRoomsConnected(gameData.map, currentRoom, player.room)) {
                 if(player.holding === null) {
                     gameData.discordHelper.SayP(`${actingUser.nick} threw ${objectDisplayName} to ${target}!`);
@@ -235,5 +268,57 @@ const self = module.exports = {
             }
         }
         gameData.discordHelper.SayM(`${actingUser.nick} tried to throw something to ${target}, but as far as I know, that isn't a person here!`);
+    },
+    ThrowClothing: function(gameData, actingUser, target, clothes) {
+        if(!ClothingToss(actingUser, clothes)) {
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to throw their ${clothes} at ${target}, but they aren't wearing any!`);
+            return false;
+        }
+        const targetLowercase = target.toLowerCase();
+        if(actingUser.nick.toLowerCase() === targetLowercase) {
+            gameData.discordHelper.SayP(`${actingUser.nick} just ripped their ${clothes} off and slammed them onto the floor. Unhygenic!`);
+            actingUser.activeActions.push("strip");
+            return false;
+        }
+        gameData.discordHelper.SayP(`${actingUser.nick} just ripped their ${clothes} off and threw them at ${target}. Now's not the time for that!`);
+        actingUser.activeActions.push("strip");
+        return true;
+    },
+    ThrowAtAnimal: function(gameData, currentRoom, actingUser, action) {
+        if(gameData.map.gimmick === null || !gameData.map.gimmick.isAnimalGimmick) { return false; }
+        const animal = action.to;
+        const animalDisplayName = (animal === "ants" ? "group of ants" : animal);
+        if(action.special !== "") {
+            const clothes = action.special;
+            if(!ClothingToss(actingUser, clothes)) {
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to throw their ${clothes}, but they aren't wearing any!`);
+                return false;
+            }
+            actingUser.activeActions.push("strip");
+            const success = gameData.map.gimmick.RepelAnimalInRoom(currentRoom, animal);
+            if(success) {
+                gameData.discordHelper.SayP(`${actingUser.nick} threw their ${clothes} at a ${animalDisplayName}, scaring them away!`);
+                actingUser.activeActions.push("defender");
+            } else {
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to throw their ${clothes} at a ${animalDisplayName}, but there's' no ${animalDisplayName} in Room ${currentRoom + 1}, so their stripping was in vain!`);
+            }
+        } else if(actingUser.holding === null) {
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to throw something, but they aren't holding anything!`);
+            return false;
+        } else {
+            const success = gameData.map.gimmick.RepelAnimalInRoom(currentRoom, animal);
+            if(success) {
+                if(actingUser.holding.type === "extinguisher") { actingUser.activeActions.push("assault"); }
+                const thingName = Food.GetFoodDisplayNameFromObj(actingUser.holding), noArticle = thingName.replace(/^an? /, "");
+                gameData.discordHelper.SayP(`${actingUser.nick} threw ${thingName} at a ${animalDisplayName}, scaring them away! The ${noArticle} is now on the floor of Room ${currentRoom + 1}!`);
+                actingUser.activeActions.push("defender");
+            } else {
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to throw ${Food.GetFoodDisplayNameFromObj(actingUser.holding)} at a ${animalDisplayName}, but there's no ${animalDisplayName} in Room ${currentRoom + 1}, so it landed on the floor!`);
+            }
+            const floor = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "floor")[0];
+            if(floor === undefined) { return; }
+            floor.contents.push(actingUser.holding);
+            actingUser.holding = null;
+        }
     }
 };

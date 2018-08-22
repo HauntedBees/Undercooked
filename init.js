@@ -153,6 +153,9 @@ const self = module.exports = {
                 gameData.playerDetails[playerId] = {
                     nick: playerNick, 
                     room: playerRoom,
+                    shoes: 2, hat: true,
+                    pants: true, shirt: true, 
+                    socks: 2, underwear: true, 
                     holding: null,
                     stuckTimer: 0,
                     activeActions: [],

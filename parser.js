@@ -23,7 +23,15 @@ const synonyms = {
     "fire extinguisher": "extinguisher",
     "conveyor belt": "belt",
     "conveyor": "belt",
-    "assembly line": "belt"
+    "assembly line": "belt",
+    "group of ants": "ants",
+    "undies": "underwear",
+    "briefs": "underwear",
+    "boxers": "underwear",
+    "panties": "underwear",
+    "thong": "underwear",
+    "tighty whities": "underwear",
+    "jockstrap": "underwear"
 };
 const self = module.exports = {
     Parse: function(s) {
@@ -112,11 +120,13 @@ const self = module.exports = {
     },
     Throw: function(s) { // (${obj}) to {name}
         const splitStr = s.split(" ");
-        if(splitStr.length === 1) { return null }
+        if(splitStr.length === 1) { return null; }
+        let special = "";
+        if(["sock", "shirt", "shoe", "pants", "hat", "underwear"].indexOf(splitStr[0]) >= 0) { special = splitStr[0]; }
         while(splitStr[0] !== "to" && splitStr[0] !== "at" && splitStr.length > 0) { splitStr.shift(); }
         if(splitStr.length === 0) { return null; }
         if(splitStr[0] === "to" || splitStr[0] === "at") { splitStr.shift(); }
-        return { type: "throw", to: splitStr.join(" ") };
+        return { type: "throw", to: splitStr.join(" "), special: special };
     },
     Use: function(s) { // (on ${place} ${optional_number})
         const splitStr = s.split(" ");
