@@ -97,8 +97,8 @@ const self = module.exports = {
                 }
             }
         }
-        if(gameData.secondsPlayed % 10 === 0) {
-            if(gameData.orders.length < gameData.map.maxOrders && Math.random() <= gameData.map.newOrderChance) {
+        if(gameData.secondsPlayed % 10 === 0 || gameData.secondsPlayed === 2) {
+            if(gameData.orders.length < gameData.map.maxOrders && (gameData.secondsPlayed === 2 || Math.random() <= gameData.map.newOrderChance)) {
                 const orders = gameData.map.potentialOrders;
                 if(orders.length > 0) {
                     const order = orders[Math.floor(Math.random() * orders.length)];

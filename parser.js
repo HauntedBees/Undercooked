@@ -267,7 +267,7 @@ const self = module.exports = {
         const splitStr = s.split(" ");
         if(splitStr.length === 1) { // direction
             const direction = splitStr[0].replace("east", "right").replace("west", "left").replace("north", "up").replace("south", "down");
-            if(direction === "neighboring") { return null; }
+            if(direction === "neighboring" || direction === "neighboring2") { return null; }
             return { type: "move", direction: direction };
         } else if(splitStr.length === 3) { // to room #
             const roomNo = parseInt(splitStr[2]);
