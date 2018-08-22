@@ -110,8 +110,11 @@ const self = module.exports = {
         }
         return null;
     },
-    Throw: function(s) { // to {name}
+    Throw: function(s) { // (${obj}) to {name}
         const splitStr = s.split(" ");
+        if(splitStr.length === 1) { return null }
+        while(splitStr[0] !== "to" && splitStr[0] !== "at" && splitStr.length > 0) { splitStr.shift(); }
+        if(splitStr.length === 0) { return null; }
         if(splitStr[0] === "to" || splitStr[0] === "at") { splitStr.shift(); }
         return { type: "throw", to: splitStr.join(" ") };
     },
