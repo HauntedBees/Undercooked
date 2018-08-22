@@ -21,6 +21,7 @@ module.exports = {
                 return;
             }
             if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "fried", "fry")) { return false; }
+            if(Food.PleaseDontCookTheFireExtinguisher(gameData, actingUser, itemInfo, "fry")) { return false; }
             chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "fried");
             gameData.discordHelper.SayP(`${actingUser.nick} fried ${objectDisplayName} on frying pan ${action.placeNum}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
             actingUser.activeActions.push("fry");
@@ -32,6 +33,7 @@ module.exports = {
                 if(itemInfo.type !== action.object) { continue; }
                 if(!Room.HasRightAttributes(itemInfo, action.objAttrs)) { continue; }
                 if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "fried")) { continue; }
+                if(Food.PleaseDontCookTheFireExtinguisher(gameData, actingUser, itemInfo, "fry")) { return false; }
                 chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "fried");
                 gameData.discordHelper.SayP(`${actingUser.nick} fried ${objectDisplayName} on frying pan ${i + 1}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
                 actingUser.activeActions.push("fry");
@@ -61,6 +63,7 @@ module.exports = {
                 return;
             }
             if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "sliced", "chop")) { return false; }
+            if(Food.PleaseDontCookTheFireExtinguisher(gameData, actingUser, itemInfo, "chop up")) { return false; }
             chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "sliced");
             gameData.discordHelper.SayP(`${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${action.placeNum}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
             actingUser.activeActions.push("chop");
@@ -72,6 +75,7 @@ module.exports = {
                 if(itemInfo.type !== action.object) { continue; }
                 if(!Room.HasRightAttributes(itemInfo, action.objAttrs)) { continue; }
                 if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "sliced")) { continue; }
+                if(Food.PleaseDontCookTheFireExtinguisher(gameData, actingUser, itemInfo, "chop up")) { return false; }
                 chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "sliced");
                 gameData.discordHelper.SayP(`${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${i + 1}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
                 actingUser.activeActions.push("chop");
@@ -98,6 +102,9 @@ module.exports = {
         if(chosenPlace.contents.length === 0 && !chosenPlace.switchedOn) { return gameData.discordHelper.SayM(`${actingUser.nick} tried to turn on ${action.displayPlace} ${placeNum + 1}, but it's empty! Put some food in it before turning it on!`); }
 
         if(action.switchType === "on") {
+            for(let i = 0; i < chosenPlace.contents.length; i++) {
+                if(Food.PleaseDontCookTheFireExtinguisher(gameData, actingUser, chosenPlace.contents[i], "cook")) { return false; }
+            }
             chosenPlace.switchedOn = true;
             chosenPlace.modifier = 1;
             chosenPlace.cookingTime = 0;
@@ -121,6 +128,9 @@ module.exports = {
         if(!GameHelper.NoPlacesCheck(gameData.discordHelper, actingUser, relevantPlaces, "mix the contents of", "mixing bowl")) { return; }
         const chosenPlace = relevantPlaces[action.placeNum - 1];
         if(!GameHelper.ChosenPlaceCheck(gameData.discordHelper, actingUser, chosenPlace, action, "some stuff", relevantPlaces.length, "mix", "mixing bowl")) { return; }
+        for(let i = 0; i < chosenPlace.contents.length; i++) {
+            if(Food.PleaseDontCookTheFireExtinguisher(gameData, actingUser, chosenPlace.contents[i], "blend")) { return false; }
+        }
         const newFood = Food.TransformFood(chosenPlace);
         chosenPlace.contents = [ newFood ];
         gameData.discordHelper.SayP(`${actingUser.nick} mixed the contents of mixing bowl ${action.placeNum} and made ${Food.GetFoodDisplayNameFromObj(newFood)}!`);

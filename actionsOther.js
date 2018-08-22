@@ -69,7 +69,7 @@ const self = module.exports = {
         const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
         const heldDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
-        const onOrIn = (["table", "floor"].indexOf(action.place) < 0 ? "in" : "down on");
+        const onOrIn = (["table", "floor", "cuttingboard"].indexOf(action.place) < 0 ? "in" : "down on");
         if(relevantPlaces.length === 0) {
             gameData.discordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${aPlace}, but there is no ${specificPlace} that they can reach!`);
             return;

@@ -63,6 +63,10 @@ const self = module.exports = {
                 return;
             }
         }
+        if(gameData.killedEveryone) {
+            self.LevelComplete(gameData);
+            return;
+        }
         for(const playerId in gameData.playerDetails) {
             const player = gameData.playerDetails[playerId];
             if(player.stuckTimer > 0) { player.stuckTimer -= 1; }
@@ -158,10 +162,13 @@ const self = module.exports = {
                 case "defend": rewardName = "Animal Expert"; break;
                 case "strip": rewardName = "Master-Class Stripper"; break;
             }
-            if(highestAction !== "assault" && player.activeActions.indexOf("assault") >= 1) {
+            if(player.activeActions.indexOf("death") >= 0) {
+                rewards.push(`Literally Killed Everyone:  ${player.nick}`);
+            }
+            if(highestAction !== "assault" && player.activeActions.indexOf("assault") >= 0) {
                 rewards.push(`Violent Tendencies:  ${player.nick}`);
             }
-            if(highestAction !== "strip" && player.activeActions.indexOf("strip") >= 1) {
+            if(highestAction !== "strip" && player.activeActions.indexOf("strip") >= 0) {
                 rewards.push(`Stripper:  ${player.nick}`);
             }
             if(!player.shirt && !player.pants && !player.underwear && player.shoes === 0 && player.socks === 0) {

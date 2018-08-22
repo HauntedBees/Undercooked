@@ -127,6 +127,14 @@ const self = module.exports = {
         return 0.25;
     },
 
+    PleaseDontCookTheFireExtinguisher: function(gameData, actingUser, food, verb) {
+        if(food.type !== "extinguisher") { return false; }
+        gameData.discordHelper.Say(`\`\`\`asciidoc\n[Well this could have gone better. ${actingUser.nick} tried to ${verb} a fire extinguisher, which consequentially exploded and killed everyone.]\`\`\``);
+        actingUser.activeActions.push("death");
+        gameData.killedEveryone = true;
+        return true;
+    },
+
     AddAttribute: function(food, attr) { // sliced, plated, fried, baked
         if(food.attributes.indexOf(attr) >= 0) { return food; }
         food.attributes.push(attr);
