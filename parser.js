@@ -50,6 +50,9 @@ const self = module.exports = {
             case "set":
             case "deposit":
             case "position": return self.Drop(remainingWords);
+            case "wash":
+            case "clean":
+            case "scrub": return { type: "wash" };
             case "serve":
             case "deliver":
             case "provide":
@@ -102,9 +105,6 @@ const self = module.exports = {
             case "chuck":
             case "lob":
             case "fling": return self.Throw(remainingWords);
-            case "wash":
-            case "clean":
-            case "scrub": return { type: "wash" };
             case "who": return self.Who(remainingWords);
             case "what": return self.What(remainingWords);
         }
