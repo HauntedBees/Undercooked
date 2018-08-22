@@ -68,6 +68,7 @@ const gimmicks = {
                     for(let i = 0; i < places.length; i++) {
                         const currentPlace = places[i];
                         if(currentPlace.type === "dispenser") { continue; }
+                        if(currentPlace.switchedOn) { continue; }
                         if(currentPlace.contents === undefined) { continue; }
                         if(currentPlace.contents.length === 0) { continue; }
                         if(currentPlace.contents[0].type === "extinguisher") { continue; }

@@ -192,7 +192,7 @@ xxxxxxTCxSSxDdxOOxxxxxxxxxxxxx  Dd = Dish Dispenser (4) OO = Output
             { type: "pepperjack", attributes: [], score: 10 }
         ]
     },
-    { name: "Earthquaker Oats", 
+    { name: "Earthquaker Oats!", 
         difficulty: "Medium", minPlayers: 2, time: 600,
         newOrderChance: 0.5, maxOrders: 5, plateChance: 0.75,
         img: `
@@ -242,7 +242,7 @@ xxCBxxCV>>>>>>>>CVxx    // = Active Fault - Earthquake Hazard
             { type: "tomatosalad", attributes: [], score: 8 }
         ]
     },
-    { name: "Telepotation Device", 
+    { name: "Telepotation Device!", 
         difficulty: "Medium", minPlayers: 2, time: 600,
         newOrderChance: 0.5, maxOrders: 5, plateChance: 0.75,
         img: `
@@ -277,6 +277,56 @@ xxDdxxxxFPxxOVxxxxxxxx  Dp = Pepper Dispenser   DD = Dough Dispenser
             { type: "floor", rooms: [1], size: 999, contents: [GetFireExtinguisher()] }
         ],
         gimmick: "teleport", gimmickArgs: { interval: 15, chance: 0.5 },
+        potentialOrders: [
+            { type: "potatosalad", attributes: [], score: 10 },
+            { type: "gnocchi", attributes: [], score: 30 },
+            { type: "steakfries", attributes: [], score: 5 },
+            { type: "frenchfries", attributes: [], score: 3 },
+            { type: "potato", attributes: ["baked"], score: 6 }
+        ]
+    },
+    { name: "Jungle Burger: Where A Monkey Can Steal Your Burger But You Still Have To Pay Us!:tm:", 
+        difficulty: "Hard", minPlayers: 2, time: 600,
+        newOrderChance: 0.4, maxOrders: 6, plateChance: 0.75,
+        img: `
+xxDOxxxxxxxxDMxx    DO = Onion Dispenser    DM = Meat Dispenser
+TC     TT     xx    TC = Trash Can          TT = Table
+DC  1  TT  2  DL    DC = Cheese Dispenser   DL = Lettuce Dispenser
+SS     TT     OO    SS = Sink               OO = Counter
+xx  CBxxxxFP  xx    CB = Cutting Board      FP = Frying Pan
+DD     TT     DT    DD = Dough Dispenser    DT = Tomato Dispenser
+OV  3  TT  4  PS    OV = Oven               PS = Pot on Stove
+TC     TT     Dd    Dd = Dish Dispenser (30)
+xxxxxxxxxxxxxxxx
+`,
+        rooms: [
+            { down: 2, neighboring: 1 },
+            { down: 3, neighboring: 0 },
+            { up: 0, neighboring: 3 },
+            { up: 1, neighboring: 2 }
+        ],
+        items: [
+            { type: "counter", rooms: [1], size: 99, contents: [] },
+            { type: "sink", rooms: [1] },
+            { type: "trashcan", rooms: [0, 2], size: 999, contents: [] },
+            { type: "dispenser", rooms: [0], dispensed: "onion", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "meat", amount: 999 },
+            { type: "dispenser", rooms: [0], dispensed: "cheese", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "lettuce", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "dough", amount: 999 },
+            { type: "dispenser", rooms: [3], dispensed: "tomato", amount: 999 },
+            { type: "dispenser", rooms: [3], dispensed: "plate", amount: 30 },
+            { type: "bowl", rooms: [0, 1], size: 4, contents: [] },
+            { type: "pot", rooms: [3], switchedOn: false, size: 4, contents: [] },
+            { type: "oven", rooms: [2], switchedOn: false, size: 4, contents: [] },
+            { type: "cuttingboard", rooms: [0, 2], size: 1, contents: [] },
+            { type: "pan", rooms: [1, 3], size: 1, contents: [] },
+            { type: "table", rooms: [0, 1], size: 6, contents: [] },
+            { type: "table", rooms: [2, 3], size: 6, contents: [] },
+            { type: "floor", rooms: [0, 2], size: 999, contents: [] },
+            { type: "floor", rooms: [1, 3], size: 999, contents: [GetFireExtinguisher()] }
+        ],
+        gimmick: "animals", gimmickArgs: { interval: 5, moveChance: 0.45, appearChance: 0.3, maxAnimalsAtOnce: 2 },
         potentialOrders: [
             { type: "potatosalad", attributes: [], score: 10 },
             { type: "gnocchi", attributes: [], score: 30 },
