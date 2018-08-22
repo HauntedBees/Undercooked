@@ -242,6 +242,49 @@ xxCBxxCV>>>>>>>>CVxx    // = Active Fault - Earthquake Hazard
             { type: "tomatosalad", attributes: [], score: 8 }
         ]
     },
+    { name: "Telepotation Device", 
+        difficulty: "Medium", minPlayers: 2, time: 600,
+        newOrderChance: 0.5, maxOrders: 5, plateChance: 0.75,
+        img: `
+xxDPxxxxCBxxPSxxxxxxxx  DP = Potato Dispenser   CB = Cutting Board
+SS        TT        DO  SS = Sink               PS = Pot on Stove
+OO   1    MB    2   Dp  OO = Counter            DO = Onion Dispenser
+TC        TT        DD  TC = Trash Can          MB = Mixing Bowl
+xxDdxxxxFPxxOVxxxxxxxx  Dp = Pepper Dispenser   DD = Dough Dispenser
+                        FP = Frying Pan         OV = Oven
+                        Dd = Dish Dispenser (4) TT = Table
+`,
+        rooms: [
+            { neighboring: 1 },
+            { neighboring: 0 }
+        ],
+        items: [
+            { type: "counter", rooms: [0], size: 99, contents: [] },
+            { type: "sink", rooms: [0] },
+            { type: "trashcan", rooms: [0], size: 999, contents: [] },
+            { type: "dispenser", rooms: [0], dispensed: "potato", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "onion", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "pepper", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "dough", amount: 999 },
+            { type: "dispenser", rooms: [0], dispensed: "plate", amount: 3 },
+            { type: "bowl", rooms: [0, 1], size: 4, contents: [] },
+            { type: "pot", rooms: [1], switchedOn: false, size: 4, contents: [] },
+            { type: "oven", rooms: [1], switchedOn: false, size: 4, contents: [] },
+            { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
+            { type: "pan", rooms: [0], size: 1, contents: [] },
+            { type: "table", rooms: [0, 1], size: 6, contents: [] },
+            { type: "floor", rooms: [0], size: 999, contents: [] },
+            { type: "floor", rooms: [1], size: 999, contents: [GetFireExtinguisher()] }
+        ],
+        gimmick: "teleport", gimmickArgs: { interval: 15, chance: 0.5 },
+        potentialOrders: [
+            { type: "potatosalad", attributes: [], score: 10 },
+            { type: "gnocchi", attributes: [], score: 30 },
+            { type: "steakfries", attributes: [], score: 5 },
+            { type: "frenchfries", attributes: [], score: 3 },
+            { type: "potato", attributes: ["baked"], score: 6 }
+        ]
+    },
     { name: "De Testbench!",
         difficulty: "Easy", minPlayers: 1, time: 3599,
         newOrderChance: 0.5, maxOrders: 0, plateChance: 0.5, // new orders are checked every 10 seconds, plates every 8
