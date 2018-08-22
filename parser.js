@@ -321,10 +321,17 @@ const self = module.exports = {
         }
         return { type: "drop", place: placeName, placeNum: placeNum }
     },
-    Grab: function(s) { // ${obj} from ${place} ${optional_number}
+    Grab: function(s) { // ${obj} (from ${place} ${optional_number})
         const info = self.FormatObjectName(s);
         if(info.invalid) { return; }
         const splitStr = info.newStr.split(" ");
+        if(splitStr.length === 1) {
+            return {
+                type: "grab",
+                object: splitStr[0], objAttrs: info.attrs,
+                place: "", placeNum: -1
+            };
+        }
         if(splitStr.length < 3) { return null; }
         const objectName = splitStr[0];
         const placeName = splitStr[2];
@@ -340,7 +347,7 @@ const self = module.exports = {
             type: "grab",
             object: objectName, objAttrs: info.attrs,
             place: placeName, placeNum: placeNum
-        }
+        };
     },
     FormatObjectName: function(fullStr) { // first words must be the object or its adjectives
         const splitStr = fullStr.split(" ");

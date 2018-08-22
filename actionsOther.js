@@ -1,5 +1,5 @@
 const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js"), Maintainers = require("./actionsMaintenance.js"), GameHelper = require("./gameHelpers.js");
-module.exports = {
+const self = module.exports = {
     Move: function(gameData, currentRoom, actingUser, action) {
         if(action.direction !== undefined) { // trying to move in a specific direction
             const nextRoom = gameData.map.rooms[currentRoom][action.direction];
@@ -84,6 +84,7 @@ module.exports = {
         }
     },
     Grab: function(gameData, currentRoom, actingUser, action) {
+        if(action.place === "") { return self.TryGrabAnywhere(gameData, currentRoom, actingUser, action); }
         const objectDisplayName = Food.GetFoodDisplayNameFromAction(action), objNoArticle = objectDisplayName.replace(/^an? /, "");
         const specificPlace = Food.FormatPlaceName(action.place, true), aPlace = Food.AorAN(specificPlace);
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, action.place);
@@ -137,6 +138,49 @@ module.exports = {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${aPlace}, but there was no ${objNoArticle} there to grab!`);
             }
         }
+    },
+    TryGrabAnywhere: function(gameData, currentRoom, actingUser, action) {
+        const relevantPlaces = Room.GetObjectsInRoom(gameData.map, currentRoom);
+        if(action.objAttrs.length === 0) { // prioritize grabbing a standard one over settling for any, if no attributes are specified (not counting dispensers)
+            for(let i = 0; i < relevantPlaces.length; i++) {
+                const currentPlace = relevantPlaces[i];
+                if(currentPlace.onFire) { continue; }
+                if(currentPlace.switchedOn) { continue; }
+                if(currentPlace.type === "dispenser") { continue; }
+                const item = Room.TryTakeObjectFromPlace(currentPlace, action.object, action.objAttrs);
+                if(item !== null) {
+                    gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${Food.FormatPlaceName(currentPlace.type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, currentPlace.type, i)}!`);
+                    actingUser.holding = item;
+                    return;
+                }
+            }
+        }
+        for(let i = 0; i < relevantPlaces.length; i++) { // then try anywhere (not counting dispensers)
+            const currentPlace = relevantPlaces[i];
+            if(currentPlace.onFire) { continue; }
+            if(currentPlace.switchedOn) { continue; }
+            if(currentPlace.type === "dispenser") { continue; }
+            const item = Room.TryTakeObjectFromPlace(currentPlace, action.object, action.objAttrs);
+            if(item !== null) {
+                gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${Food.FormatPlaceName(currentPlace.type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, currentPlace.type, i)}!`);
+                actingUser.holding = item;
+                return;
+            }
+        }
+        const dispensers = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "dispenser");
+        for(let i = 0; i < dispensers.length; i++) { // okay NOW check dispensers
+            const currentPlace = dispensers[i];
+            if(currentPlace.onFire) { continue; }
+            const item = Room.TryTakeObjectFromPlace(currentPlace, action.object, action.objAttrs);
+            if(item !== null) {
+                actingUser.activeActions.push("dispense");
+                gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${Food.FormatPlaceName(currentPlace.type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, currentPlace.type, i)}!`);
+                actingUser.holding = item;
+                return;
+            }
+        }
+        const objectDisplayName = Food.GetFoodDisplayNameFromAction(action), objNoArticle = objectDisplayName.replace(/^an? /, "");
+        gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName}, but there was no ${objNoArticle} in Room ${currentRoom + 1} to grab!`);
     },
     Throw: function(gameData, currentRoom, actingUser, target) {
         if(target.indexOf("<@") === 0) { // @-tagged users are in the format of <@userID> (technically <@!userID> but we strip exclamation points out of messages)
