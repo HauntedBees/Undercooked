@@ -285,7 +285,7 @@ xxDdxxxxFPxxOVxxxxxxxx  Dp = Pepper Dispenser   DD = Dough Dispenser
             { type: "potato", attributes: ["baked"], score: 6 }
         ]
     },
-    { name: "Jungle Burger: Where A Monkey Can Steal Your Burger But You Still Have To Pay Us!:tm:", 
+    { name: "Jungle Burger: Where A Monkey Can Steal Your Burger But You Still Have To Pay Us!™", 
         difficulty: "Hard", minPlayers: 2, time: 600,
         newOrderChance: 0.4, maxOrders: 6, plateChance: 0.75,
         img: `
@@ -462,7 +462,7 @@ const self = module.exports = {
     },
     GetMapStr: function(i, gameSpeed) {
         const map = maps[i];
-        return `#${i + 1}: ${map.name} ${PadSpaces(map.name, 32)} + Difficulty: ${PadSpaces(map.difficulty, 7)}${map.difficulty}. Minimum Players: ${PadSpaces(map.minPlayers.toString(), 2)}${map.minPlayers}. Time: ${self.FormatTime(map.time, gameSpeed)}`;
+        return `#${i + 1}: ${map.name}\n+++ Difficulty: ${PadSpaces(map.difficulty, 7)}${map.difficulty}. Minimum Players: ${PadSpaces(map.minPlayers.toString(), 2)}${map.minPlayers}. Time: ${self.FormatTime(map.time, gameSpeed)}`;
     },
     GetMaps: function(gameSpeed) {
         let results = [];
