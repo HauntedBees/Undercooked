@@ -6,14 +6,14 @@ const self = module.exports = {
         if(action.all) { // search every room
             let found = self.FindInRoom(gameData.map, roomNo, itemToFind); // start with your room
             if(found !== null) {
-                gameData.discordHelper.SayP(`${actingUser.nick} looked for ${itemName} and found one at ${found} in Room ${roomNo + 1}!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} looked for ${itemName} and found one at ${found} in Room ${roomNo + 1}!`);
                 return;
             }
             for(let i = 0; i < gameData.map.rooms.length; i++) {
                 if(i === roomNo) { continue; } // don't search your room again!
                 found = self.FindInRoom(gameData.map, i, itemToFind);
                 if(found !== null) {
-                    gameData.discordHelper.SayP(`${actingUser.nick} looked for ${itemName} and found one at ${found} in Room ${i + 1}!`);
+                    gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} looked for ${itemName} and found one at ${found} in Room ${i + 1}!`);
                     return;
                 }
             }
@@ -23,7 +23,7 @@ const self = module.exports = {
             if(found === null) {
                 gameData.discordHelper.SayM(`${actingUser.nick} looked for ${itemName} in Room ${roomNo + 1}, but found none! Check another room or a dispenser!`);
             } else {
-                gameData.discordHelper.SayP(`${actingUser.nick} looked for ${itemName} in Room ${roomNo + 1} and found one at ${found}!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} looked for ${itemName} in Room ${roomNo + 1} and found one at ${found}!`);
             }
         }
     },
@@ -49,7 +49,7 @@ const self = module.exports = {
         return null;
     },
     Holding: function(gameData, actingUser) {
-        gameData.discordHelper.SayP(`${actingUser.nick} is currently holding ${actingUser.holding === null ? "nothing" : Food.GetFoodDisplayNameFromObj(actingUser.holding)}.`);
+        gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} is currently holding ${actingUser.holding === null ? "nothing" : Food.GetFoodDisplayNameFromObj(actingUser.holding)}.`);
     },
     Who: function(gameData, currentRoom, actingUser, actingUserID, placeNum) {
         if(placeNum < 0) { placeNum = currentRoom + 1; }
@@ -69,9 +69,9 @@ const self = module.exports = {
         }
         if(playersInRoom.length === 0) {
             if(isInRoom) {
-                gameData.discordHelper.SayP(`${actingUser.nick} looked for people in Room ${placeNum}, and they're the only one in there!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} looked for people in Room ${placeNum}, and they're the only one in there!`);
             } else {
-                gameData.discordHelper.SayP(`${actingUser.nick} looked for people in Room ${placeNum}, and there's no one there!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} looked for people in Room ${placeNum}, and there's no one there!`);
             }
         } else {
             let res = `${actingUser.nick} looked for people in Room ${placeNum}, and found `;
@@ -89,11 +89,11 @@ const self = module.exports = {
                 }
             }
             res += isInRoom ? ", in addition to themselves." : ".";
-            gameData.discordHelper.SayP(res);
+            gameData.discordHelper.SayColor(actingUser.color, res);
         }
     },
     What: function(gameData, actingUser, food) {
-        gameData.discordHelper.SayP(Food.GetRecipeNameAndHowMake(actingUser.nick, food));
+        gameData.discordHelper.SayColor(actingUser.color, Food.GetRecipeNameAndHowMake(actingUser.nick, food));
     },
     Look: function(gameData, currentRoom, actingUser, action) {
         if(action.around) { return self.LookAround(gameData, currentRoom, actingUser, action.placeNum); }
@@ -153,7 +153,7 @@ const self = module.exports = {
             if(roomsArray[playerRoom] === undefined) { roomsArray[playerRoom] = []; }
             roomsArray[playerRoom].push(player.nick);
         }
-        let informationStr = `The game has begun! You are on the map "${gameData.map.name}!" You have ${Map.FormatTime(gameData.endingTime - gameData.secondsPlayed, 1)} remaining! 
+        let informationStr = `You are on the map "${gameData.map.name}!" You have ${Map.FormatTime(gameData.endingTime - gameData.secondsPlayed, 1)} remaining! 
 ${gameData.map.img}\n`;
         for(let i = 0; i < roomsArray.length; i++) {
             const peopleInRoom = roomsArray[i];

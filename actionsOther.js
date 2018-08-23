@@ -29,7 +29,7 @@ const self = module.exports = {
                 return;
             }
             actingUser.room = nextRoom;
-            gameData.discordHelper.SayP(`${actingUser.nick} walked ${action.direction} from Room ${currentRoom + 1} to Room ${nextRoom + 1}!`);
+            gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} walked ${action.direction} from Room ${currentRoom + 1} to Room ${nextRoom + 1}!`);
             actingUser.activeActions.push("walk");
         } else { // trying to move to a specific room
             if(currentRoom === action.roomNo) {
@@ -41,7 +41,7 @@ const self = module.exports = {
                 if(direction === "neighboring" || direction === "neighboring2") { continue; }
                 if(potentialRooms[direction] === action.roomNo) {
                     actingUser.room = action.roomNo;
-                    gameData.discordHelper.SayP(`${actingUser.nick} walked ${direction} from Room ${currentRoom + 1} to Room ${action.roomNo + 1}!`);
+                    gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} walked ${direction} from Room ${currentRoom + 1} to Room ${action.roomNo + 1}!`);
                     actingUser.activeActions.push("walk");
                     return;
                 }
@@ -77,7 +77,7 @@ const self = module.exports = {
             switch(addStatus) {
                 case "ok":
                     actingUser.holding = null;
-                    gameData.discordHelper.SayP(`${actingUser.nick} put ${heldDisplayName} ${onOrIn} ${specificPlace} ${action.placeNum}!`);
+                    gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} put ${heldDisplayName} ${onOrIn} ${specificPlace} ${action.placeNum}!`);
                     break;
                 case "onfire":
                     gameData.discordHelper.SayM(`${actingUser.nick} tried to put ${heldDisplayName} ${onOrIn} ${specificPlace} ${action.placeNum}, but it's on fire! Use a fire extinguisher to put it out first!`);
@@ -93,7 +93,7 @@ const self = module.exports = {
             for(let i = 0; i < relevantPlaces.length; i++) {
                 const attempt = Room.TryAddObjectToPlace(relevantPlaces[i], actingUser.holding);
                 if(attempt === "ok") {
-                    gameData.discordHelper.SayP(`${actingUser.nick} put ${heldDisplayName} ${onOrIn} ${specificPlace} ${i + 1}!`);
+                    gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} put ${heldDisplayName} ${onOrIn} ${specificPlace} ${i + 1}!`);
                     actingUser.holding = null;
                     return;
                 }
@@ -133,7 +133,7 @@ const self = module.exports = {
             const item = Room.TryTakeObjectFromPlace(chosenPlace, action.object, action.objAttrs);
             if(item !== null) {
                 if(chosenPlace.type === "dispenser") { actingUser.activeActions.push("dispense"); }
-                gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${specificPlace} ${action.placeNum}!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${specificPlace} ${action.placeNum}!`);
                 actingUser.holding = item;
             } else {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to grab ${objectDisplayName} from ${specificPlace} ${action.placeNum}, but there was no ${action.object} there to grab!`);
@@ -146,7 +146,7 @@ const self = module.exports = {
                 const item = Room.TryTakeObjectFromPlace(relevantPlaces[i], action.object, action.objAttrs);
                 if(item !== null) {
                     if(relevantPlaces[i].type === "dispenser") { actingUser.activeActions.push("dispense"); }
-                    gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${specificPlace} ${i + 1}!`);
+                    gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${specificPlace} ${i + 1}!`);
                     actingUser.holding = item;
                     return;
                 }
@@ -199,7 +199,7 @@ const self = module.exports = {
         if(currentPlace.switchedOn) { return false; }
         const item = Room.TryTakeObjectFromPlace(currentPlace, action.object, action.objAttrs);
         if(item !== null) {
-            gameData.discordHelper.SayP(`${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${Food.FormatPlaceName(currentPlace.type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, currentPlace.type, i)}!`);
+            gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} picked up ${Food.GetFoodDisplayNameFromObj(item)} from ${Food.FormatPlaceName(currentPlace.type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, currentPlace.type, i)}!`);
             actingUser.holding = item;
             return true;
         }
@@ -219,7 +219,7 @@ const self = module.exports = {
         }
         const objectDisplayName = Food.GetFoodDisplayNameFromObj(actingUser.holding);
         if(actingUser.nick.toLowerCase() === targetLowercase) {
-            gameData.discordHelper.SayP(`${actingUser.nick} juggles ${objectDisplayName} areund in their hands. Fun!`);
+            gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} juggles ${objectDisplayName} areund in their hands. Fun!`);
             return false;
         }
         for(const playerId in gameData.playerDetails) {
@@ -227,7 +227,7 @@ const self = module.exports = {
             if(player.nick.toLowerCase() !== targetLowercase) { continue; }
             if(player.room === currentRoom || Room.AreRoomsConnected(gameData.map, currentRoom, player.room)) {
                 if(player.holding === null) {
-                    gameData.discordHelper.SayP(`${actingUser.nick} threw ${objectDisplayName} to ${target}!`);
+                    gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} threw ${objectDisplayName} to ${target}!`);
                     player.holding = actingUser.holding;
                     actingUser.holding = null;
                     actingUser.activeActions.push("throw");
@@ -274,11 +274,11 @@ const self = module.exports = {
         }
         const targetLowercase = target.toLowerCase();
         if(actingUser.nick.toLowerCase() === targetLowercase) {
-            gameData.discordHelper.SayP(`${actingUser.nick} just ripped their ${clothes} off and slammed them onto the floor. Unhygenic!`);
+            gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} just ripped their ${clothes} off and slammed them onto the floor. Unhygenic!`);
             actingUser.activeActions.push("strip");
             return false;
         }
-        gameData.discordHelper.SayP(`${actingUser.nick} just ripped their ${clothes} off and threw them at ${target}. Now's not the time for that!`);
+        gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} just ripped their ${clothes} off and threw them at ${target}. Now's not the time for that!`);
         actingUser.activeActions.push("strip");
         return true;
     },
@@ -299,7 +299,7 @@ const self = module.exports = {
             actingUser.activeActions.push("strip");
             const success = gameData.map.gimmick.RepelAnimalInRoom(currentRoom, animal);
             if(success) {
-                gameData.discordHelper.SayP(`${actingUser.nick} threw their ${clothes} at a ${animalDisplayName}, scaring them away!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} threw their ${clothes} at a ${animalDisplayName}, scaring them away!`);
                 actingUser.activeActions.push("defender");
             } else {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to throw their ${clothes} at a ${animalDisplayName}, but there's' no ${animalDisplayName} in Room ${currentRoom + 1}, so their stripping was in vain!`);
@@ -312,7 +312,7 @@ const self = module.exports = {
             if(success) {
                 if(actingUser.holding.type === "extinguisher") { actingUser.activeActions.push("assault"); }
                 const thingName = Food.GetFoodDisplayNameFromObj(actingUser.holding), noArticle = thingName.replace(/^an? /, "");
-                gameData.discordHelper.SayP(`${actingUser.nick} threw ${thingName} at a ${animalDisplayName}, scaring them away! The ${noArticle} is now on the floor of Room ${currentRoom + 1}!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} threw ${thingName} at a ${animalDisplayName}, scaring them away! The ${noArticle} is now on the floor of Room ${currentRoom + 1}!`);
                 actingUser.activeActions.push("defender");
             } else {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to throw ${Food.GetFoodDisplayNameFromObj(actingUser.holding)} at a ${animalDisplayName}, but there's no ${animalDisplayName} in Room ${currentRoom + 1}, so it landed on the floor!`);

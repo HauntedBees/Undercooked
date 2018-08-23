@@ -157,6 +157,7 @@ const self = module.exports = {
                 const playerRoom = i % numRooms;
                 const playerNick = GetNickname(gameData.bot, gameData.serverID, playerId);
                 gameData.playerDetails[playerId] = {
+                    color: (i % 4), 
                     nick: playerNick, 
                     room: playerRoom,
                     shoes: 2, hat: true,

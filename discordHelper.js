@@ -1,3 +1,4 @@
+const t = "```";
 module.exports = {
     DiscordHelper: function(b, c) {
         let SayFromCache = function() {
@@ -20,11 +21,19 @@ module.exports = {
         }
         let messageCache = [], bot = b, channelID = c, iter = setInterval(SayFromCache, 250);
         let awaitingResponse = false;
+        this.SayColor = function(i, message) {
+            switch(i) {
+                case 0: this.Say(`${t}md\n# ${message}${t}`); break;    // blue
+                case 1: this.Say(`${t}cs\n# ${message}${t}`); break;    // orange
+                case 2: this.Say(`${t}fix\n= ${message}${t}`); break;   // cyan
+                case 3: this.Say(`${t}xl\n+ ${message}${t}`); break;    // grey
+                default: this.Say(message); break;
+            }
+        },
         this.Say = function(message) { messageCache.push(message); };
-        this.SayE = function(message) { messageCache.push(`\`\`\`fix\n= ${message}\`\`\``); }; // "Say" wrapped in the "fix" formatting wrapper, first line prefixed with =
-        this.SayF = function(message) { messageCache.push(`\`\`\`fix\n${message}\`\`\``); }; // "Say" wrapped in the "fix" formatting wrapper
-        this.SayP = function(message) { messageCache.push(`\`\`\`diff\n+ ${message}\`\`\``); }; // "Say" wrapped in the "diff" formatting wrapper, first line prefixed with +
-        this.SayM = function(message) { messageCache.push(`\`\`\`diff\n- ${message}\`\`\``); }; // "Say" wrapped in the "diff" formatting wrapper, first line prefixed with -
+        this.SayF = function(message) { messageCache.push(`${t}fix\n${message}${t}`); }; // yellow
+        this.SayP = function(message) { messageCache.push(`${t}diff\n+ ${message}${t}`); }; // green
+        this.SayM = function(message) { messageCache.push(`${t}diff\n- ${message}${t}`); }; // red
         this.Log = function(message) { console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] ${message}`); };
         this.CleanUp = function() { clearInterval(iter); messageCache = []; }
     }

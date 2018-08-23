@@ -23,7 +23,7 @@ module.exports = {
             if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "fried", "fry")) { return false; }
             if(Food.PleaseDontCookTheFireExtinguisher(gameData, actingUser, itemInfo, "fry")) { return false; }
             chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "fried");
-            gameData.discordHelper.SayP(`${actingUser.nick} fried ${objectDisplayName} on frying pan ${action.placeNum}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
+            gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} fried ${objectDisplayName} on frying pan ${action.placeNum}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
             actingUser.activeActions.push("fry");
         } else {
             for(let i = 0; i < relevantPlaces.length; i++) {
@@ -35,7 +35,7 @@ module.exports = {
                 if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "fried")) { continue; }
                 if(Food.PleaseDontCookTheFireExtinguisher(gameData, actingUser, itemInfo, "fry")) { return false; }
                 chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "fried");
-                gameData.discordHelper.SayP(`${actingUser.nick} fried ${objectDisplayName} on frying pan ${i + 1}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} fried ${objectDisplayName} on frying pan ${i + 1}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
                 actingUser.activeActions.push("fry");
                 return;
             }
@@ -65,7 +65,7 @@ module.exports = {
             if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "sliced", "chop")) { return false; }
             if(Food.PleaseDontCookTheFireExtinguisher(gameData, actingUser, itemInfo, "chop up")) { return false; }
             chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "sliced");
-            gameData.discordHelper.SayP(`${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${action.placeNum}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
+            gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${action.placeNum}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
             actingUser.activeActions.push("chop");
         } else {
             for(let i = 0; i < relevantPlaces.length; i++) {
@@ -77,7 +77,7 @@ module.exports = {
                 if(!GameHelper.DuplicateAttributeCheck(gameData.discordHelper, itemInfo, "sliced")) { continue; }
                 if(Food.PleaseDontCookTheFireExtinguisher(gameData, actingUser, itemInfo, "chop up")) { return false; }
                 chosenPlace.contents[0] = Food.AddAttribute(itemInfo, "sliced");
-                gameData.discordHelper.SayP(`${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${i + 1}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} chopped up ${objectDisplayName} on cutting board ${i + 1}, and made ${Food.GetFoodDisplayNameFromObj(chosenPlace.contents[0])}!`);
                 actingUser.activeActions.push("chop");
                 return;
             }
@@ -111,14 +111,14 @@ module.exports = {
             chosenPlace.cookRangeDetails = Food.GetCookTime(chosenPlace, gameData.gameSpeed);
             chosenPlace.burnTime = chosenPlace.cookRangeDetails.time + chosenPlace.cookRangeDetails.range * 4;
             const newFood = Food.TransformFood(chosenPlace);
-            gameData.discordHelper.SayP(`${actingUser.nick} turned ${action.displayPlace} ${placeNum + 1} on, and is now ${action.place === "oven" ? "baking" : "boiling"} ${Food.GetFoodDisplayNameFromObj(newFood)}!
+            gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} turned ${action.displayPlace} ${placeNum + 1} on, and is now ${action.place === "oven" ? "baking" : "boiling"} ${Food.GetFoodDisplayNameFromObj(newFood)}!
 + It will be ready in ${chosenPlace.cookRangeDetails.time - chosenPlace.cookRangeDetails.range}-${chosenPlace.cookRangeDetails.time + chosenPlace.cookRangeDetails.range} seconds!`);
         } else {
             chosenPlace.switchedOn = false;
             chosenPlace.modifier = Food.GetCookingModifier(chosenPlace);
             const newFood = Food.TransformFood(chosenPlace);
             chosenPlace.contents = [ newFood ];
-            gameData.discordHelper.SayP(`${actingUser.nick} turned ${action.displayPlace} ${placeNum + 1} off and made ${Food.GetFoodDisplayNameFromObj(newFood)}!`);
+            gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} turned ${action.displayPlace} ${placeNum + 1} off and made ${Food.GetFoodDisplayNameFromObj(newFood)}!`);
             actingUser.activeActions.push(action.displayPlace);
         }
     },
@@ -133,7 +133,7 @@ module.exports = {
         }
         const newFood = Food.TransformFood(chosenPlace);
         chosenPlace.contents = [ newFood ];
-        gameData.discordHelper.SayP(`${actingUser.nick} mixed the contents of mixing bowl ${action.placeNum} and made ${Food.GetFoodDisplayNameFromObj(newFood)}!`);
+        gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} mixed the contents of mixing bowl ${action.placeNum} and made ${Food.GetFoodDisplayNameFromObj(newFood)}!`);
         actingUser.activeActions.push("mix");
     }
 };

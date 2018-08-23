@@ -37,7 +37,7 @@ module.exports = {
         gameData.discordHelper.SayM(`${actingUser.nick} tried to kick ${target} from the game, but I can't find that user to kick! Type their nickname or @-tag them!`);
     },
     EndGame: function(gameData, actingUser) {
-        gameData.discordHelper.SayP(`${actingUser.nick} ended the game early.`);
+        gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} ended the game early.`);
         console.log(`${actingUser.nick} ended the game.`);
         gameData.killedEveryone = true;
     }

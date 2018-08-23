@@ -63,7 +63,7 @@ module.exports = {
             const plateStatus = Room.TryPlateObjectOnPlace(chosenPlace, actingUser.holding);
             if(typeof plateStatus === "object") {
                 actingUser.holding = plateStatus;
-                gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${action.placeNum}, and is now holding ${Food.GetFoodDisplayNameFromObj(actingUser.holding)}!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${action.placeNum}, and is now holding ${Food.GetFoodDisplayNameFromObj(actingUser.holding)}!`);
                 actingUser.activeActions.push("plate");
                 return;
             }
@@ -83,9 +83,9 @@ module.exports = {
                 const attempt = Room.TryPlateObjectOnPlace(relevantPlaces[i], actingUser.holding);
                 if(typeof attempt === "object") {
                     if(placeType === "") {
-                        gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${Food.FormatPlaceName(relevantPlaces[i].type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, relevantPlaces[i].type, i)}, and is now holding ${Food.GetFoodDisplayNameFromObj(actingUser.holding)}!`);
+                        gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} plated ${heldDisplayName} on ${Food.FormatPlaceName(relevantPlaces[i].type, true)} ${Room.GetPlaceNumber(relevantPlaces, currentRoom, relevantPlaces[i].type, i)}, and is now holding ${Food.GetFoodDisplayNameFromObj(actingUser.holding)}!`);
                     } else {
-                        gameData.discordHelper.SayP(`${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${i + 1}, and is now holding ${Food.GetFoodDisplayNameFromObj(actingUser.holding)}!`);
+                        gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} plated ${heldDisplayName} on ${specificPlace} ${i + 1}, and is now holding ${Food.GetFoodDisplayNameFromObj(actingUser.holding)}!`);
                     }
                     actingUser.holding = attempt;
                     actingUser.activeActions.push("plate");
@@ -112,14 +112,14 @@ module.exports = {
                     return;
                 }
                 chosenPlace.onFire = false;
-                gameData.discordHelper.SayP(`${actingUser.nick} used ${heldTheirDisplayName} on ${Food.FormatPlaceName(chosenPlace.type, true)} ${action.placeNum}, putting out the fire! Hooray!`);
+                gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} used ${heldTheirDisplayName} on ${Food.FormatPlaceName(chosenPlace.type, true)} ${action.placeNum}, putting out the fire! Hooray!`);
                 actingUser.activeActions.push("extinguish");
             } else {
                 for(let i = 0; i < relevantPlaces.length; i++) {
                     const chosenPlace = relevantPlaces[i];
                     if(!chosenPlace.onFire) { continue; }
                     chosenPlace.onFire = false;
-                    gameData.discordHelper.SayP(`${actingUser.nick} used ${heldTheirDisplayName} on ${Food.FormatPlaceName(chosenPlace.type)}, putting out the fire! Hooray!`);
+                    gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} used ${heldTheirDisplayName} on ${Food.FormatPlaceName(chosenPlace.type)}, putting out the fire! Hooray!`);
                     actingUser.activeActions.push("extinguish");
                     return;
                 }
@@ -140,7 +140,7 @@ module.exports = {
         const relevantPlaces = Room.GetObjectsOfTypeInRoom(gameData.map, currentRoom, "sink");
         if(!GameHelper.NoPlacesCheck(gameData.discordHelper, actingUser, relevantPlaces, "wash a plate", "sink")) { return; }
         actingUser.holding.attributes = [];
-        gameData.discordHelper.SayP(`${actingUser.nick} washed a plate. Good for them!`);
+        gameData.discordHelper.SayColor(actingUser.color, `${actingUser.nick} washed a plate. Good for them!`);
         actingUser.activeActions.push("wash");
     }
 }
