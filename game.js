@@ -190,7 +190,7 @@ ${rewards.join("\n")}
 \`\`\``);
         gameData.discordHelper.SayP(`${gameData.hostUserName}, say "AGAIN" in the next 60 seconds to set up another round with the same team, or "CANCEL" to disband the team!`);
     },
-    HandleAction: function(gameData, userID, action) {
+    HandleAction: function(gameData, userID, action, message) {
         if(gameData.cancelled || gameData.complete || gameData.killedEveryone) { return; }
         gameData.lastActionTimeSecond = gameData.secondsPlayed;
         try {
@@ -231,8 +231,7 @@ ${rewards.join("\n")}
                 case "throw": return Others.Throw(gameData, currentRoom, actingUser, action);
             }
         } catch(e) {
-            gameData.discordHelper.Log(e.stack);
-            gameData.discordHelper.Log(JSON.stringify(action));
+            gameData.discordHelper.Log(`Message: ${message}\nAction: ${JSON.stringify(action)}\nException: ${e.stack}`);
             gameData.discordHelper.SayM(`Something broke but we're all good. I recovered. I'm a big boy. We got this. We're good.`);
         }
     },

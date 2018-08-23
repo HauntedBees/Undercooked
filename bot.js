@@ -63,7 +63,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     if(message.indexOf("!HELP") === 0) { return Game.ShowHelp(channelGameData, message); }
     const parsedResult = Parser.Parse(message);
     if(parsedResult === null) { return; }
-    Game.HandleAction(channelGameData, userID, parsedResult);
+    Game.HandleAction(channelGameData, userID, parsedResult, message);
     bot.deleteMessage({ channelID: channelID, messageID: evt.d.id });
 });
 
