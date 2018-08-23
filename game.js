@@ -1,7 +1,7 @@
 const Observers = require("./actionsObserve.js"), Cookers = require("./actionsCooking.js");
 const Maintainers = require("./actionsMaintenance.js"), Others = require("./actionsOther.js");
 const Food = require("./foodHelpers.js"), Strings = require("./strings.js"), Room = require("./roomHelpers.js");
-const Tutorial = require("./tutorial.js");
+const Tutorial = require("./tutorial.js"), Admin = require("./actionsHost.js");
 const self = module.exports = {
     ShowHelp: function(gameData, message) {
         const trimmed = message.replace(/^!HELP\s?/, "");
@@ -199,6 +199,14 @@ ${rewards.join("\n")}
                 return;
             }
             if(Room.TrySlipOnFloor(gameData, actingUser, action.type)) { return; }
+            if(action.host) {
+                if(userID !== gameData.hostUserID) { return; }
+                switch(action.type) {
+                    case "kick": return Admin.KickUser(gameData, actingUser, userID, action.who);
+                    case "endgame": return Admin.EndGame(gameData, actingUser);
+                }
+                return;
+            }
             if(action.place !== undefined) { action.place = self.GetExpandedPlaceName(action.place); }
             switch(action.type) {
                 case "plate": return Maintainers.Plate(gameData, currentRoom, actingUser, action);

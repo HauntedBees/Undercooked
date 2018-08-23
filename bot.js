@@ -39,12 +39,14 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     if(channelGameData.complete && channelGameData.hostUserID === userID) {
         if(message === "AGAIN") {
             console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Starting a follow-up round on channel ${channelID}.`);
+            const kickedUserIDs = channelGameData.kickedUserIDs;
             const numPlayers = channelGameData.numPlayers;
             const mapIdx = channelGameData.selectedMapIdx === 0 ? -1 : channelGameData.selectedMapIdx;
             const speed = channelGameData.gameSpeed;
             const players = channelGameData.players.slice(0);
             KillGameData(channelGameData);
             chGdM[channelID] = GetNewGameData(bot, channelID);
+            chGdM[channelID].kickedUserIDs = kickedUserIDs;
             chGdM[channelID].numPlayers = numPlayers;
             chGdM[channelID].selectedMapIdx = mapIdx;
             chGdM[channelID].gameSpeed = speed;
@@ -74,7 +76,7 @@ function GetNewGameData(bot, channelID) {
         score: 0, ordersCleared: 0, platesOnField: 0, 
         gameTimer: 0, gameSpeed: 1,
         secondsPlayed: 0, endingTime: 0, 
-        lastActionTimeSecond: 0
+        lastActionTimeSecond: 0, kickedUserIDs: []
     };
     gameData.discordHelper = new DH.DiscordHelper(bot, channelID);
     gameData.KillGame = function() {

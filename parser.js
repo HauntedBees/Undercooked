@@ -37,7 +37,7 @@ const synonyms = {
 const self = module.exports = {
     Parse: function(s) {
         if(s === "") { return null; }
-        s = s.trim().replace(/[.,!:;'"]/g, "").replace(/\s+/g, " ").toLowerCase();
+        s = s.trim().replace(/[.,:;'"]/g, "").replace(/\s+/g, " ").toLowerCase();
         for(const word in synonyms) { s = s.replace(word, synonyms[word]); }
         s = Food.FlattenFoodNames(s);
 
@@ -45,6 +45,7 @@ const self = module.exports = {
         const remainingWords = splitWord.length === 1 ? "" : s.substring(s.indexOf(" ") + 1);
         
         switch(firstWord) { // verbs that don't need anything after the verb itself
+            case "!endgame": return { host: true, type: "endgame" };
             case "use": return self.Use(remainingWords);
             case "plate": return self.Plate(remainingWords);
             case "trash": return { type: "drop", place: "trashcan", placeNum: 1 };
@@ -72,6 +73,7 @@ const self = module.exports = {
 
         if(remainingWords === "") { return null; }
         switch(firstWord) {
+            case "!kick": return { host: true, type: "kick", who: remainingWords };
             case "grab":
             case "take":
             case "get":

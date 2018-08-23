@@ -1,4 +1,4 @@
-const CONSTS = require("./strings.js"), Map = require("./maps.js");
+const CONSTS = require("./strings.js"), Map = require("./maps.js"), Admin = require("./actionsHost.js");
 const IDtoNicknameMappings = {};
 function GetSpeedName(i) {
     switch(i) {
@@ -49,6 +49,7 @@ const self = module.exports = {
 - The host can type "!speed #" to set the speed (valid values are Fast, Normal, Slow, Very Slow).
 - The host can type "!changelevel LEVELNUMBER", "!changelevel Random", "!viewlevels" or "!viewlevel LEVELNUMBER"!
 - The host can type "start" to begin the game or "cancel" to end the game.
+- The host can type "!kick @user" to kick a user before or during the game, and can type "!endgame" during the game to end it early.
 - ${gameData.hostUserName} is the host!${playerStr}`);
     },
     HandlePostInitCommand: function(gameData, userID, message) {
@@ -66,6 +67,7 @@ const self = module.exports = {
         const user = GetNickname(gameData.bot, gameData.serverID, userID);
         if(message === "join") {
             if(gameData.players.indexOf(userID) >= 0) { return; }
+            if(gameData.kickedUserIDs.indexOf(userID) >= 0) { return; }
             if(gameData.players.length >= gameData.numPlayers) {
                 gameData.discordHelper.SayM(`This round already has ${gameData.numPlayers} players in it. ${gameData.hostUserName}, type *Start* to begin the game.`);
             } else {
@@ -80,7 +82,11 @@ const self = module.exports = {
         }
     },
     JustHostyThings: function(gameData, message) {
-        if(message.indexOf("!changelevel") === 0) {
+        if(message.indexOf("!kick") === 0) {
+            const target = message.replace("!kick ", "");
+            Admin.KickUser(gameData, { nick: gameData.hostUserName }, gameData.hostUserID, target);
+            return true;
+        } else if(message.indexOf("!changelevel") === 0) {
             const potentialNum = message.replace("!changelevel ", "");
             if(potentialNum === "random") {
                 gameData.selectedMapIdx = -1;

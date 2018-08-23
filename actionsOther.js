@@ -205,8 +205,9 @@ const self = module.exports = {
     },
     Throw: function(gameData, currentRoom, actingUser, action) {
         let target = action.to;
-        if(target.indexOf("<@") === 0) { // @-tagged users are in the format of <@userID> (technically <@!userID> but we strip exclamation points out of messages)
-            target = gameData.playerDetails[target.replace("<@", "").replace(">", "")].nick.toLowerCase();
+        if(target.indexOf("<@!") === 0) { // @-tagged users are in the format of <@!userID>
+            const targID = target.replace("<@!", "").replace(">", "");
+            if(gameData.playerDetails[targID] !== undefined) { target = gameData.playerDetails[targID].nick; }
         }
         const targetLowercase = target.toLowerCase();
         if(["monkey", "snake", "toucan", "ants", "bear"].indexOf(target) >= 0) { return self.ThrowAtAnimal(gameData, currentRoom, actingUser, action); }
@@ -222,7 +223,6 @@ const self = module.exports = {
         }
         for(const playerId in gameData.playerDetails) {
             const player = gameData.playerDetails[playerId];
-            if(player.nick.toLowerCase() !== targetLowercase) { continue; }
             if(player.room === currentRoom || Room.AreRoomsConnected(gameData.map, currentRoom, player.room)) {
                 if(player.holding === null) {
                     gameData.discordHelper.SayP(`${actingUser.nick} threw ${objectDisplayName} to ${target}!`);
