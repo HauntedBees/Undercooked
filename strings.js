@@ -21,9 +21,10 @@ Say <INIT> to become the host. After that, follow the prompts to select the numb
 
 How do I play?
 ---------------
-You can type "!HELP" at any time to see this message again! Once the game is started, only people actually playing the game can do this.
 
-The following commands are available to you. For more information on how to use them, type "!HELP [action name]" at any time.
+You can type "!HELP" at any time to see this message!
+
+The following commands are available. For more information on how to use them, type "!HELP [action name]" at any time.
 
 Primary Actions:
 * < grab > - "grab tomato from table 1" or "grab potato from dispenser"
