@@ -337,89 +337,103 @@ xxxxxxxxxxxxxxxx
             { type: "potato", attributes: ["baked"], score: 6 }
         ]
     },
-    { name: "De Testbench!",
-        difficulty: "Easy", minPlayers: 1, time: 3599,
-        newOrderChance: 0.5, maxOrders: 0, plateChance: 0.5, // new orders are checked every 10 seconds, plates every 8
+    { name: "Everything and the Kitchen Sink!", 
+        difficulty: "Hard", minPlayers: 4, time: 900,
+        newOrderChance: 0.35, maxOrders: 8, plateChance: 0.75,
         img: `
-xxOVxPSxxxxxxxOUxxxx    OU = Counter for Food Delivery and Used Plate Pickup
-FP                DT    TT = Table                  TC = Trash Can
-CB   1   TT   2   DD    DS = Potato Dispenser       DO = Onion Dispenser
-CB FE    TT       DS    DT = Tomato Dispenser       DM = Mushroom Dispenser
-xxxx   xxxxSNxCBTCxx    DD = Plate Dispenser        DP = Pepper Dispenser
-DP       DM   ^         DL = Lettuce Dispenser      DC = Cheese Dispenser
-DL       MB   ^         FP = Frying Pan             Dd = Dough Dispenser
-DO   3   DC   ^         PS = Pot on Stove           DM = Meat Dispenser
-DM       Dd   ^         MB = Mixing Bowl            OV = Oven
-xx       CB>>>>         CB = Cutting Board          FE = Fire Extinguisher
-xxxxxxxxxxx             SN = Sink                   CB = Conveyor Belt
+xxxxxxPSxxxxxxxxDPxxDTxxDLxx    PS = Pot and Stove      DP = Potato Dispenser
+xx           xx           xx    DT = Tomato Dispenser   DL = Lettuce Dispenser
+CB     1            2     FP    CB = Cutting Board      FP = Frying Pan
+xx           xx           xx                            TC = Trash Can
+xxTCxxTTTTxxxxxxxTTTTxxxPSxxxxxxxSSxTCxxx               TT = Table
+DO           DD           xx           xx               SS = Sink
+DM     3     TT     4            5     OO               DO = Onion Dispenser
+DC           Dm           xx           xx               DD = Dough Dispenser
+xxxxxx   xxxxxxDpxxOVxxxDdxxCVxxxxxxxxxxx               DM = Mushroom Dispenser
+MB           xx             ^                           OO = Counter
+CB     6     xx             ^   DC = Cheese Dispenser   Dm = Meat Dispenser
+FP           CV>>>>>>>>>>>>>>   OV = Oven               Dp = Plate Dispenser (15)  
+xxxxxxxxxxxxxxx                 MB = Mixing Bowl        CV = Conveyor Belt
 `,
         rooms: [
-            { right: 1, down: 2 },
-            { left: 0 },
-            { up: 0 }
+            { right: 1, neighboring: 2 },
+            { left: 0, neighboring: 3 },
+            { down: 5, neighboring: 0 },
+            { right: 4, neighboring: 2, neighboring2: 1 },
+            { left: 3 },
+            { up: 2 }
         ],
         items: [
-            { type: "counter", rooms: [0], size: 3, contents: [ { type: "plate", modifier: 1, attributes: ["dirty"] } ] },
-            { type: "sink", rooms: [0] },
-            { type: "belt", rooms: [0], start: true, to: 1, size: 4, contents: [] },
-            { type: "belt", rooms: [0], start: false, from: 2, size: 4, contents: [] },
-            { type: "trashcan", rooms: [0], size: 999, contents: [] },
-            { type: "table", rooms: [0, 1], size: 4, contents: [] },
-            { type: "dispenser", rooms: [0], dispensed: "potato", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "tomato", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "lettuce", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "onion", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "mushroom", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "pepper", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "cheese", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "dough", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "meat", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "plate", amount: 999 },
+            { type: "counter", rooms: [4], size: 3, contents: [] },
+            { type: "sink", rooms: [4] },
+            { type: "belt", rooms: [5], start: true, to: 4, size: 4, contents: [] },
+            { type: "belt", rooms: [4], start: false, from: 5, size: 4, contents: [] },
+            { type: "dispenser", rooms: [1], dispensed: "potato", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "tomato", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "lettuce", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "onion", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "mushroom", amount: 999 },
+            { type: "dispenser", rooms: [2], dispensed: "cheese", amount: 999 },
+            { type: "dispenser", rooms: [2, 3], dispensed: "dough", amount: 999 },
+            { type: "dispenser", rooms: [2, 3], dispensed: "meat", amount: 999 },
+            { type: "dispenser", rooms: [3], dispensed: "pepper", amount: 999 },
+            { type: "dispenser", rooms: [3], dispensed: "plate", amount: 15 },
+            { type: "trashcan", rooms: [0, 2, 4], size: 999, contents: [] },
             { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
-            { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
-            { type: "bowl", rooms: [0], size: 4, contents: [] },
-            { type: "pan", rooms: [0], size: 1, contents: [] },
+            { type: "cuttingboard", rooms: [5], size: 1, contents: [] },
+            { type: "bowl", rooms: [5], size: 4, contents: [] },
+            { type: "pan", rooms: [1], size: 1, contents: [] },
             { type: "pot", rooms: [0], switchedOn: false, size: 4, contents: [] },
-            { type: "oven", rooms: [0], switchedOn: false, size: 4, contents: [] },
-            { type: "floor", rooms: [0], size: 999, contents: [{ type: "extinguisher", modifier: 1, attributes: [] }] },
+            { type: "pot", rooms: [1, 3], switchedOn: false, size: 4, contents: [] },
+            { type: "oven", rooms: [3], switchedOn: false, size: 4, contents: [] },
+            { type: "table", rooms: [0, 2], size: 4, contents: [] },
+            { type: "table", rooms: [2, 3], size: 4, contents: [] },
+            { type: "table", rooms: [1, 3], size: 4, contents: [] },
             { type: "floor", rooms: [0], size: 999, contents: [] },
-            { type: "floor", rooms: [0], size: 999, contents: [] }
-        ],
-        //gimmick: "animals", gimmickArgs: { interval: 2, moveChance: 0, appearChance: 0.5, maxAnimalsAtOnce: 1 },
-        //gimmick: "teleport", gimmickArgs: { interval: 5, chance: 1 },
-        //gimmick: "earthquake", gimmickArgs: { rooms: [0, 1], interval: 5, chance: 1 },
-        potentialOrders: [
-            { type: "tomato", attributes: ["sliced"], score: 5 },
-            { type: "frenchfries", attributes: [], score: 10 },
-            { type: "tomatosoup", attributes: [], score: 20 },
-            { type: "fettucini", attributes: [], score: 15 },
-            { type: "spaghetti", attributes: [], score: 30 }
-        ]
-    },
-    { name: "Hello Hi! Let's Some Tomatoes!", minPlayers: 2, time: 3599, difficulty: "Easy", 
-        img: `
-xxxxxxxxxxxxxxxxxxx    DT = Tomato Dispenser
-xx       T       DT    DP = Plate Dispenser
-CB   1   T   2   DP    OU = Counter for Food Delivery and Used Plate Pickup
-CB               OU    CB = Cutting Board
-xxxxxxxxxxxxxxxxxxx     T = Table
-`,
-        rooms: [
-            { right: 1 },
-            { left: 0 }
-        ],
-        items: [
-            { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
-            { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
-            { type: "table", rooms: [0, 1], size: 2, contents: [] },
-            { type: "dispenser", rooms: [1], contents: [{ item: "tomato", amount: 999 }] },
-            { type: "dispenser", rooms: [1], contents: [{ item: "plate", amount: 999 }] },
-            { type: "counter", rooms: [1], size: 3, contents: [] },
-            { type: "floor", rooms: [0], size: 999, contents: [] },
-            { type: "floor", rooms: [1], size: 999, contents: [] }
+            { type: "floor", rooms: [1], size: 999, contents: [{ type: "extinguisher", modifier: 1, attributes: [] }] },
+            { type: "floor", rooms: [2], size: 999, contents: [] },
+            { type: "floor", rooms: [3], size: 999, contents: [] },
+            { type: "floor", rooms: [4], size: 999, contents: [] },
+            { type: "floor", rooms: [5], size: 999, contents: [] }
         ],
         potentialOrders: [
-            { item: "tomato_sliced", score: 5 }
+            { type: "potionfire", attributes: [], score: 100 },
+            { type: "searedmushroom", attributes: [], score: 20 },
+            { type: "parmesantomato", attributes: [], score: 15 },
+            { type: "stuffedpepper", attributes: [], score: 16 },
+            { type: "dumpling", attributes: [], score: 15 },
+            { type: "taco", attributes: [], score: 20 },
+            { type: "onionrings", attributes: [], score: 5 },
+            { type: "pizza", attributes: [], score: 20 },
+            { type: "meatloaf", attributes: [], score: 2 },
+            { type: "caesarsalad", attributes: [], score: 8 },
+            { type: "cheeseburger", attributes: [], score: 30 },
+            { type: "pancakes", attributes: [], score: 12 },
+            { type: "bagel", attributes: [], score: 8 },
+            { type: "frenchtoast", attributes: [], score: 6 },
+            { type: "halloumi", attributes: [], score: 4 },
+            { type: "potpie", attributes: [], score: 16 },
+            { type: "mushroomsoup", attributes: [], score: 12 },
+            { type: "pepperjack", attributes: [], score: 3 },
+            { type: "angelhair", attributes: [], score: 15 },
+            { type: "fettucini", attributes: [], score: 16 },
+            { type: "spaghetti", attributes: [], score: 17 },
+            { type: "macaroni", attributes: [], score: 18 },
+            { type: "lasagna", attributes: [], score: 25 },
+            { type: "roastedonion", attributes: [], score: 3 },
+            { type: "frenchonionsoup", attributes: [], score: 11 },
+            { type: "mozzarellastick", attributes: [], score: 10 },
+            { type: "tomatosoup", attributes: [], score: 10 },
+            { type: "spicytomatosoup", attributes: [], score: 15 },
+            { type: "bread", attributes: [], score: 6 },
+            { type: "wrap", attributes: [], score: 30 },
+            { type: "salad", attributes: [], score: 6 },
+            { type: "tomatosalad", attributes: [], score: 8 },
+            { type: "potatosalad", attributes: [], score: 7 },
+            { type: "gnocchi", attributes: [], score: 40 },
+            { type: "steakfries", attributes: [], score: 7 },
+            { type: "frenchfries", attributes: [], score: 8 },
+            { type: "potato", attributes: ["baked"], score: 6 }
         ]
     }
 ];

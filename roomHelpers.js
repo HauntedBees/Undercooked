@@ -39,7 +39,7 @@ const self = module.exports = {
             if(Math.random() < 0.25) {
                 actingUser.stuckTimer = 10;
                 const verb = (item.type === "plate" ? "shattering" : "ruining");
-                gameData.discordHelper.SayM(`${actingUser.nick} was about to do something really important, but they slipped on ${Food.GetFoodDisplayNameFromObj(item)}, ${verb} it, and fell on their ass, stunning them for 10 seconds!`);
+                gameData.discordHelper.SayM(`${actingUser.nick} was about to do something really important, but they slipped on ${Food.GetFoodDisplayNameFromObj(item)}, ${verb} it, and fell on their bum, stunning them for 10 seconds!`);
                 floorContents.splice(i, 1);
                 return true;
             }
