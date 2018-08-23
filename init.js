@@ -155,7 +155,6 @@ const self = module.exports = {
                     room: playerRoom,
                     shoes: 2, hat: true,
                     pants: true, shirt: true, 
-                    socks: 2, underwear: true, 
                     holding: null,
                     stuckTimer: 0,
                     activeActions: [],

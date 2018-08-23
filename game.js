@@ -171,9 +171,9 @@ const self = module.exports = {
             if(highestAction !== "strip" && player.activeActions.indexOf("strip") >= 0) {
                 rewards.push(`Stripper:  ${player.nick}`);
             }
-            if(!player.shirt && !player.pants && !player.underwear && player.shoes === 0 && player.socks === 0) {
+            if(!player.shirt && !player.pants && player.shoes === 0) {
                 if(player.hat) { rewards.push(`Mad Hatter:  ${player.nick}`); }
-                else { rewards.push(`Nudist:  ${player.nick}`); }
+                else { rewards.push(`Underwarrior:  ${player.nick}`); }
             }
             if(rewardName !== "") { rewards.push(`${rewardName}:  ${player.nick}`); }
         }

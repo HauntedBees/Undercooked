@@ -1,10 +1,6 @@
 const Room = require("./roomHelpers.js"), Food = require("./foodHelpers.js"), Maintainers = require("./actionsMaintenance.js"), GameHelper = require("./gameHelpers.js");
 function ClothingToss(actingUser, clothing) {
     switch(clothing) {
-        case "sock":
-            if(actingUser.socks <= 0) { return false; }
-            actingUser.socks--;
-            return true;
         case "shirt":
             if(!actingUser.shirt) { return false; }
             actingUser.shirt = false;
@@ -20,10 +16,6 @@ function ClothingToss(actingUser, clothing) {
         case "hat":
             if(!actingUser.hat) { return false; }
             actingUser.hat = false;
-            return true;
-        case "underwear":
-            if(!actingUser.underwear) { return false; }
-            actingUser.underwear = false;
             return true;
     }
     return false;
@@ -270,6 +262,10 @@ const self = module.exports = {
         gameData.discordHelper.SayM(`${actingUser.nick} tried to throw something to ${target}, but as far as I know, that isn't a person here!`);
     },
     ThrowClothing: function(gameData, actingUser, target, clothes) {
+        if(clothes === "sock" || clothes === "underwear") {
+            gameData.discordHelper.SayM(`${actingUser.nick} tried to throw their ${clothes}, but they should really keep those on! This is a kitchen, for crying out loud!!`);
+            return false;
+        }
         if(!ClothingToss(actingUser, clothes)) {
             gameData.discordHelper.SayM(`${actingUser.nick} tried to throw their ${clothes} at ${target}, but they aren't wearing any!`);
             return false;
@@ -290,6 +286,10 @@ const self = module.exports = {
         const animalDisplayName = (animal === "ants" ? "group of ants" : animal);
         if(action.special !== "") {
             const clothes = action.special;
+            if(clothes === "sock" || clothes === "underwear") {
+                gameData.discordHelper.SayM(`${actingUser.nick} tried to throw their ${clothes}, but they should really keep those on! This is a kitchen, for crying out loud!!`);
+                return false;
+            }
             if(!ClothingToss(actingUser, clothes)) {
                 gameData.discordHelper.SayM(`${actingUser.nick} tried to throw their ${clothes}, but they aren't wearing any!`);
                 return false;
