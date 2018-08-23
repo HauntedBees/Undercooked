@@ -191,6 +191,7 @@ ${rewards.join("\n")}
         gameData.discordHelper.SayP(`${gameData.hostUserName}, say "AGAIN" in the next 60 seconds to set up another round with the same team, or "CANCEL" to disband the team!`);
     },
     HandleAction: function(gameData, userID, action) {
+        if(gameData.cancelled || gameData.complete || gameData.killedEveryone) { return; }
         gameData.lastActionTimeSecond = gameData.secondsPlayed;
         try {
             const currentRoom = gameData.playerDetails[userID].room, actingUser = gameData.playerDetails[userID];
