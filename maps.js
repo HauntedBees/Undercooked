@@ -328,7 +328,7 @@ xxxxxxxxxxxxxxxx
             { type: "floor", rooms: [0, 2], size: 999, contents: [] },
             { type: "floor", rooms: [1, 3], size: 999, contents: [GetFireExtinguisher()] }
         ],
-        gimmick: "animals", gimmickArgs: { interval: 5, moveChance: 0.45, appearChance: 0.3, maxAnimalsAtOnce: 2 },
+        gimmick: "animals", gimmickArgs: { interval: 5, moveChance: 0.25, appearChance: 0.1, maxAnimalsAtOnce: 2 },
         potentialOrders: [
             { type: "onionrings", attributes: [], score: 6 },
             { type: "pizza", attributes: [], score: 15 },
