@@ -193,46 +193,48 @@ xxxxxxTCxSSxDdxOOxxxxxxxxxxxxx  Dd = Dish Dispenser (4) OO = Output
         ]
     },
     { name: "Earthquaker Oats!", 
-        difficulty: "Medium", minPlayers: 2, time: 600,
+        difficulty: "Medium", minPlayers: 3, time: 600,
         newOrderChance: 0.5, maxOrders: 5, plateChance: 0.75,
         img: `
-xxDMxMBxxxxTTxxxTCxx    DM = Mushroom Dispenser TT = Table
-DL      / /       xx    DL = Lettuce Dispenser  TC = Trash Can          
-DT      / /       xx    DT = Tomato Dispenser   MB = Mixing Bowl
+xxDMxMBxxxxxxxxxOVxx    DM = Mushroom Dispenser MB = Mixing Bowl
+DL       1        xx    DL = Lettuce Dispenser  OV = Oven          
+xxDTxxTTxxxxxxxxTTxx    DT = Tomato Dispenser   TT = Table
 Dd      / /       OO    Dd = Dish Dispenser (3) OO = Counter
-DP   1  / /   2   SS    DP = Potato Dispenser   SS = Sink
+DP   2  / /   3   SS    DP = Potato Dispenser   SS = Sink
 DD      / /       PS    DD = Dough Dispenser    PS = Pot and Stove
-DO      / /       xx    DO = Onion Dispenser    OV = Oven
-xx      / /       OV    CB = Cutting Board      CV = Conveyor Belt
+DO      / /       TC    DO = Onion Dispenser    TC = Trash Can
+xx      / /       xx    CB = Cutting Board      CV = Conveyor Belt
 xxCBxxCV>>>>>>>>CVxx    // = Active Fault - Earthquake Hazard
 `,
         rooms: [
-            { right: 1 },
-            { left: 0 }
+            { neighboring: 1, neighboring2: 2 },
+            { right: 2, neighboring: 0 },
+            { left: 1, neighboring: 0 }
         ],
         items: [
-            { type: "counter", rooms: [1], size: 99, contents: [] },
-            { type: "sink", rooms: [1] },
-            { type: "trashcan", rooms: [1], size: 999, contents: [] },
+            { type: "counter", rooms: [2], size: 99, contents: [] },
+            { type: "sink", rooms: [2] },
+            { type: "trashcan", rooms: [2], size: 999, contents: [] },
             { type: "dispenser", rooms: [0], dispensed: "mushroom", amount: 999 },
             { type: "dispenser", rooms: [0], dispensed: "lettuce", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "tomato", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "pepper", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "dough", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "onion", amount: 999 },
-            { type: "dispenser", rooms: [0], dispensed: "plate", amount: 3 },
+            { type: "dispenser", rooms: [0, 1], dispensed: "tomato", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "pepper", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "dough", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "onion", amount: 999 },
+            { type: "dispenser", rooms: [1], dispensed: "plate", amount: 3 },
             { type: "bowl", rooms: [0], size: 4, contents: [] },
-            { type: "pot", rooms: [1], switchedOn: false, size: 4, contents: [] },
-            { type: "oven", rooms: [1], switchedOn: false, size: 4, contents: [] },
-            { type: "cuttingboard", rooms: [0], size: 1, contents: [] },
-            { type: "table", rooms: [0], size: 6, contents: [] },
-            { type: "table", rooms: [1], size: 6, contents: [] },
-            { type: "belt", rooms: [0], start: true, to: 1, size: 6, contents: [] },
-            { type: "belt", rooms: [1], start: false, from: 0, size: 6, contents: [] },
+            { type: "pot", rooms: [2], switchedOn: false, size: 4, contents: [] },
+            { type: "oven", rooms: [0], switchedOn: false, size: 4, contents: [] },
+            { type: "cuttingboard", rooms: [1], size: 1, contents: [] },
+            { type: "table", rooms: [0, 1], size: 6, contents: [] },
+            { type: "table", rooms: [0, 2], size: 6, contents: [] },
+            { type: "belt", rooms: [1], start: true, to: 2, size: 6, contents: [] },
+            { type: "belt", rooms: [2], start: false, from: 1, size: 6, contents: [] },
             { type: "floor", rooms: [0], size: 999, contents: [] },
-            { type: "floor", rooms: [1], size: 999, contents: [GetFireExtinguisher()] }
+            { type: "floor", rooms: [1], size: 999, contents: [] },
+            { type: "floor", rooms: [2], size: 999, contents: [GetFireExtinguisher()] }
         ],
-        gimmick: "earthquake", gimmickArgs: { rooms: [0, 1], interval: 30, chance: 0.6 },
+        gimmick: "earthquake", gimmickArgs: { rooms: [1, 2], interval: 30, chance: 0.6 },
         potentialOrders: [
             { type: "tomatosoup", attributes: [], score: 10 },
             { type: "spicytomatosoup", attributes: [], score: 15 },
