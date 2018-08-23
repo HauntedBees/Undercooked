@@ -330,11 +330,11 @@ xxxxxxxxxxxxxxxx
         ],
         gimmick: "animals", gimmickArgs: { interval: 5, moveChance: 0.45, appearChance: 0.3, maxAnimalsAtOnce: 2 },
         potentialOrders: [
-            { type: "potatosalad", attributes: [], score: 10 },
-            { type: "gnocchi", attributes: [], score: 30 },
-            { type: "steakfries", attributes: [], score: 5 },
-            { type: "frenchfries", attributes: [], score: 3 },
-            { type: "potato", attributes: ["baked"], score: 6 }
+            { type: "onionrings", attributes: [], score: 6 },
+            { type: "pizza", attributes: [], score: 15 },
+            { type: "meatloaf", attributes: [], score: 3 },
+            { type: "caesarsalad", attributes: [], score: 10 },
+            { type: "cheeseburger", attributes: [], score: 25 }
         ]
     },
     { name: "Everything and the Kitchen Sink!", 
