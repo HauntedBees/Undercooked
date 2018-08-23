@@ -278,7 +278,7 @@ xxDdxxxxFPxxOVxxxxxxxx  Dp = Pepper Dispenser   DD = Dough Dispenser
             { type: "floor", rooms: [0], size: 999, contents: [] },
             { type: "floor", rooms: [1], size: 999, contents: [GetFireExtinguisher()] }
         ],
-        gimmick: "teleport", gimmickArgs: { interval: 15, chance: 0.5 },
+        gimmick: "teleport", gimmickArgs: { interval: 35, chance: 0.5 },
         potentialOrders: [
             { type: "potatosalad", attributes: [], score: 10 },
             { type: "gnocchi", attributes: [], score: 30 },
