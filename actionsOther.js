@@ -38,6 +38,7 @@ const self = module.exports = {
             }
             const potentialRooms = gameData.map.rooms[currentRoom];
             for(const direction in potentialRooms) {
+                if(direction === "neighboring" || direction === "neighboring2") { continue; }
                 if(potentialRooms[direction] === action.roomNo) {
                     actingUser.room = action.roomNo;
                     gameData.discordHelper.SayP(`${actingUser.nick} walked ${direction} from Room ${currentRoom + 1} to Room ${action.roomNo + 1}!`);
