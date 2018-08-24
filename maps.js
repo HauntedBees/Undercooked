@@ -13,12 +13,12 @@ const maps = [
         difficulty: "Trivial", minPlayers: 2, time: 3599,
         newOrderChance: 0, maxOrders: 5, plateChance: 1, // new orders are checked every 10 seconds, plates every 8
         img: `
-xxCBxCBxxxDLxDTxx   DL = Lettuce Dispenser
-x       T       x   DT = Tomato Dispenser
-x   1   T   2   O   CB = Cutting Board
-x       T       x    T = Table
-x       T       x    O = Delivery Counter
-xxxxxxxxxxxxxDPxx   DP = Plate Dispenser`,
+--CB-CB---DL-DT--   DL = Lettuce Dispenser
+|       T       |   DT = Tomato Dispenser
+|   1   T   2   O   CB = Cutting Board
+|       T       |    T = Table
+|       T       |    O = Delivery Counter
+-------------DP--   DP = Plate Dispenser`,
         rooms: [
             { neighboring: 1 },
             { neighboring: 0 }
@@ -40,11 +40,11 @@ xxxxxxxxxxxxxDPxx   DP = Plate Dispenser`,
         difficulty: "Easy", minPlayers: 1, time: 360,
         newOrderChance: 0.7, maxOrders: 2, plateChance: 1,
         img: `
-xxxDOxDCxxxxPSxOVxxx    DO = Onion Dispenser    DC = Cheese Dispenser
-xx        1       xx    PS = Pot and Stove      OV = Oven
-xxTTTTTTTTTTTTT   SS    SS = Kitchen Sink       TC = Trash Can
-OO        2       xx    OO = Counter            CB = Cutting Board
-xxxxxCBxCBxxDDxxTCxx    TT = Table              DD = Dish Dispenser (10)
+---DOxDC---xPSxOV---    DO = Onion Dispenser    DC = Cheese Dispenser
+|         1        |    PS = Pot and Stove      OV = Oven
+|TTTTTTTTTTTTTT   SS    SS = Kitchen Sink       TC = Trash Can
+OO        2        |    OO = Counter            CB = Cutting Board
+-----CBxCB--DD--TC--    TT = Table              DD = Dish Dispenser (10)
 `,
         rooms: [
             { down: 1 },
@@ -74,11 +74,11 @@ xxxxxCBxCBxxDDxxTCxx    TT = Table              DD = Dish Dispenser (10)
         difficulty: "Easy", minPlayers: 1, time: 420,
         newOrderChance: 0.7, maxOrders: 3, plateChance: 0.8,
         img: `
-xxDPxxOOOxxDCxx     DP = Potato Dispenser   DC = Cheese Dispenser
+--DP--OOO--DC--     DP = Potato Dispenser   DC = Cheese Dispenser
 FP           CB     DD = Dough Dispenser    Dd = Dish Dispenser (5)
 FP     1     CB     CB = Cutting Board      FP = Frying Pan
 FP           CB     TT = Table              OO = Counter
-xxxSSxTTTxxTCxx     SS = Sink               TC = Trash Can
+---SSxTTT--TC--     SS = Sink               TC = Trash Can
 `,
         rooms: [{}],
         items: [
@@ -108,11 +108,11 @@ xxxSSxTTTxxTCxx     SS = Sink               TC = Trash Can
         difficulty: "Easy", minPlayers: 2, time: 480,
         newOrderChance: 0.5, maxOrders: 3, plateChance: 0.75,
         img: `
-xxDDxDCxxxxxxxxOVxxxxx  DD = Dough Dispenser    DC = Cheese Dispenser
+--DDxDC--------OV-----  DD = Dough Dispenser    DC = Cheese Dispenser
 CB        TT        SS  DT = Tomato Dispenser   DM = Meat Dispenser
 CB   1    TT    2   OO  CB = Cutting Board      PS = Pot on Stove
-xx        TT        TC  OV = Oven               OO = Counter
-xxDTxxxxTCxxxPSxDdDMxx  SS = Sink               TC = Trash Can
+|         TT        TC  OV = Oven               OO = Counter
+--DT---xTC---PSxDdDM--  SS = Sink               TC = Trash Can
                         Dd = Dish Dispenser (10)
 `,
         rooms: [
@@ -148,13 +148,13 @@ xxDTxxxxTCxxxPSxDdDMxx  SS = Sink               TC = Trash Can
         difficulty: "Medium", minPlayers: 3, time: 600,
         newOrderChance: 0.5, maxOrders: 4, plateChance: 0.75,
         img: `
-xxFPxOVxxxxxxxxxxxxxxxxPSxCBxx  FP = Frying Pan         OV = Oven
+--FPxOV---------------xPSxCB--  FP = Frying Pan         OV = Oven
 DD            TC            DM  PS = Pot and Stove      CB = Cutting Board
-xx     1              2     xx  DD = Dough Dispenser    DM = Mushroom Dispenser
+|      1              2      |  DD = Dough Dispenser    DM = Mushroom Dispenser
 DC            MB            DP  DC = Cheese Dispenser   DP = Pepper Dispenser
-xxTTTTTTTTTTTTxxTTTTTTTTTTTTxx  MB = Mixing Bowl        TT = Table
-xx             3            xx  TC = Trash Can          SS = Sink
-xxxxxxTCxSSxDdxOOxxxxxxxxxxxxx  Dd = Dish Dispenser (4) OO = Output
+|TTTTTTTTTTTTT--TTTTTTTTTTTTT|  MB = Mixing Bowl        TT = Table
+|              3             |  TC = Trash Can          SS = Sink
+------TCxSSxDdxOO------------x  Dd = Dish Dispenser (4) OO = Output
 `,
         rooms: [
             { right: 1, neighboring2: 2 },
@@ -196,15 +196,15 @@ xxxxxxTCxSSxDdxOOxxxxxxxxxxxxx  Dd = Dish Dispenser (4) OO = Output
         difficulty: "Medium", minPlayers: 3, time: 600,
         newOrderChance: 0.5, maxOrders: 5, plateChance: 0.75,
         img: `
-xxDMxMBxxxxxxxxxOVxx    DM = Mushroom Dispenser MB = Mixing Bowl
-DL       1        xx    DL = Lettuce Dispenser  OV = Oven          
-xxDTxxTTxxxxxxxxTTxx    DT = Tomato Dispenser   TT = Table
+--DMxMB---------OV--    DM = Mushroom Dispenser MB = Mixing Bowl
+DL       1         |    DL = Lettuce Dispenser  OV = Oven          
+|-DT--TT--------TT-|    DT = Tomato Dispenser   TT = Table
 Dd      / /       OO    Dd = Dish Dispenser (3) OO = Counter
 DP   2  / /   3   SS    DP = Potato Dispenser   SS = Sink
 DD      / /       PS    DD = Dough Dispenser    PS = Pot and Stove
 DO      / /       TC    DO = Onion Dispenser    TC = Trash Can
-xx      / /       xx    CB = Cutting Board      CV = Conveyor Belt
-xxCBxxCV>>>>>>>>CVxx    // = Active Fault - Earthquake Hazard
+|       / /        |    CB = Cutting Board      CV = Conveyor Belt
+--CB--CV>>>>>>>>CV--    // = Active Fault - Earthquake Hazard
 `,
         rooms: [
             { neighboring: 1, neighboring2: 2 },
@@ -248,11 +248,11 @@ xxCBxxCV>>>>>>>>CVxx    // = Active Fault - Earthquake Hazard
         difficulty: "Medium", minPlayers: 2, time: 600,
         newOrderChance: 0.5, maxOrders: 5, plateChance: 0.75,
         img: `
-xxDPxxxxCBxxPSxxxxxxxx  DP = Potato Dispenser   CB = Cutting Board
+--DP---xCB--PS--------  DP = Potato Dispenser   CB = Cutting Board
 SS        TT        DO  SS = Sink               PS = Pot on Stove
 OO   1    MB    2   Dp  OO = Counter            DO = Onion Dispenser
 TC        TT        DD  TC = Trash Can          MB = Mixing Bowl
-xxDdxxxxFPxxOVxxxxxxxx  Dp = Pepper Dispenser   DD = Dough Dispenser
+--Dd---xFP--OV--------  Dp = Pepper Dispenser   DD = Dough Dispenser
                         FP = Frying Pan         OV = Oven
                         Dd = Dish Dispenser (4) TT = Table
 `,
@@ -291,15 +291,15 @@ xxDdxxxxFPxxOVxxxxxxxx  Dp = Pepper Dispenser   DD = Dough Dispenser
         difficulty: "Hard", minPlayers: 2, time: 600,
         newOrderChance: 0.4, maxOrders: 6, plateChance: 0.75,
         img: `
-xxDOxxxxxxxxDMxx    DO = Onion Dispenser    DM = Meat Dispenser
-TC     TT     xx    TC = Trash Can          TT = Table
+--DO--------DM--    DO = Onion Dispenser    DM = Meat Dispenser
+TC     TT      |    TC = Trash Can          TT = Table
 DC  1  TT  2  DL    DC = Cheese Dispenser   DL = Lettuce Dispenser
 SS     TT     OO    SS = Sink               OO = Counter
-xx  CBxxxxFP  xx    CB = Cutting Board      FP = Frying Pan
+|   CB---xFP   |    CB = Cutting Board      FP = Frying Pan
 DD     TT     DT    DD = Dough Dispenser    DT = Tomato Dispenser
 OV  3  TT  4  PS    OV = Oven               PS = Pot on Stove
 TC     TT     Dd    Dd = Dish Dispenser (30)
-xxxxxxxxxxxxxxxx
+---------------x
 `,
         rooms: [
             { down: 2, neighboring: 1 },
@@ -341,19 +341,19 @@ xxxxxxxxxxxxxxxx
         difficulty: "Hard", minPlayers: 4, time: 900,
         newOrderChance: 0.35, maxOrders: 8, plateChance: 0.75,
         img: `
-xxxxxxPSxxxxxxxxDPxxDTxxDLxx    PS = Pot and Stove      DP = Potato Dispenser
-xx           xx           xx    DT = Tomato Dispenser   DL = Lettuce Dispenser
+------PS--------DP--DT--DL--    PS = Pot and Stove      DP = Potato Dispenser
+|            |             |    DT = Tomato Dispenser   DL = Lettuce Dispenser
 CB     1            2     FP    CB = Cutting Board      FP = Frying Pan
-xx           xx           xx                            TC = Trash Can
-xxTCxxTTTTxxxxxxxTTTTxxxPSxxxxxxxSSxTCxxx               TT = Table
-DO           DD           xx           xx               SS = Sink
+|            |             |                            TC = Trash Can
+--TC--TTTT------xTTTT---PS------xSSxTC---               TT = Table
+DO           DD            |            |               SS = Sink
 DM     3     TT     4            5     OO               DO = Onion Dispenser
-DC           Dm           xx           xx               DD = Dough Dispenser
-xxxxxx   xxxxxxDpxxOVxxxDdxxCVxxxxxxxxxxx               DM = Mushroom Dispenser
-MB           xx             ^                           OO = Counter
-CB     6     xx             ^   DC = Cheese Dispenser   Dm = Meat Dispenser
+DC           Dm            |            |               DD = Dough Dispenser
+|-----   ------Dp--OV---Dd--CV-----------               DM = Mushroom Dispenser
+MB            |             ^                           OO = Counter
+CB     6      |             ^   DC = Cheese Dispenser   Dm = Meat Dispenser
 FP           CV>>>>>>>>>>>>>>   OV = Oven               Dp = Plate Dispenser (15)  
-xxxxxxxxxxxxxxx                 MB = Mixing Bowl        CV = Conveyor Belt
+---------------                 MB = Mixing Bowl        CV = Conveyor Belt
 `,
         rooms: [
             { right: 1, neighboring: 2 },
