@@ -2,7 +2,7 @@
 ## wut
 Undercooked is a text-based co-op cooking game made for the [August 2018 Demake Jam](https://itch.io/jam/demake-jam). You can play it [on the official Discord server](https://discord.gg/zXfrTJR), [invite the official bot to your own server](https://discordapp.com/oauth2/authorize?client_id=478730013286465547&scope=bot&permissions=0) or build and deploy your own Discord bot.
 ## license
-Undercooked is licensed under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html) because yes. It has dependencies on a few node.js modules ([discord.io](https://www.npmjs.com/package/discord.io) and [its](https://www.npmjs.com/package/cjopus) [three](https://www.npmjs.com/package/tweetnacl) [dependencies](https://www.npmjs.com/package/ws)) that are all either MIT licensed or public domain.
+Undercooked is licensed under the [GNU Affero General Public License v3](https://www.gnu.org/licenses/agpl-3.0.en.html) because yes. It has dependencies on a few node.js modules ([discord.io](https://www.npmjs.com/package/discord.io) and [its](https://www.npmjs.com/package/cjopus) [three](https://www.npmjs.com/package/tweetnacl) [dependencies](https://www.npmjs.com/package/ws)) that are all either MIT licensed or public domain.
 ## why
 Demake Jam. I already said that.
 ## building and running
