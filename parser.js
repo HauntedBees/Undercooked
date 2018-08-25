@@ -386,6 +386,7 @@ const self = module.exports = {
                 case "plain":
                 case "standard":
                 case "regular":
+                case "clean":
                     attrs.push("standard");
                     break;
                 default:
