@@ -1,8 +1,8 @@
 # Undercooked
 ## wut
-Undercooked is a text-based co-op cooking game made for the [August 2018 Demake Jam](https://itch.io/jam/demake-jam). You can play it [on the official Discord server](https://discord.gg/zXfrTJR) or build and deploy your own Discord bot.
+Undercooked is a text-based co-op cooking game made for the [August 2018 Demake Jam](https://itch.io/jam/demake-jam). You can play it [on the official Discord server](https://discord.gg/zXfrTJR), [invite the official bot to your own server](https://discordapp.com/oauth2/authorize?client_id=478730013286465547&scope=bot&permissions=0) or build and deploy your own Discord bot.
 ## license
-Undercooked is licensed under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html) because yes. It has dependencies on a few node.js modules that are mostly MIT licensed.
+Undercooked is licensed under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html) because yes. It has dependencies on a few node.js modules ([discord.io](https://www.npmjs.com/package/discord.io) and [its](https://www.npmjs.com/package/cjopus) [three](https://www.npmjs.com/package/tweetnacl) [dependencies](https://www.npmjs.com/package/ws)) that are all either MIT licensed or public domain.
 ## why
 Demake Jam. I already said that.
 ## building and running
@@ -33,4 +33,4 @@ Demake Jam. I already said that.
     1. Once the bot is running and in your server, type **INIT** to initialize a new game.
     2. Further instructions are provided in-game from this point on. You can type **!HELP** for more information.
 ## want to make changes?
-The game isn't even done yet hold your horses yo. Development will freeze on Friday, August 24th at 3PM PST, as that's when the Demake Jam ends. 
+Go for it! No new changes will be accepted until September 2018 since the Demake Game Jam is being judged up until that point. But after that, if you want to make a change, go nuts! Make those pull requests! Add new features or levels! Fix existing stuff! Go nuts! Any changes that get accepted into the master branch will be deployed to the primary Undercooked bot and server. Please make all changes GNU GPLv3 compatible, or - even better - GNU GPLv3 licensed.
