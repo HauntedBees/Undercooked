@@ -10,7 +10,7 @@ bot.on("message", function (user, userID, channelID, message, evt) {
     if(userID === bot.id) { return; }
     
     if(chGdM[channelID] === undefined && message === "INIT") {
-        console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Initializing up a game on channel ${channelID}.`);
+        console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] ${user} initialized a game on channel ${channelID}.`);
         chGdM[channelID] = GetNewGameData(bot, channelID);
     }
     const channelGameData = chGdM[channelID];

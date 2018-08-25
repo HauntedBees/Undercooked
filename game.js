@@ -178,16 +178,18 @@ const self = module.exports = {
             if(rewardName !== "") { rewards.push(`${rewardName}:  ${player.nick}`); }
         }
         rewards.unshift(`Most Active: ${mostActivePlayer}`);
-        console.log(`[${(new Date()).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}] Game completed on channel ${gameData.channelID}.`);
         if(gameData.score > 9999999) { gameData.score = 9999999; }
         if(gameData.ordersCleared > 99999) { gameData.ordersCleared = 99999; }
-        gameData.discordHelper.Say(`\`\`\`asciidoc
+        const response = `\`\`\`asciidoc
 === Level Complete ===
 ======================
 Orders Served:   ${" ".repeat(5 - gameData.ordersCleared.toString().length)}${gameData.ordersCleared}
 Money Made:   ${" ".repeat(7 - gameData.score.toString().length)}$${gameData.score}       
 ${rewards.join("\n")}
-\`\`\``);
+\`\`\``;
+        gameData.discordHelper.Say(response);
+        gameData.discordHelper.Log(`Game completed on channel ${gameData.channelID}.`);
+        gameData.discordHelper.Log(response);
         gameData.discordHelper.SayP(`${gameData.hostUserName}, say "AGAIN" in the next 60 seconds to set up another round with the same team, or "CANCEL" to disband the team!`);
     },
     HandleAction: function(gameData, userID, action, message) {
